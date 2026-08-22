@@ -1,11 +1,28 @@
 import { useState } from 'react'
 import { navbarList } from '../constants/constants'
 
-const Navbar = () => {
+const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
   const [activeItem, setActiveItem] = useState('#inicio')
 
+  const isMobile = variant === 'mobile'
+
+  // Función para manejar la navegación y establecer el elemento activo
+  const handleNavigate = (href) => {
+    setActiveItem(href)
+
+    if (onNavigate) {
+      onNavigate()
+    }
+  }
+
   return (
-    <nav className="flex items-center justify-center gap-8">
+    <nav
+      className={
+        isMobile
+          ? 'flex flex-col items-start gap-4'
+          : 'flex items-center justify-center gap-8'
+      }
+    >
       {navbarList.map((item) => {
         const isActive = activeItem === item.href
 
@@ -13,7 +30,7 @@ const Navbar = () => {
           <a
             key={item.href}
             href={item.href}
-            onClick={() => setActiveItem(item.href)}
+            onClick={() => handleNavigate(item.href)}
             className={`text-sm font-semibold tracking-wide transition-colors duration-200 ${
               isActive
                 ? 'text-mesa-primary'
@@ -26,11 +43,34 @@ const Navbar = () => {
       })}
 
       <a
-        href="#registro"
-        onClick={() => setActiveItem('#registro')}
-        className="rounded-xl bg-mesa-primary px-5 py-2.5 text-sm font-semibold tracking-wide text-white shadow-lg shadow-mesa-primary/25 transition-colors duration-200 hover:bg-mesa-primary-dark">
-        Registrarse
+        href="/login"
+        onClick={() => {
+          if (onNavigate) {
+            onNavigate()
+          }
+        }}
+        className="text-sm font-semibold tracking-wide text-mesa-muted transition-colors duration-200 hover:text-mesa-text"
+      >
+        Iniciar sesión
       </a>
+
+      <button
+        type="button"
+        onClick={() => {
+          onOpenAssociateDialog()
+
+          if (onNavigate) {
+            onNavigate()
+          }
+        }}
+        className={
+          isMobile
+            ? 'w-full cursor-pointer rounded-xl bg-mesa-primary px-5 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-mesa-primary/25 transition-colors duration-200 hover:bg-mesa-primary-dark'
+            : 'cursor-pointer rounded-xl bg-mesa-primary px-5 py-2.5 text-sm font-semibold tracking-wide text-white shadow-lg shadow-mesa-primary/25 transition-colors duration-200 hover:bg-mesa-primary-dark'
+        }
+      >
+        Asociate con nosotros
+      </button>
     </nav>
   )
 }

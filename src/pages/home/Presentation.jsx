@@ -28,10 +28,10 @@ const Presentation = () => {
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <a
-              href="#registro"
-              className="rounded-xl bg-mesa-primary px-6 py-3 text-center font-semibold text-white shadow-lg shadow-mesa-primary/25 transition hover:bg-mesa-primary-dark"
+              href="#beneficios"
+              className="rounded-xl cursor-pointer bg-mesa-primary px-6 py-3 text-center font-semibold text-white shadow-lg shadow-mesa-primary/25 transition hover:bg-mesa-primary-dark"
             >
-              Registrarse
+              Beneficios
             </a>
 
             <a

@@ -1,1 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap');
+
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", sans-serif;
+  --font-display: "Poppins", sans-serif;
+
+  --color-mesa-bg: #03070F;
+  --color-mesa-surface: #0B111C;
+  --color-mesa-card: #111827;
+  --color-mesa-border: #1F2937;
+
+  --color-mesa-primary: #056EF8;
+  --color-mesa-primary-dark: #1E60DB;
+  --color-mesa-cyan: #099CF7;
+  --color-mesa-cyan-light: #10C4FC;
+
+  --color-mesa-text: #F8FAFC;
+  --color-mesa-muted: #94A3B8;
+
+  --color-mesa-success: #16A34A;
+  --color-mesa-warning: #F5A306;
+  --color-mesa-orange: #D76C03;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #03070F;
+  color: #F8FAFC;
+  font-family: Manrope, system-ui, sans-serif;
+}

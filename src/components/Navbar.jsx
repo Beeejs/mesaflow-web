@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
+/* Constants */
 import { navbarList } from '../constants/constants'
 
 const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
@@ -42,17 +44,15 @@ const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
         )
       })}
 
-      <a
-        href="/login"
+      <Link
+        to="/login"
         onClick={() => {
-          if (onNavigate) {
-            onNavigate()
-          }
+          if (onNavigate) onNavigate();
         }}
         className="text-sm font-semibold tracking-wide text-mesa-muted transition-colors duration-200 hover:text-mesa-text"
       >
         Iniciar sesión
-      </a>
+      </Link>
 
       <button
         type="button"

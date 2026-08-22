@@ -4,6 +4,7 @@ import Presentation from "./pages/home/Presentation"
 import Services from "./pages/home/Services"
 import Benefits from "./pages/home/Benefits"
 import Platform from "./pages/home/Platform"
+import Contact from "./pages/home/Contact"
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Services/>
       <Benefits />
       <Platform/>
+      <Contact />
     </Layout>
   )
 }

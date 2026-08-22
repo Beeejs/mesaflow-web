@@ -1,8 +1,8 @@
-import { platformList } from '../../constants/constants.js'
+import { platformList } from '../../../constants/constants.js'
 
 /* Components */
-import PlatformCard from '../../components/platform/PlatformCard.jsx'
-import PlatformMetrics from '../../components/platform/PlatformMetrics.jsx'
+import PlatformCard from '../../../components/platform/PlatformCard.jsx'
+import PlatformMetrics from '../../../components/platform/PlatformMetrics.jsx'
 
 const Platform = () => {
   return (

@@ -1,7 +1,7 @@
-import { benefitsList } from "../../constants/constants.js"
+import { benefitsList } from "../../../constants/constants.js"
 
 /* Components */
-import BenefitCard from "../../components/benefits/BenefitCard.jsx"
+import BenefitCard from "../../../components/benefits/BenefitCard.jsx"
 
 const Benefits = () => {
   return (

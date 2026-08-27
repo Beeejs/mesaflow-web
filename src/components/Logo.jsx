@@ -10,7 +10,7 @@ const Logo = () => {
         alt="Logo MesaFlow"
         width="56"
         height="56"
-        className="h-11 w-11 rounded-full object-contain sm:h-12 sm:w-12 lg:h-14 lg:w-14"
+        className="h-11 w-11 rounded-full object-contain lg:h-14 lg:w-14"
         title="Logo MesaFlow"
       />
 

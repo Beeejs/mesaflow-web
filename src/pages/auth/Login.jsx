@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
+
 import AuthForm from '../../components/auth/AuthForm'
 
 const Login = () => {
@@ -10,6 +12,10 @@ const Login = () => {
     setMode((prevMode) => (prevMode === 'login' ? 'register' : 'login'))
   }
 
+  const handleGoToLogin = () => {
+    setMode('login')
+  }
+
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 sm:px-6 lg:px-8">
       <div className="absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-mesa-primary/20 blur-3xl sm:h-96 sm:w-96" />
@@ -17,7 +23,7 @@ const Login = () => {
 
       <section className="relative grid w-full max-w-6xl overflow-hidden rounded-3xl border border-mesa-border bg-mesa-surface/80 shadow-2xl shadow-mesa-primary/10 backdrop-blur lg:grid-cols-[0.9fr_1.1fr]">
         <div className="hidden border-r border-mesa-border bg-mesa-bg/60 p-10 lg:flex lg:flex-col lg:justify-between">
-          <a href="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <img
               src="/logo/mesaFlow_circular_logo.png"
               alt="Logo MesaFlow"
@@ -33,7 +39,7 @@ const Login = () => {
                 PEDÍ · DISFRUTÁ · FLUYE
               </p>
             </div>
-          </a>
+          </Link>
 
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-mesa-cyan">
@@ -57,7 +63,7 @@ const Login = () => {
         </div>
 
         <div className="p-6 sm:p-8 lg:p-10">
-          <a href="/" className="mb-8 flex items-center gap-3 lg:hidden">
+          <Link to="/" className="mb-8 flex items-center gap-3 lg:hidden">
             <img
               src="/logo/mesaFlow_circular_logo.png"
               alt="Logo MesaFlow"
@@ -73,7 +79,7 @@ const Login = () => {
                 PEDÍ · DISFRUTÁ · FLUYE
               </p>
             </div>
-          </a>
+          </Link>
 
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-mesa-cyan sm:text-sm">
             {isRegister ? 'Crear cuenta' : 'Bienvenido'}
@@ -89,7 +95,11 @@ const Login = () => {
               : 'Ingresá con tus credenciales para acceder al panel de gestión.'}
           </p>
 
-          <AuthForm mode={mode} />
+          <AuthForm
+            key={mode}
+            mode={mode}
+            onRegisterSuccess={handleGoToLogin}
+          />
 
           <div className="mt-6 border-t border-mesa-border pt-6 text-center">
             <p className="text-sm text-mesa-muted">

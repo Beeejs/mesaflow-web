@@ -1,7 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+/* MUI */
 import TextField from '@mui/material/TextField'
+
+/* Hooks */
+import useApiAction from '../../hooks/useApiActions'
+
 /* Api */
 import { login, register } from '../../api/authService'
+
 /* Sonner */
 import { toast } from 'sonner'
 
@@ -40,7 +47,22 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
   const isRegister = mode === 'register'
 
   const [formData, setFormData] = useState(initialFormData)
-  const [isLoading, setIsLoading] = useState(false)
+
+  const {
+    data: loginData,
+    loading: loginLoading,
+    error: loginError,
+    action: loginAction,
+  } = useApiAction(login)
+
+  const {
+    data: registerData,
+    loading: registerLoading,
+    error: registerError,
+    action: registerAction,
+  } = useApiAction(register)
+
+  const isLoading = loginLoading || registerLoading
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -60,15 +82,6 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     return true
   }
 
-  const getErrorMessage = (error) => {
-    return (
-      error.response?.data?.message ||
-      error.response?.data?.mensaje ||
-      error.response?.data?.error ||
-      'Ocurrió un error. Intentá nuevamente.'
-    )
-  }
-
   const saveSession = (data) => {
     const response = data.response || data
 
@@ -81,7 +94,7 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     }
   }
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
 
     const isValid = validateForm()
@@ -90,46 +103,57 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
       return
     }
 
-    try {
-      setIsLoading(true)
-
-      if (isRegister) {
-        const registerPayload = {
-          nombre: formData.nombre,
-          apellido: formData.apellido,
-          email: formData.email,
-          password: formData.password,
-          origenRegistro: 'WEB',
-        }
-
-        await register(registerPayload)
-
-        toast.success('Cuenta creada correctamente. Ya podés iniciar sesión.')
-
-        setTimeout(() => {
-          onRegisterSuccess()
-        }, 1000)
-
-        return
-      }
-
-      const loginPayload = {
+    if (isRegister) {
+      const registerPayload = {
+        nombre: formData.nombre,
+        apellido: formData.apellido,
         email: formData.email,
         password: formData.password,
+        origenRegistro: 'WEB',
       }
 
-      const data = await login(loginPayload)
-
-      saveSession(data)
-
-      toast.success('Inicio de sesión exitoso.')
-    } catch (error) {
-      const message = getErrorMessage(error)
-      toast.error(message)
-    } finally {
-      setIsLoading(false)
+      registerAction(registerPayload)
+      return
     }
+
+    const loginPayload = {
+      email: formData.email,
+      password: formData.password,
+    }
+
+    loginAction(loginPayload)
   }
+
+  useEffect(() => {
+    if (!registerData) {
+      return
+    }
+
+    toast.success('Cuenta creada correctamente. Ya podés iniciar sesión.')
+
+    const timer = setTimeout(() => {
+      if (onRegisterSuccess) {
+        onRegisterSuccess()
+      }
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [registerData, onRegisterSuccess])
+
+  useEffect(() => {
+    if (!loginData) {
+      return
+    }
+
+    saveSession(loginData)
+
+    toast.success('Inicio de sesión exitoso.')
+  }, [loginData])
+
+  useEffect(() => {
+    if(loginError || registerError) toast.error(loginError || registerError)
+  }, [loginError, registerError])
+
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 grid gap-5">

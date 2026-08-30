@@ -3,8 +3,6 @@ import { useState } from 'react'
 const getErrorMessage = (error) => {
   return (
     error.response?.data?.message ||
-    error.response?.data?.mensaje ||
-    error.response?.data?.error ||
     'Ocurrió un error. Intentá nuevamente.'
   )
 }

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 /* Constants */
 import { navbarList } from '../constants/constants'
+/* Components */
+import DefaultButton from './DefaultButton'
 
 const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
   const [activeItem, setActiveItem] = useState('#inicio')
@@ -54,7 +56,7 @@ const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
         Iniciar sesión
       </Link>
 
-      <button
+      <DefaultButton
         type="button"
         onClick={() => {
           onOpenAssociateDialog()
@@ -70,7 +72,7 @@ const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
         }
       >
         Asociate con nosotros
-      </button>
+      </DefaultButton>
     </nav>
   )
 }

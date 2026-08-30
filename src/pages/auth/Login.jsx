@@ -8,10 +8,12 @@ const Login = () => {
 
   const isRegister = mode === 'register'
 
+  // Función para cambiar el modo de autenticación
   const handleChangeMode = () => {
     setMode((prevMode) => (prevMode === 'login' ? 'register' : 'login'))
   }
 
+  // Función para manejar la navegación después del registro exitoso
   const handleGoToLogin = () => {
     setMode('login')
   }
@@ -23,7 +25,7 @@ const Login = () => {
 
       <section className="relative grid w-full max-w-6xl overflow-hidden rounded-3xl border border-mesa-border bg-mesa-surface/80 shadow-2xl shadow-mesa-primary/10 backdrop-blur lg:grid-cols-[0.9fr_1.1fr]">
         <div className="hidden border-r border-mesa-border bg-mesa-bg/60 p-10 lg:flex lg:flex-col lg:justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 w-fit">
             <img
               src="/logo/mesaFlow_circular_logo.png"
               alt="Logo MesaFlow"

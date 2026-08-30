@@ -1,17 +1,20 @@
 import { useState } from 'react'
 
+// Función para obtener un mensaje de error amigable a partir del error recibido
 const getErrorMessage = (error) => {
   return (
     error.response?.data?.message ||
-    'Ocurrió un error. Intentá nuevamente.'
+    'Ocurrió un error. Intentá nuevamente más tarde.'
   )
 }
 
 const useApiAction = (serviceFunction) => {
+  // Estados para almacenar los datos, el error y el estado de carga
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Función para ejecutar la acción de la API
   const action = async (...params) => {
     try {
       setLoading(true)
@@ -34,12 +37,14 @@ const useApiAction = (serviceFunction) => {
     }
   }
 
+  // Función para reiniciar los estados a sus valores iniciales
   const reset = () => {
     setData(null)
     setError('')
     setLoading(false)
   }
 
+  // Retornamos los estados y la función de reinicio
   return {
     data,
     error,

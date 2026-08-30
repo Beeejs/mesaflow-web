@@ -8,6 +8,7 @@ import AssociateDialog from './associate/AssociateDialog'
 
 /* Context */
 import { SessionContext } from '../context/SessionContext'
+import SessionMenu from './session/SessionMenu'
 
 const Header = () => {
   const [isAssociateDialogOpen, setIsAssociateDialogOpen] = useState(false)
@@ -58,6 +59,10 @@ const Header = () => {
             />
           </div>
 
+          <div className="hidden lg:flex lg:items-center">
+            <SessionMenu />
+          </div>
+
           <button
             type="button"
             onClick={toggleMobileMenu}
@@ -95,6 +100,10 @@ const Header = () => {
               onOpenAssociateDialog={openAssociateDialog}
               onNavigate={closeMobileMenu}
             />
+
+            <div className="mt-5 border-t border-mesa-border pt-5">
+              <SessionMenu />
+            </div>
           </div>
         )}
       </header>

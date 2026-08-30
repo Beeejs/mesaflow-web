@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 /* MUI */
 import TextField from '@mui/material/TextField'
+
 /* Componentes */
 import DefaultButton from '../DefaultButton'
 
@@ -9,10 +10,14 @@ import DefaultButton from '../DefaultButton'
 import useApiAction from '../../hooks/useApiActions'
 
 /* Api */
-import { login, register } from '../../api/authService'
+import { register } from '../../api/authService'
+
+/* Context */
+import { SessionContext } from '../../context/SessionContext'
 
 /* Sonner */
 import { toast } from 'sonner'
+import { useNavigate } from 'react-router'
 
 const inputStyles = {
   '& label': {
@@ -50,13 +55,22 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
   // Estado del formulario de autenticación
   const [formData, setFormData] = useState(initialFormData)
 
+  // Contexto de sesión
+  const { loginUser } = useContext(SessionContext)
+
+  // Hook de navegación para redirigir al usuario después del inicio de sesión o registro
+  const navigate = useNavigate()
+
+  // Condicion para determinar si el formulario es de registro o de inicio de sesión
+  const isRegister = mode === 'register'
+
   // Hooks
   const {
     data: loginData,
     loading: loginLoading,
     error: loginError,
     action: loginAction,
-  } = useApiAction(login)
+  } = useApiAction(loginUser)
 
   const {
     data: registerData,
@@ -67,8 +81,6 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
 
   // Condicion para determinar si el formulario está en proceso de carga (login o registro)
   const isLoading = loginLoading || registerLoading
-  // Condicion para determinar si el formulario es de registro o de inicio de sesión
-  const isRegister = mode === 'register'
 
   // Función para manejar los cambios en los campos del formulario
   const handleChange = (event) => {
@@ -88,19 +100,6 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     }
 
     return true
-  }
-
-  // TODO: Esto es base, hay que verlo bien
-  const saveSession = (data) => {
-    const user = {
-      idUsuario: data.idUsuario,
-      nombre: data.nombre,
-      apellido: data.apellido,
-      email: data.email,
-      rol: data.rol,
-    }
-
-    console.log('Usuario autenticado:', user)
   }
 
   // Función para manejar el envío del formulario
@@ -157,16 +156,21 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
       return
     }
 
-    saveSession(loginData)
-
     toast.success('Inicio de sesión exitoso.')
-  }, [loginData])
+
+    navigate('/')
+  }, [loginData, navigate])
 
   // Efecto para manejar los errores de inicio de sesión y registro
   useEffect(() => {
-    if(loginError || registerError) toast.error(loginError || registerError)
-  }, [loginError, registerError])
+    const error = loginError || registerError
 
+    if (!error) {
+      return
+    }
+
+    toast.error(error)
+  }, [loginError, registerError])
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
@@ -244,11 +248,11 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
         loading={isLoading}
         fullWidth
       >
-      {isLoading
-        ? 'Cargando'
-        : isRegister
-          ? 'Crear cuenta'
-          : 'Iniciar sesión'}
+        {isLoading
+          ? 'Cargando'
+          : isRegister
+            ? 'Crear cuenta'
+            : 'Iniciar sesión'}
       </DefaultButton>
     </form>
   )

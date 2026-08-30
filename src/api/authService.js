@@ -1,4 +1,5 @@
 import api from './axiosConfig'
+
 // Importamos la función para manejar la respuesta de la API
 import { handleApiResponse } from './handleApiResponse'
 
@@ -17,5 +18,17 @@ export const register = async (registerData) => {
 // Función para realizar la solicitud de inicio de sesión con Google
 export const googleLogin = async (googleLoginData) => {
   const response = await api.post('/api/auth/google', googleLoginData)
+  return handleApiResponse(response.data)
+}
+
+// Función para obtener el usuario autenticado actual
+export const getCurrentUser = async () => {
+  const response = await api.get('/api/auth/me')
+  return handleApiResponse(response.data)
+}
+
+// Función para cerrar sesión
+export const logout = async () => {
+  const response = await api.post('/api/auth/logout')
   return handleApiResponse(response.data)
 }

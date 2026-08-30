@@ -8,7 +8,7 @@ const getButtonStyles = (variant) => {
     fontWeight: 700,
     textTransform: 'none',
   }
-  // Variantes segun lo que pasemos por props (styles)
+
   const variants = {
     primary: {
       backgroundColor: '#056EF8',
@@ -67,6 +67,7 @@ const DefaultButton = ({
   disabled = false,
   fullWidth = false,
   onClick,
+  sx = {},
 }) => {
   return (
     <Button
@@ -77,7 +78,10 @@ const DefaultButton = ({
       fullWidth={fullWidth}
       disabled={disabled || loading}
       onClick={onClick}
-      sx={getButtonStyles(variant)}
+      sx={{
+        ...getButtonStyles(variant),
+        ...sx,
+      }}
     >
       {children}
     </Button>

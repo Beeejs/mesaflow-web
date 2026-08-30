@@ -65,11 +65,9 @@ const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
             onNavigate()
           }
         }}
-        className={
-          isMobile
-            ? 'w-full cursor-pointer rounded-xl bg-mesa-primary px-5 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-mesa-primary/25 transition-colors duration-200 hover:bg-mesa-primary-dark'
-            : 'cursor-pointer rounded-xl bg-mesa-primary px-5 py-2.5 text-sm font-semibold tracking-wide text-white shadow-lg shadow-mesa-primary/25 transition-colors duration-200 hover:bg-mesa-primary-dark'
-        }
+        sx={{
+          padding: '5px 20px'
+        }}
       >
         Asociate con nosotros
       </DefaultButton>

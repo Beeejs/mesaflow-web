@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
 /* Api */
 import {
+  getCsrfToken,
   getCurrentUser,
   login,
   logout,
@@ -19,6 +20,7 @@ export const SessionProvider = ({ children }) => {
     try {
       setIsLoadingSession(true)
 
+      await getCsrfToken() // Obtener el token CSRF
       const currentUser = await getCurrentUser()
       console.log('Usuario autenticado actual:', currentUser)
 
@@ -36,7 +38,9 @@ export const SessionProvider = ({ children }) => {
 
   // Función para iniciar sesión y actualizar el estado del usuario
   const loginUser = useCallback(async (loginData) => {
+    await getCsrfToken() // Obtener el token CSRF antes de iniciar sesión
     const loggedUser = await login(loginData)
+    await getCsrfToken() // Obtener el token CSRF después de iniciar sesión
 
     setUser(loggedUser)
 
@@ -45,7 +49,9 @@ export const SessionProvider = ({ children }) => {
 
   // Función para cerrar sesión y limpiar el estado del usuario
   const logoutUser = useCallback(async () => {
+    await getCsrfToken() // Obtener el token CSRF antes de cerrar sesión
     await logout()
+    await getCsrfToken() // Obtener el token CSRF después de cerrar sesión
 
     setUser(null)
   }, [])

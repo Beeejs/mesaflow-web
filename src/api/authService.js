@@ -32,3 +32,9 @@ export const logout = async () => {
   const response = await api.post('/api/auth/logout')
   return handleApiResponse(response.data)
 }
+
+// Función para obtener el token CSRF
+export const getCsrfToken = async () => {
+  const response = await api.get('/api/csrf')
+  return handleApiResponse(response.data)
+}

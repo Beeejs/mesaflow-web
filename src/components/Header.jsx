@@ -1,14 +1,16 @@
 import { useContext, useState } from 'react'
+
 import { toast } from 'sonner'
 
 /* Components */
 import Logo from './Logo'
 import Navbar from './Navbar'
 import AssociateDialog from './associate/AssociateDialog'
+import SessionMenu from './menu/SessionMenu'
+import MobileMenu from './menu/MobileMenu'
 
 /* Context */
 import { SessionContext } from '../context/SessionContext'
-import SessionMenu from './session/SessionMenu'
 
 const Header = () => {
   const [isAssociateDialogOpen, setIsAssociateDialogOpen] = useState(false)
@@ -66,7 +68,7 @@ const Header = () => {
           <button
             type="button"
             onClick={toggleMobileMenu}
-            className="flex h-11 w-11 items-center justify-center rounded-xl border border-mesa-border bg-mesa-surface text-mesa-text transition hover:border-mesa-primary/60 lg:hidden"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-mesa-border bg-mesa-surface text-mesa-text transition hover:border-mesa-primary/60 lg:hidden"
             aria-label={isMobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
             aria-expanded={isMobileMenuOpen}
           >
@@ -91,22 +93,14 @@ const Header = () => {
             </span>
           </button>
         </div>
-
-        {isMobileMenuOpen && (
-          <div className="border-t border-mesa-border bg-mesa-bg px-4 py-5 sm:px-6 lg:hidden">
-            <Navbar
-              variant="mobile"
-              isAuthenticated={isAuthenticated}
-              onOpenAssociateDialog={openAssociateDialog}
-              onNavigate={closeMobileMenu}
-            />
-
-            <div className="mt-5 border-t border-mesa-border pt-5">
-              <SessionMenu />
-            </div>
-          </div>
-        )}
       </header>
+
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        isAuthenticated={isAuthenticated}
+        onClose={closeMobileMenu}
+        onOpenAssociateDialog={openAssociateDialog}
+      />
 
       <AssociateDialog
         open={isAssociateDialogOpen}

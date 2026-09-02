@@ -1,16 +1,33 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { toast } from 'sonner'
 
 /* Components */
 import Logo from './Logo'
 import Navbar from './Navbar'
 import AssociateDialog from './associate/AssociateDialog'
 
+/* Context */
+import { SessionContext } from '../context/SessionContext'
+import SessionMenu from './session/SessionMenu'
+
 const Header = () => {
   const [isAssociateDialogOpen, setIsAssociateDialogOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Funcion para abrir el diálogo de asociación
+  const { isAuthenticated, isLoadingSession } = useContext(SessionContext)
+
+  // Funcion para abrir el diálogo de asociación. Solo se permite si el usuario está autenticado y la sesión no está en proceso de carga.
   const openAssociateDialog = () => {
+    if (isLoadingSession) {
+      toast.info('Estamos verificando tu sesión. Intentá nuevamente en unos segundos.')
+      return
+    }
+
+    if (!isAuthenticated) {
+      toast.warning('Debés iniciar sesión para realizar esta acción.')
+      return
+    }
+
     setIsAssociateDialogOpen(true)
   }
 
@@ -36,7 +53,14 @@ const Header = () => {
           <Logo />
 
           <div className="hidden lg:block">
-            <Navbar onOpenAssociateDialog={openAssociateDialog} />
+            <Navbar
+              isAuthenticated={isAuthenticated}
+              onOpenAssociateDialog={openAssociateDialog}
+            />
+          </div>
+
+          <div className="hidden lg:flex lg:items-center">
+            <SessionMenu />
           </div>
 
           <button
@@ -72,9 +96,14 @@ const Header = () => {
           <div className="border-t border-mesa-border bg-mesa-bg px-4 py-5 sm:px-6 lg:hidden">
             <Navbar
               variant="mobile"
+              isAuthenticated={isAuthenticated}
               onOpenAssociateDialog={openAssociateDialog}
               onNavigate={closeMobileMenu}
             />
+
+            <div className="mt-5 border-t border-mesa-border pt-5">
+              <SessionMenu />
+            </div>
           </div>
         )}
       </header>

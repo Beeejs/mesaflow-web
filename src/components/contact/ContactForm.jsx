@@ -1,4 +1,6 @@
 import TextField from '@mui/material/TextField'
+/* Components */
+import DefaultButton from '../DefaultButton'
 
 const inputStyles = {
   '& label': {
@@ -58,12 +60,13 @@ const ContactForm = () => {
           sx={inputStyles}
         />
 
-        <button
+        <DefaultButton
           type="submit"
+          fullWidth
           className="mt-2 rounded-xl bg-mesa-primary px-6 py-3 font-semibold text-white shadow-lg shadow-mesa-primary/25 transition hover:bg-mesa-primary-dark"
         >
           Enviar consulta
-        </button>
+        </DefaultButton>
 
         <p className="text-sm leading-6 text-mesa-muted">
           Al enviar la consulta, el equipo de MesaFlow podrá revisar la

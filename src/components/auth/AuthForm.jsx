@@ -1,16 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 /* MUI */
 import TextField from '@mui/material/TextField'
+
+/* Componentes */
+import DefaultButton from '../DefaultButton'
 
 /* Hooks */
 import useApiAction from '../../hooks/useApiActions'
 
 /* Api */
-import { login, register } from '../../api/authService'
+import { register } from '../../api/authService'
+
+/* Context */
+import { SessionContext } from '../../context/SessionContext'
 
 /* Sonner */
 import { toast } from 'sonner'
+import { useNavigate } from 'react-router'
 
 const inputStyles = {
   '& label': {
@@ -35,6 +42,7 @@ const inputStyles = {
   },
 }
 
+// Data inicial del formulario de autenticación
 const initialFormData = {
   nombre: '',
   apellido: '',
@@ -44,16 +52,25 @@ const initialFormData = {
 }
 
 const AuthForm = ({ mode, onRegisterSuccess }) => {
-  const isRegister = mode === 'register'
-
+  // Estado del formulario de autenticación
   const [formData, setFormData] = useState(initialFormData)
 
+  // Contexto de sesión
+  const { loginUser } = useContext(SessionContext)
+
+  // Hook de navegación para redirigir al usuario después del inicio de sesión o registro
+  const navigate = useNavigate()
+
+  // Condicion para determinar si el formulario es de registro o de inicio de sesión
+  const isRegister = mode === 'register'
+
+  // Hooks
   const {
     data: loginData,
     loading: loginLoading,
     error: loginError,
     action: loginAction,
-  } = useApiAction(login)
+  } = useApiAction(loginUser)
 
   const {
     data: registerData,
@@ -62,8 +79,10 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     action: registerAction,
   } = useApiAction(register)
 
+  // Condicion para determinar si el formulario está en proceso de carga (login o registro)
   const isLoading = loginLoading || registerLoading
 
+  // Función para manejar los cambios en los campos del formulario
   const handleChange = (event) => {
     const { name, value } = event.target
 
@@ -73,6 +92,7 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     }))
   }
 
+  // Función para validar el formulario
   const validateForm = () => {
     if (isRegister && formData.password !== formData.confirmPassword) {
       toast.error('Las contraseñas no coinciden.')
@@ -82,18 +102,7 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     return true
   }
 
-  const saveSession = (data) => {
-    const response = data.response || data
-
-    if (response.token) {
-      localStorage.setItem('token', response.token)
-    }
-
-    if (response.usuario) {
-      localStorage.setItem('user', JSON.stringify(response.usuario))
-    }
-  }
-
+  // Función para manejar el envío del formulario
   const handleSubmit = (event) => {
     event.preventDefault()
 
@@ -124,6 +133,7 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     loginAction(loginPayload)
   }
 
+  // Efecto para manejar el registro exitoso y mostrar un mensaje de éxito
   useEffect(() => {
     if (!registerData) {
       return
@@ -140,20 +150,27 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     return () => clearTimeout(timer)
   }, [registerData, onRegisterSuccess])
 
+  // Efecto para manejar el inicio de sesión exitoso
   useEffect(() => {
     if (!loginData) {
       return
     }
 
-    saveSession(loginData)
-
     toast.success('Inicio de sesión exitoso.')
-  }, [loginData])
 
+    navigate('/')
+  }, [loginData, navigate])
+
+  // Efecto para manejar los errores de inicio de sesión y registro
   useEffect(() => {
-    if(loginError || registerError) toast.error(loginError || registerError)
-  }, [loginError, registerError])
+    const error = loginError || registerError
 
+    if (!error) {
+      return
+    }
+
+    toast.error(error)
+  }, [loginError, registerError])
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
@@ -226,17 +243,17 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
         />
       )}
 
-      <button
+      <DefaultButton
         type="submit"
-        disabled={isLoading}
-        className="mt-2 cursor-pointer rounded-xl bg-mesa-primary px-6 py-3 font-semibold text-white shadow-lg shadow-mesa-primary/25 transition hover:bg-mesa-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
+        loading={isLoading}
+        fullWidth
       >
         {isLoading
-          ? 'Procesando...'
+          ? 'Cargando'
           : isRegister
             ? 'Crear cuenta'
             : 'Iniciar sesión'}
-      </button>
+      </DefaultButton>
     </form>
   )
 }

@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Link } from 'react-router'
 /* Constants */
 import { navbarList } from '../constants/constants'
+/* Components */
+import DefaultButton from './DefaultButton'
+/* Context */
+import { SessionContext } from '../context/SessionContext'
 
 const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
   const [activeItem, setActiveItem] = useState('#inicio')
+  const { isAuthenticated } = useContext(SessionContext)
 
   const isMobile = variant === 'mobile'
 
@@ -44,17 +49,21 @@ const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
         )
       })}
 
-      <Link
-        to="/login"
-        onClick={() => {
-          if (onNavigate) onNavigate();
-        }}
-        className="text-sm font-semibold tracking-wide text-mesa-muted transition-colors duration-200 hover:text-mesa-text"
-      >
-        Iniciar sesión
-      </Link>
+     {!isAuthenticated && (
+        <Link
+          to="/login"
+          onClick={() => {
+            if (onNavigate) {
+              onNavigate()
+            }
+          }}
+          className="text-sm font-semibold tracking-wide text-mesa-muted transition-colors duration-200 hover:text-mesa-text"
+        >
+          Iniciar sesión
+        </Link>
+      )}
 
-      <button
+      <DefaultButton
         type="button"
         onClick={() => {
           onOpenAssociateDialog()
@@ -63,14 +72,12 @@ const Navbar = ({ onOpenAssociateDialog, onNavigate, variant = 'desktop' }) => {
             onNavigate()
           }
         }}
-        className={
-          isMobile
-            ? 'w-full cursor-pointer rounded-xl bg-mesa-primary px-5 py-3 text-sm font-semibold tracking-wide text-white shadow-lg shadow-mesa-primary/25 transition-colors duration-200 hover:bg-mesa-primary-dark'
-            : 'cursor-pointer rounded-xl bg-mesa-primary px-5 py-2.5 text-sm font-semibold tracking-wide text-white shadow-lg shadow-mesa-primary/25 transition-colors duration-200 hover:bg-mesa-primary-dark'
-        }
+        sx={{
+          padding: '5px 20px'
+        }}
       >
         Asociate con nosotros
-      </button>
+      </DefaultButton>
     </nav>
   )
 }

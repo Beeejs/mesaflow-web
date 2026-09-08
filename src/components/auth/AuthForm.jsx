@@ -9,6 +9,9 @@ import TextField from '@mui/material/TextField'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
+/* Google */
+import { GoogleLogin } from '@react-oauth/google'
+
 /* Componentes */
 import DefaultButton from '../DefaultButton'
 
@@ -65,7 +68,7 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   // Contexto de sesión
-  const { loginUser } = useContext(SessionContext)
+  const { loginUser, googleLoginUser } = useContext(SessionContext)
 
   // Hook de navegación para redirigir al usuario después del inicio de sesión o registro
   const navigate = useNavigate()
@@ -87,6 +90,13 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     error: registerError,
     action: registerAction,
   } = useApiAction(register)
+
+  const {
+    data: googleLoginData,
+    loading: googleLoginLoading,
+    error: googleLoginError,
+    action: googleLoginAction,
+  } = useApiAction(googleLoginUser)
 
   // Condicion para determinar si el formulario está en proceso de carga (login o registro)
   const isLoading = loginLoading || registerLoading
@@ -153,6 +163,26 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
     loginAction(loginPayload)
   }
 
+  // Función para manejar el inicio de sesión con Google
+  const handleGoogleSuccess = async (credentialResponse) => {
+    // Verificar si se esta logueando normalmente
+    if (isLoading) {
+      return
+    }
+
+    if (!credentialResponse.credential) {
+      toast.error('No se recibió el token de Google.')
+      return
+    }
+
+    googleLoginAction(credentialResponse.credential)
+  }
+
+  // Función para manejar el error de inicio de sesión con Google
+  const handleGoogleError = () => {
+    toast.error('No se pudo iniciar sesión con Google.')
+  }
+
   // Efecto para manejar el registro exitoso y mostrar un mensaje de éxito
   useEffect(() => {
     if (!registerData) {
@@ -180,17 +210,27 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
 
     navigate('/')
   }, [loginData, navigate])
+  // Efecto para manejar el inicio de sesión con Google exitoso
+    useEffect(() => {
+    if (!googleLoginData) {
+      return
+    }
+
+    toast.success('Inicio de sesión con Google exitoso.')
+
+    navigate('/')
+  }, [googleLoginData, navigate])
 
   // Efecto para manejar los errores de inicio de sesión y registro
   useEffect(() => {
-    const error = loginError || registerError
+    const error = loginError || registerError || googleLoginError
 
     if (!error) {
       return
     }
 
     toast.error(error)
-  }, [loginError, registerError])
+  }, [loginError, registerError, googleLoginError])
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
@@ -318,6 +358,29 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
             ? 'Crear cuenta'
             : 'Iniciar sesión'}
       </DefaultButton>
+
+      <div className="flex items-center gap-4">
+        <span className="h-px flex-1 bg-mesa-border" />
+
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-mesa-muted">
+          o
+        </span>
+
+        <span className="h-px flex-1 bg-mesa-border" />
+      </div>
+      {/* Google Auth */}
+      <div className="overflow-hidden rounded-full">
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          theme="filled_black"
+          size="large"
+          text={isRegister ? 'signup_with' : 'signin_with'}
+          shape="pill"
+          width="100%"
+          loading={googleLoginLoading}
+        />
+      </div>
     </form>
   )
 }

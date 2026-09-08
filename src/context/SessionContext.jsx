@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   login,
   logout,
+  googleLogin
 } from '../api/authService'
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -47,6 +48,21 @@ export const SessionProvider = ({ children }) => {
     return loggedUser
   }, [])
 
+  const googleLoginUser = useCallback(async (idToken) => {
+    await getCsrfToken()
+
+    const loggedUser = await googleLogin({
+      idToken,
+      origenRegistro: 'WEB',
+    })
+
+    await getCsrfToken()
+
+    setUser(loggedUser)
+
+    return loggedUser
+  }, [])
+
   // Función para cerrar sesión y limpiar el estado del usuario
   const logoutUser = useCallback(async () => {
     await getCsrfToken() // Obtener el token CSRF antes de cerrar sesión
@@ -69,6 +85,7 @@ export const SessionProvider = ({ children }) => {
       loginUser,
       logoutUser,
       refreshSession,
+      googleLoginUser
     }
   }, [
     user,
@@ -76,6 +93,7 @@ export const SessionProvider = ({ children }) => {
     loginUser,
     logoutUser,
     refreshSession,
+    googleLoginUser
   ])
 
   return (

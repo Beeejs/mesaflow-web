@@ -1,7 +1,13 @@
 import { useContext, useEffect, useState } from 'react'
 
 /* MUI */
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
+
+/* MUI Icons */
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
 /* Componentes */
 import DefaultButton from '../DefaultButton'
@@ -54,6 +60,9 @@ const initialFormData = {
 const AuthForm = ({ mode, onRegisterSuccess }) => {
   // Estado del formulario de autenticación
   const [formData, setFormData] = useState(initialFormData)
+  // Estados para controlar la visibilidad de las contraseñas
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   // Contexto de sesión
   const { loginUser } = useContext(SessionContext)
@@ -81,6 +90,17 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
 
   // Condicion para determinar si el formulario está en proceso de carga (login o registro)
   const isLoading = loginLoading || registerLoading
+
+  // Funciones para alternar la visibilidad de las contraseñas
+  const handleToggleShowPassword = () => {
+    // Función para alternar la visibilidad de la contraseña principal
+    setShowPassword((prevState) => !prevState)
+  }
+
+  // Función para alternar la visibilidad de la contraseña de confirmación
+  const handleToggleShowConfirmPassword = () => {
+    setShowConfirmPassword((prevState) => !prevState)
+  }
 
   // Función para manejar los cambios en los campos del formulario
   const handleChange = (event) => {
@@ -216,30 +236,74 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
       />
 
       <TextField
-        name="password"
         label="Contraseña"
-        placeholder="Ingresá tu contraseña"
+        name="password"
+        type={showPassword ? 'text' : 'password'}
         value={formData.password}
         onChange={handleChange}
-        variant="outlined"
         fullWidth
         required
-        type="password"
         sx={inputStyles}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  type="button"
+                  onClick={handleToggleShowPassword}
+                  edge="end"
+                  sx={{
+                    color: '#94A3B8',
+                    '&:hover': {
+                      color: '#F8FAFC',
+                    },
+                  }}
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        }}
       />
 
       {isRegister && (
         <TextField
-          name="confirmPassword"
           label="Confirmar contraseña"
-          placeholder="Repetí tu contraseña"
+          name="confirmPassword"
+          type={showConfirmPassword ? 'text' : 'password'}
           value={formData.confirmPassword}
           onChange={handleChange}
-          variant="outlined"
           fullWidth
           required
-          type="password"
           sx={inputStyles}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    type="button"
+                    onClick={handleToggleShowConfirmPassword}
+                    edge="end"
+                    sx={{
+                      color: '#94A3B8',
+                      '&:hover': {
+                        color: '#F8FAFC',
+                      },
+                    }}
+                    aria-label={
+                      showConfirmPassword
+                        ? 'Ocultar confirmación de contraseña'
+                        : 'Mostrar confirmación de contraseña'
+                    }
+                  >
+                    {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
       )}
 

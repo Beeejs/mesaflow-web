@@ -369,7 +369,7 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
         <span className="h-px flex-1 bg-mesa-border" />
       </div>
       {/* Google Auth */}
-      <div className="overflow-hidden rounded-full">
+      <div className="flex justify-center overflow-hidden rounded-full">
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={handleGoogleError}
@@ -377,7 +377,7 @@ const AuthForm = ({ mode, onRegisterSuccess }) => {
           size="large"
           text={isRegister ? 'signup_with' : 'signin_with'}
           shape="pill"
-          width="100%"
+          width="552"
           loading={googleLoginLoading}
         />
       </div>

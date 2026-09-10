@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 
 import AuthForm from '../../components/auth/AuthForm'
+import BackLink from '../../components/BackLink'
 
 const Login = () => {
   const [mode, setMode] = useState('login')
@@ -65,6 +66,8 @@ const Login = () => {
         </div>
 
         <div className="p-6 sm:p-8 lg:p-10">
+          <BackLink />
+
           <Link to="/" className="mb-8 flex items-center gap-3 lg:hidden">
             <img
               src="/logo/mesaFlow_circular_logo.png"

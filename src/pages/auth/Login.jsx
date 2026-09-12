@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 
 import AuthForm from '../../components/auth/AuthForm'
-import BackLink from '../../components/BackLink'
+import BackLink from '../../components/button/BackLink'
 
 const Login = () => {
   const [mode, setMode] = useState('login')

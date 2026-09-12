@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 /* Components */
 import Logo from './Logo'
 import Navbar from './Navbar'
-import AssociateDialog from './associate/AssociateDialog'
+import AssociateDialog from './pages/associate/AssociateDialog'
 import SessionMenu from './menu/SessionMenu'
 import MobileMenu from './menu/MobileMenu'
 

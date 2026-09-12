@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router'
 /* Layouts */
 import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
-import AdminLayout from './layouts/AdminLayout'
+import DashboardLayout from './layouts/DashboardLayout'
 
 /* Routes */
 import ProtectedRoute from './components/route/ProtectedRoute'
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/dashboard',
-        Component: AdminLayout,
+        Component: DashboardLayout,
         children: [
           {
             index: true,

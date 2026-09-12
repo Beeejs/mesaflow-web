@@ -140,7 +140,7 @@ export const metricsList = [
 ]
 
 
-export const adminNavigation = [
+export const dashboardNavigation = [
   {
     label: 'Panel',
     to: '/dashboard',

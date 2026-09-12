@@ -1,9 +1,12 @@
 import { createBrowserRouter } from 'react-router'
 
 /* Layouts */
-import MainLayout from './layouts/MainLayout.jsx'
+import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
 import AdminLayout from './layouts/AdminLayout'
+
+/* Routes */
+import ProtectedRoute from './components/route/ProtectedRoute'
 
 /* Pages */
 import Home from './pages/home/Home'
@@ -34,20 +37,25 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/dashboard',
-    Component: AdminLayout,
+    element: <ProtectedRoute allowedRoles={['ADMIN']} />,
     children: [
       {
-        index: true,
-        Component: Dashboard,
-      },
-      {
-        path: 'usuarios',
-        Component: AdminUsers,
-      },
-      {
-        path: 'establecimientos',
-        Component: AdminEstablishments,
+        path: '/dashboard',
+        Component: AdminLayout,
+        children: [
+          {
+            index: true,
+            Component: Dashboard,
+          },
+          {
+            path: 'usuarios',
+            Component: AdminUsers,
+          },
+          {
+            path: 'establecimientos',
+            Component: AdminEstablishments,
+          },
+        ],
       },
     ],
   },

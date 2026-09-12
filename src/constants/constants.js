@@ -1,3 +1,10 @@
+/* MUI Icons */
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import GroupIcon from '@mui/icons-material/Group'
+import StorefrontIcon from '@mui/icons-material/Storefront'
+import EventSeatIcon from '@mui/icons-material/EventSeat'
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
+
 export const navbarList = [
   {
     label: 'Inicio',
@@ -129,5 +136,57 @@ export const metricsList = [
     value: '+50',
     description: 'Locales preparados para operar con MesaFlow',
     color: 'text-mesa-warning',
+  },
+]
+
+
+export const adminNavigation = [
+  {
+    label: 'Panel',
+    to: '/dashboard',
+    icon: DashboardIcon,
+    end: true,
+  },
+  {
+    label: 'Usuarios',
+    to: '/dashboard/usuarios',
+    icon: GroupIcon,
+  },
+  {
+    label: 'Establecimientos',
+    to: '/dashboard/establecimientos',
+    icon: StorefrontIcon,
+  },
+]
+
+
+export const dashboardCards = [
+  {
+    title: 'Usuarios',
+    description: 'Administrá los usuarios globales de MesaFlow.',
+    to: '/dashboard/usuarios',
+    icon: GroupIcon,
+    available: true,
+  },
+  {
+    title: 'Establecimientos',
+    description: 'Consultá y gestioná los establecimientos registrados.',
+    to: '/dashboard/establecimientos',
+    icon: StorefrontIcon,
+    available: true,
+  },
+  {
+    title: 'Reservas',
+    description: 'Módulo pendiente de implementación.',
+    to: '#',
+    icon: EventSeatIcon,
+    available: false,
+  },
+  {
+    title: 'Pedidos',
+    description: 'Módulo pendiente de implementación.',
+    to: '#',
+    icon: ReceiptLongIcon,
+    available: false,
   },
 ]

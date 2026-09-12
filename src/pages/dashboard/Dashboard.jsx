@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
 /* Constants */
-import { dashboardCards } from '../../../constants/constants'
+import { dashboardCards } from '../../constants/constants'
 
 const Dashboard = () => {
   return (

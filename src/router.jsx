@@ -11,9 +11,9 @@ import ProtectedRoute from './components/route/ProtectedRoute'
 /* Pages */
 import Home from './pages/home/Home'
 import Login from './pages/auth/Login'
-import Dashboard from './pages/admin/dashboard/Dashboard'
-import AdminUsers from './pages/admin/users/AdminUsers'
-import AdminEstablishments from './pages/admin/establishments/AdminEstablishments'
+import Dashboard from './pages/dashboard/Dashboard'
+import AdminUsers from './pages/dashboard/users/AdminUsers'
+import AdminEstablishments from './pages/dashboard/establishments/AdminEstablishments'
 
 const router = createBrowserRouter([
   {

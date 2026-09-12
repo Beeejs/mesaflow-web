@@ -3,7 +3,9 @@ import { Navigate, Outlet } from 'react-router'
 
 /* Context */
 import { SessionContext } from '../../context/SessionContext'
-import AppLoader from '../loader/AppLoader'
+
+/* Components */
+import Loader from '../loader/Loader'
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
   const {
@@ -13,7 +15,7 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
   } = useContext(SessionContext)
 
   if (isLoadingSession) {
-    return <AppLoader />
+    return <Loader fullScreen size={250} showText={false} />
   }
 
   if (!isAuthenticated) {

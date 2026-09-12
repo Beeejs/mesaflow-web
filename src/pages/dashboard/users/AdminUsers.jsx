@@ -1,16 +1,6 @@
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
-/* Api */
-import { listUsers } from '../../../api/userService'
-
-/* Hooks */
-import useApiAction from '../../../hooks/useApiActions'
-
-/* Components */
-import Loader from '../../../components/loader/Loader'
-import UsersTable from '../../../components/dashboard/users/UsersTable'
-
 /* MUI */
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
@@ -18,32 +8,33 @@ import Tooltip from '@mui/material/Tooltip'
 /* MUI Icons */
 import RefreshIcon from '@mui/icons-material/Refresh'
 
-const AdminUsers = () => {
-  // Hook para listar usuarios
-  const {
-    data: usersData,
-    loading: usersLoading,
-    error: usersError,
-    action: listUsersAction,
-  } = useApiAction(listUsers)
+/* Hooks */
+import useUsersQuery from '../../../hooks/queries/useUsersQuery'
 
-  // Función para editar usuario
+/* Components */
+import UsersTable from '../../../components/dashboard/users/UsersTable'
+
+const AdminUsers = () => {
+  // Listado de usuarios
+  const {
+    data: usersData = [],
+    isLoading: usersLoading,
+    isFetching: usersFetching,
+    error: usersError,
+    refetch: refetchUsers,
+  } = useUsersQuery()
+
   const handleEditUser = (user) => {
     console.log('Usuario a editar:', user)
   }
 
-  // Efecto para cargar los usuarios al entrar a la vista
-  useEffect(() => {
-    listUsersAction()
-  }, [])
-
-  // Efecto para manejar errores al cargar usuarios
+  // Manejador de errores
   useEffect(() => {
     if (!usersError) {
       return
     }
 
-    toast.error(usersError)
+    toast.error('No se pudieron cargar los usuarios.')
   }, [usersError])
 
   return (
@@ -66,8 +57,8 @@ const AdminUsers = () => {
         <Tooltip title="Recargar usuarios">
           <IconButton
             type="button"
-            onClick={listUsersAction}
-            disabled={usersLoading}
+            onClick={() => refetchUsers()}
+            disabled={usersFetching}
             sx={{
               width: 44,
               height: 44,
@@ -91,7 +82,7 @@ const AdminUsers = () => {
             <RefreshIcon
               sx={{
                 fontSize: 22,
-                animation: usersLoading ? 'spin 0.8s linear infinite' : 'none',
+                animation: usersFetching ? 'spin 0.8s linear infinite' : 'none',
                 '@keyframes spin': {
                   from: {
                     transform: 'rotate(0deg)',
@@ -106,15 +97,12 @@ const AdminUsers = () => {
         </Tooltip>
       </div>
 
-      <div className="flex items-center justify-center rounded-3xl border border-mesa-border bg-mesa-surface p-6 mt-12">
-        {usersLoading ? (
-          <Loader />
-        ) : (
-          <UsersTable
-            users={usersData || []}
-            onEditUser={handleEditUser}
-          />
-        )}
+      <div className="mt-12">
+        <UsersTable
+          users={usersData || []}
+          loading={usersLoading}
+          onEditUser={handleEditUser}
+        />
       </div>
     </section>
   )

@@ -1,8 +1,12 @@
 /* MUI */
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
+
+/* MUI Icons */
 import EditIcon from '@mui/icons-material/Edit'
 
 /* Components */
-import DashboardTable from '../../../components/dashboard/DashboardTable'
+import DashboardDataGrid from '../../../components/dashboard/DashboardDataGrid'
 import UserStatusChip from './UserStatusChip'
 
 const formatDate = (date) => {
@@ -17,73 +21,89 @@ const formatDate = (date) => {
   }).format(new Date(date))
 }
 
-const UsersTable = ({ users = [], onEditUser }) => {
+const UsersTable = ({ users = [], loading = false, onEditUser }) => {
   const columns = [
     {
-      key: 'usuario',
-      label: 'Usuario',
-      render: (user) => (
-        <p className="text-sm font-semibold text-mesa-text">
-          {user.nombre} {user.apellido}
-        </p>
-      ),
-    },
-    {
-      key: 'email',
-      label: 'Email',
-      render: (user) => (
-        <p className="text-sm text-mesa-muted">
-          {user.email}
-        </p>
-      ),
-    },
-    {
-      key: 'rol',
-      label: 'Rol',
-      render: (user) => (
-        <span className="rounded-full border border-mesa-border px-3 py-1 text-xs font-bold text-mesa-cyan-light">
-          {user.rol}
+      field: 'usuario',
+      headerName: 'Usuario',
+      flex: 1,
+      minWidth: 180,
+      valueGetter: (_, user) =>
+        `${user.nombre || ''} ${user.apellido || ''}`,
+      renderCell: (params) => (
+        <span className="font-semibold text-mesa-text">
+          {params.value}
         </span>
       ),
     },
     {
-      key: 'activo',
-      label: 'Estado',
-      render: (user) => (
-        <UserStatusChip active={user.activo} />
+      field: 'email',
+      headerName: 'Email',
+      flex: 1.3,
+      minWidth: 220,
+    },
+    {
+      field: 'rol',
+      headerName: 'Rol',
+      flex: 0.7,
+      minWidth: 130,
+      renderCell: (params) => (
+        <span className="rounded-full border border-mesa-border px-3 py-1 text-xs font-bold text-mesa-cyan-light">
+          {params.value}
+        </span>
       ),
     },
     {
-      key: 'fechaCreacion',
-      label: 'Fecha',
-      render: (user) => (
-        <p className="text-sm text-mesa-muted">
-          {formatDate(user.fechaCreacion)}
-        </p>
+      field: 'activo',
+      headerName: 'Estado',
+      flex: 0.7,
+      minWidth: 130,
+      renderCell: (params) => (
+        <UserStatusChip active={params.value} />
       ),
     },
     {
-      key: 'acciones',
-      label: 'Acciones',
+      field: 'fechaCreacion',
+      headerName: 'Fecha',
+      flex: 0.8,
+      minWidth: 130,
+      valueFormatter: (value) => formatDate(value),
+    },
+    {
+      field: 'acciones',
+      headerName: 'Acciones',
+      flex: 0.5,
+      minWidth: 110,
+      sortable: false,
+      filterable: false,
       align: 'right',
-      render: (user) => (
-        <button
-          type="button"
-          onClick={() => onEditUser(user)}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-mesa-border px-4 py-2 text-sm font-semibold text-mesa-muted transition hover:border-mesa-primary/60 hover:text-mesa-text"
-        >
-          <EditIcon sx={{ fontSize: 18 }} />
-          Editar
-        </button>
+      headerAlign: 'right',
+      renderCell: (params) => (
+        <Tooltip title="Editar usuario">
+          <IconButton
+            type="button"
+            onClick={() => onEditUser(params.row)}
+            sx={{
+              color: '#94A3B8',
+              '&:hover': {
+                color: '#F8FAFC',
+                backgroundColor: '#111827',
+              },
+            }}
+          >
+            <EditIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+        </Tooltip>
       ),
     },
   ]
 
   return (
-    <DashboardTable
-      columns={columns}
+    <DashboardDataGrid
       rows={users}
+      columns={columns}
       getRowId={(user) => user.idUsuario}
+      loading={loading}
       emptyMessage="No hay usuarios para mostrar."
     />
   )

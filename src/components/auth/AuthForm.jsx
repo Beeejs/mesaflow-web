@@ -13,7 +13,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { GoogleLogin } from '@react-oauth/google'
 
 /* Componentes */
-import DefaultButton from '../DefaultButton'
+import DefaultButton from '../button/DefaultButton'
 
 /* Hooks */
 import useApiAction from '../../hooks/useApiActions'

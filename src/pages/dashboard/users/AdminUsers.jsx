@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 /* MUI */
@@ -13,8 +13,12 @@ import useUsersQuery from '../../../hooks/queries/useUsersQuery'
 
 /* Components */
 import UsersTable from '../../../components/dashboard/users/UsersTable'
+import UserFormDialog from '../../../components/dashboard/users/UserFormDialog'
 
 const AdminUsers = () => {
+  // Usuario seleccionado para editar
+  const [selectedUser, setSelectedUser] = useState(null)
+
   // Listado de usuarios
   const {
     data: usersData = [],
@@ -24,8 +28,9 @@ const AdminUsers = () => {
     refetch: refetchUsers,
   } = useUsersQuery()
 
+  // Manejador de edición de usuario
   const handleEditUser = (user) => {
-    console.log('Usuario a editar:', user)
+    setSelectedUser(user)
   }
 
   // Manejador de errores
@@ -104,6 +109,15 @@ const AdminUsers = () => {
           onEditUser={handleEditUser}
         />
       </div>
+
+      {selectedUser && (
+        <UserFormDialog
+          key={selectedUser.idUsuario}
+          open={Boolean(selectedUser)}
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </section>
   )
 }

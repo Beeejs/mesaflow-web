@@ -1,15 +1,23 @@
 import { createBrowserRouter } from 'react-router'
 
 /* Layouts */
-import MainLayout from './layouts/MainLayout.jsx'
+import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
+import DashboardLayout from './layouts/DashboardLayout'
+
+/* Routes */
+import ProtectedRoute from './components/route/ProtectedRoute'
 
 /* Pages */
 import Home from './pages/home/Home'
 import Login from './pages/auth/Login'
+import Dashboard from './pages/dashboard/Dashboard'
+import AdminUsers from './pages/dashboard/users/AdminUsers'
+import AdminEstablishments from './pages/dashboard/establishments/AdminEstablishments'
 
 const router = createBrowserRouter([
   {
+    path: '/',
     Component: MainLayout,
     children: [
       {
@@ -25,6 +33,29 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: Login,
+      },
+    ],
+  },
+  {
+    element: <ProtectedRoute allowedRoles={['ADMIN']} />,
+    children: [
+      {
+        path: '/dashboard',
+        Component: DashboardLayout,
+        children: [
+          {
+            index: true,
+            Component: Dashboard,
+          },
+          {
+            path: 'usuarios',
+            Component: AdminUsers,
+          },
+          {
+            path: 'establecimientos',
+            Component: AdminEstablishments,
+          },
+        ],
       },
     ],
   },

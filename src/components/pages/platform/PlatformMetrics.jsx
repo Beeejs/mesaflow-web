@@ -1,4 +1,4 @@
-import { metricsList } from "../../constants/constants.js"
+import { metricsList } from "../../../constants/constants.js"
 
 const PlatformMetrics = () => {
   return (

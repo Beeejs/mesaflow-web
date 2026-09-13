@@ -16,10 +16,12 @@ import Typography from '@mui/material/Typography'
 /* MUI Icons */
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import LogoutIcon from '@mui/icons-material/Logout'
+import HomeIcon from '@mui/icons-material/Home'
 
 /* Context */
 import { SessionContext } from '../../context/SessionContext'
 
+// Función para obtener las iniciales del usuario
 const getInitials = (user) => {
   if (!user) {
     return ''
@@ -39,7 +41,7 @@ const getInitials = (user) => {
   return email.charAt(0).toUpperCase()
 }
 
-const SessionMenu = () => {
+const SessionMenu = ({ variant = 'default' }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const navigate = useNavigate()
@@ -52,20 +54,31 @@ const SessionMenu = () => {
   } = useContext(SessionContext)
 
   const isMenuOpen = Boolean(anchorEl)
+  const isDashboardVariant = variant === 'dashboard'
 
+  // Función para abrir el menú de sesión
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }
 
+  // Función para cerrar el menú de sesión
   const handleCloseMenu = () => {
     setAnchorEl(null)
   }
 
+  // Función para navegar al dashboard
   const handleGoToDashboard = () => {
     handleCloseMenu()
+
+    if (isDashboardVariant) {
+      navigate('/')
+      return
+    }
+
     navigate('/dashboard')
   }
 
+  // Función para cerrar sesión y manejar la navegación
   const handleLogout = async () => {
     try {
       await logoutUser()
@@ -78,6 +91,15 @@ const SessionMenu = () => {
     } catch {
       toast.error('No se pudo cerrar la sesión.')
     }
+  }
+
+  // Función para determinar si se debe mostrar el rol del usuario
+  const shouldShowRole = (role) => {
+    if (!role) {
+      return false
+    }
+
+    return role !== 'USUARIO'
   }
 
   if (isLoadingSession) {
@@ -172,6 +194,27 @@ const SessionMenu = () => {
           >
             {user.email}
           </Typography>
+
+          {/* Muestra el rol del usuario solo si es diferente de 'USUARIO' */}
+          {shouldShowRole(user.rol) && (
+            <Typography
+              sx={{
+                mt: 0.75,
+                display: 'inline-flex',
+                alignItems: 'center',
+                borderRadius: '999px',
+                border: '1px solid #1F2937',
+                px: 1,
+                py: 0.25,
+                color: '#10C4FC',
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: '0.12em',
+              }}
+            >
+              {user.rol}
+            </Typography>
+          )}
         </Box>
 
         <Divider sx={{ borderColor: '#1F2937' }} />
@@ -190,10 +233,19 @@ const SessionMenu = () => {
             },
           }}
         >
-          <ListItemIcon>
-            <DashboardIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
+          <ListItemIcon
+            sx={{
+              minWidth: 32,
+              color: '#FFFFFF',
+            }}
+          >
+            {isDashboardVariant ? (
+              <HomeIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
+            ) : (
+              <DashboardIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
+            )}
           </ListItemIcon>
-          Mi panel
+          {isDashboardVariant ? 'Inicio' : 'Mi panel'}
         </MenuItem>
 
         <MenuItem

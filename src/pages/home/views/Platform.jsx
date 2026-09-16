@@ -35,6 +35,7 @@ const Platform = () => {
               key={item.title}
               tag={item.tag}
               title={item.title}
+              icon={item.icon}
               description={item.description}
             />
           ))}

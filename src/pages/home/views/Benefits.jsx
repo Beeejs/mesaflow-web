@@ -45,6 +45,7 @@ const Benefits = () => {
               key={benefit.title}
               title={benefit.title}
               description={benefit.description}
+              icon={benefit.icon}
             />
           ))}
         </div>

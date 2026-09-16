@@ -1,17 +1,23 @@
-const ServiceCard = ({ number, title, description }) => {
+const ServiceCard = ({ title, description, image }) => {
   return (
-    <article className="group rounded-3xl border border-mesa-border bg-mesa-surface p-6 transition duration-300 hover:-translate-y-1 hover:border-mesa-primary/60 hover:bg-mesa-card hover:shadow-2xl hover:shadow-mesa-primary/10">
-      <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-2xl bg-mesa-primary/15 text-sm font-bold text-mesa-cyan-light transition duration-300 ease group-hover:bg-mesa-primary group-hover:text-white">
-        {number}
+    <article className="group overflow-hidden rounded-3xl border border-mesa-border bg-mesa-surface transition duration-300 hover:-translate-y-1 hover:border-mesa-primary/60 hover:bg-mesa-card hover:shadow-2xl hover:shadow-mesa-primary/10">
+      <div className="aspect-[4/3] overflow-hidden border-b border-mesa-border">
+        <img
+          src={image}
+          alt={title}
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        />
       </div>
 
-      <h3 className="text-xl font-bold text-mesa-text">
-        {title}
-      </h3>
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-mesa-text">
+          {title}
+        </h3>
 
-      <p className="mt-4 text-sm leading-6 text-mesa-muted">
-        {description}
-      </p>
+        <p className="mt-4 text-sm leading-6 text-mesa-muted">
+          {description}
+        </p>
+      </div>
     </article>
   )
 }

@@ -31,8 +31,8 @@ const Services = () => {
           {servicesList.map((service) => (
             <ServiceCard
               key={service.number}
-              number={service.number}
               title={service.title}
+              image={service.image}
               description={service.description}
             />
           ))}

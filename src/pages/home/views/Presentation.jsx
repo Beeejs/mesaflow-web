@@ -1,4 +1,25 @@
 const Presentation = () => {
+  const proposalItems = [
+    {
+      title: 'Menos tiempos de espera',
+      description:
+        'El cliente puede acceder al menú, hacer pedidos y solicitar la cuenta desde su mesa.',
+      icon: '/icons/menos-espera.svg',
+    },
+    {
+      title: 'Mayor organización interna',
+      description:
+        'El establecimiento puede gestionar reservas, mesas, pedidos, usuarios y pagos desde una única plataforma.',
+      icon: '/icons/organizacion-interna.svg',
+    },
+    {
+      title: 'Servicio más ágil y eficiente',
+      description:
+        'Ideal para momentos de alta demanda, donde coordinar el salón y la cocina se vuelve clave.',
+      icon: '/icons/servicio-agil.svg',
+    },
+  ]
+
   return (
     <section
       id="inicio"
@@ -61,62 +82,31 @@ const Presentation = () => {
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-2xl border border-mesa-border bg-mesa-bg p-4 sm:p-5">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mesa-primary/15 text-sm font-semibold text-mesa-cyan">
-                    01
-                  </div>
+              {proposalItems.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-2xl border border-mesa-border bg-mesa-bg p-4 sm:p-5"
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={item.icon}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-14 w-14 shrink-0"
+                    />
 
-                  <div>
-                    <h3 className="font-semibold text-mesa-text">
-                      Menos tiempos de espera
-                    </h3>
+                    <div>
+                      <h3 className="font-semibold text-mesa-text">
+                        {item.title}
+                      </h3>
 
-                    <p className="mt-1 text-sm leading-6 text-mesa-muted">
-                      El cliente puede acceder al menú, hacer pedidos y solicitar
-                      la cuenta desde su mesa.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-mesa-border bg-mesa-bg p-4 sm:p-5">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mesa-primary/15 text-sm font-semibold text-mesa-cyan">
-                    02
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold text-mesa-text">
-                      Mayor organización interna
-                    </h3>
-
-                    <p className="mt-1 text-sm leading-6 text-mesa-muted">
-                      El establecimiento puede gestionar reservas, mesas,
-                      pedidos, usuarios y pagos desde una única plataforma.
-                    </p>
+                      <p className="mt-1 text-sm leading-6 text-mesa-muted">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="rounded-2xl border border-mesa-border bg-mesa-bg p-4 sm:p-5">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mesa-primary/15 text-sm font-semibold text-mesa-cyan">
-                    03
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold text-mesa-text">
-                      Servicio más ágil y eficiente
-                    </h3>
-
-                    <p className="mt-1 text-sm leading-6 text-mesa-muted">
-                      Ideal para momentos de alta demanda, donde coordinar el
-                      salón y la cocina se vuelve clave.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
 
             <div className="mt-6 rounded-2xl border border-mesa-primary/30 bg-mesa-primary/10 p-4 sm:p-5">

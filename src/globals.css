@@ -41,3 +41,30 @@
     font-family: "Manrope", system-ui, sans-serif;
   }
 }
+
+@layer components {
+  .benefit-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 64px;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .benefit-content {
+    min-width: 0;
+  }
+
+  .benefit-icon {
+    position: static;
+    width: 56px;
+    height: 56px;
+    opacity: 0.35;
+    justify-self: center;
+    transition: opacity 0.25s ease;
+    filter: drop-shadow(0 0 12px rgba(16, 196, 252, 0.35));
+  }
+
+  .benefit-card:hover .benefit-icon {
+    opacity: 0.75;
+  }
+}

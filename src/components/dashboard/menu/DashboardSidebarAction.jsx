@@ -17,7 +17,7 @@ const DashboardSidebarAction = ({
 
   if (to) {
     return (
-      <Link to={to} className={className}>
+      <Link to={to} onClick={onClick} className={className}>
         <Icon sx={{ fontSize: 20 }} />
         {label}
       </Link>

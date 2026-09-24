@@ -234,23 +234,25 @@ const UserFormDialog = ({
               slotProps={{
                 select: {
                   MenuProps: {
-                    PaperProps: {
-                      sx: {
-                        backgroundColor: '#0B111C',
-                        color: '#F8FAFC',
-                        border: '1px solid #1F2937',
-                        borderRadius: '16px',
+                    slotProps: {
+                      paper: {
+                        sx: {
+                          backgroundColor: '#0B111C',
+                          color: '#F8FAFC',
+                          border: '1px solid #1F2937',
+                          borderRadius: '16px',
 
-                        '& .MuiMenuItem-root:hover': {
-                          backgroundColor: '#111827',
-                        },
+                          '& .MuiMenuItem-root:hover': {
+                            backgroundColor: '#111827',
+                          },
 
-                        '& .MuiMenuItem-root.Mui-selected': {
-                          backgroundColor: 'rgba(5, 110, 248, 0.18)',
-                        },
+                          '& .MuiMenuItem-root.Mui-selected': {
+                            backgroundColor: 'rgba(5, 110, 248, 0.18)',
+                          },
 
-                        '& .MuiMenuItem-root.Mui-selected:hover': {
-                          backgroundColor: 'rgba(5, 110, 248, 0.25)',
+                          '& .MuiMenuItem-root.Mui-selected:hover': {
+                            backgroundColor: 'rgba(5, 110, 248, 0.25)',
+                          },
                         },
                       },
                     },

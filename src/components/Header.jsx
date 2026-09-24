@@ -8,6 +8,7 @@ import Navbar from './Navbar'
 import AssociateDialog from './pages/associate/AssociateDialog'
 import SessionMenu from './menu/SessionMenu'
 import MobileMenu from './menu/MobileMenu'
+import MobileMenuButton from './menu/MobileMenuButton'
 
 /* Context */
 import { SessionContext } from '../context/SessionContext'
@@ -65,33 +66,12 @@ const Header = () => {
             <SessionMenu />
           </div>
 
-          <button
-            type="button"
+          
+          <MobileMenuButton
+            isOpen={isMobileMenuOpen}
             onClick={toggleMobileMenu}
-            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-mesa-border bg-mesa-surface text-mesa-text transition hover:border-mesa-primary/60 lg:hidden"
-            aria-label={isMobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
-            aria-expanded={isMobileMenuOpen}
-          >
-            <span className="relative h-4 w-5">
-              <span
-                className={`absolute left-0 h-0.5 w-5 rounded-full bg-current transition ${
-                  isMobileMenuOpen ? 'top-2 rotate-45' : 'top-0'
-                }`}
-              />
-
-              <span
-                className={`absolute left-0 top-2 h-0.5 w-5 rounded-full bg-current transition ${
-                  isMobileMenuOpen ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
-
-              <span
-                className={`absolute left-0 h-0.5 w-5 rounded-full bg-current transition ${
-                  isMobileMenuOpen ? 'top-2 -rotate-45' : 'top-4'
-                }`}
-              />
-            </span>
-          </button>
+            className="lg:hidden"
+          />
         </div>
       </header>
 

@@ -36,6 +36,79 @@ const DashboardDataGrid = ({
           </div>
         ),
       }}
+      slotProps={{
+        panel: {
+          sx: {
+            backgroundColor: '#0B111C',
+            color: '#F8FAFC',
+            border: '1px solid #1F2937',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.45)',
+
+            '& .MuiDataGrid-paper': {
+              backgroundColor: '#0B111C',
+              color: '#F8FAFC',
+            },
+
+            '& .MuiDataGrid-panelWrapper': {
+              backgroundColor: '#0B111C',
+              color: '#F8FAFC',
+            },
+
+            '& .MuiDataGrid-panelContent': {
+              backgroundColor: '#0B111C',
+              color: '#F8FAFC',
+            },
+
+            '& .MuiDataGrid-panelHeader': {
+              backgroundColor: '#111827',
+              borderBottom: '1px solid #1F2937',
+            },
+
+            '& .MuiDataGrid-panelFooter': {
+              backgroundColor: '#0B111C',
+              borderTop: '1px solid #1F2937',
+            },
+
+            '& .MuiDataGrid-columnsManagement': {
+              backgroundColor: '#0B111C',
+              color: '#F8FAFC',
+            },
+
+            '& .MuiFormControlLabel-label': {
+              color: '#F8FAFC',
+            },
+
+            '& .MuiCheckbox-root': {
+              color: '#94A3B8',
+            },
+
+            '& .MuiCheckbox-root.Mui-checked': {
+              color: '#10C4FC',
+            },
+
+            '& .MuiInputBase-root': {
+              backgroundColor: '#03070F',
+              color: '#F8FAFC',
+              borderRadius: '12px',
+            },
+
+            '& .MuiInputBase-input': {
+              color: '#F8FAFC',
+            },
+
+            '& .MuiInputBase-input::placeholder': {
+              color: '#94A3B8',
+              opacity: 1,
+            },
+
+            '& .MuiButton-root': {
+              color: '#10C4FC',
+            },
+          },
+        },
+      }}
       localeText={{
         noRowsLabel: emptyMessage,
         noResultsOverlayLabel: 'No se encontraron resultados.',
@@ -99,6 +172,39 @@ const DashboardDataGrid = ({
 
         '& .MuiDataGrid-toolbarContainer .MuiSvgIcon-root': {
           color: '#94A3B8',
+        },
+
+        '& .MuiDataGrid-toolbar .MuiInputBase-root': {
+          color: '#F8FAFC',
+          backgroundColor: '#0B111C',
+          border: '1px solid #1F2937',
+          borderRadius: '12px',
+          paddingX: 1,
+        },
+
+        '& .MuiDataGrid-toolbar .MuiInputBase-root:hover': {
+          borderColor: 'rgba(5, 110, 248, 0.6)',
+        },
+
+        '& .MuiDataGrid-toolbar .MuiInputBase-root.Mui-focused': {
+          borderColor: '#056EF8',
+        },
+
+        '& .MuiDataGrid-toolbar .MuiInputBase-input': {
+          color: '#F8FAFC',
+        },
+
+        '& .MuiDataGrid-toolbar .MuiInputBase-input::placeholder': {
+          color: '#94A3B8',
+          opacity: 1,
+        },
+
+        '& .MuiDataGrid-toolbar .MuiInputBase-root::before': {
+          display: 'none',
+        },
+
+        '& .MuiDataGrid-toolbar .MuiInputBase-root::after': {
+          display: 'none',
         },
 
         '& .MuiDataGrid-columnHeaders': {

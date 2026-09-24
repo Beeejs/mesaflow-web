@@ -15,6 +15,11 @@ const queryClient = new QueryClient({
 export const queryKeys = {
   users: ['users'],
   roles: ['roles'],
+  establishments: ['establishments'],
+  myEstablishments: ['my-establishments'],
+  establishmentStates: ['establishment-states'],
+  provinces: ['provinces'],
+  districts: (provinceId) => ['districts', provinceId],
 }
 
 export default queryClient

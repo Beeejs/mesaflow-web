@@ -204,3 +204,27 @@ export const dashboardCards = [
     available: false,
   },
 ]
+
+
+// ----- Constantes para los formularios de registro y edición -----
+
+// Establecimientos
+export const establishmentFields = [
+  'nombre',
+  'razonSocial',
+  'cuit',
+  'direccion',
+  'idPartido',
+  'codigoPostal',
+  'telefono',
+  'email',
+  'idEstadoEstablecimiento',
+]
+
+// Usuarios
+export const userFields = [
+  'nombre',
+  'apellido',
+  'rol',
+  'activo',
+]

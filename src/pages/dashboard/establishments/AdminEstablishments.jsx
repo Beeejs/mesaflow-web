@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 /* MUI */
@@ -14,8 +14,10 @@ import useEstablishmentsQuery from '../../../hooks/queries/useEstablishmentsQuer
 
 /* Components */
 import EstablishmentsTable from '../../../components/dashboard/establishments/EstablishmentsTable'
+import EstablishmentFormDialog from '../../../components/dashboard/establishments/EstablishmentFormDialog'
 
 const AdminEstablishments = () => {
+  // Query para obtener los establecimientos
   const {
     data: establishments = [],
     isLoading,
@@ -24,6 +26,10 @@ const AdminEstablishments = () => {
     refetch,
   } = useEstablishmentsQuery()
 
+  // Estado para manejar el establecimiento seleccionado para editar
+  const [selectedEstablishment, setSelectedEstablishment] = useState(null)
+
+  // UseEffect para mostrar un toast de error si ocurre un error al cargar los establecimientos
   useEffect(() => {
     if (error) {
       toast.error('No se pudieron cargar los establecimientos.')
@@ -83,8 +89,19 @@ const AdminEstablishments = () => {
         <EstablishmentsTable
           establishments={establishments}
           loading={isLoading}
+          onEditEstablishment={setSelectedEstablishment}
         />
       </div>
+
+      {/* Dialog para editar un establecimiento */}
+      {selectedEstablishment && (
+        <EstablishmentFormDialog
+          key={selectedEstablishment.idEstablecimiento}
+          open={Boolean(selectedEstablishment)}
+          establishment={selectedEstablishment}
+          onClose={() => setSelectedEstablishment(null)}
+        />
+      )}
     </section>
   )
 }

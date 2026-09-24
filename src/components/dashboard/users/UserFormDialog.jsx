@@ -19,6 +19,13 @@ import DefaultButton from '../../button/DefaultButton'
 import useRolesQuery from '../../../hooks/queries/useRolesQuery'
 import useUpdateUserMutation from '../../../hooks/mutations/useUpdateUserMutation'
 
+/* Constants */
+import { userFields } from '../../../constants/constants'
+
+/* Utils */
+import { hasFormChanges } from '../../../utils/formUtils'
+
+
 const textFieldStyles = {
   '& .MuiOutlinedInput-root': {
     color: '#F8FAFC',
@@ -36,6 +43,26 @@ const textFieldStyles = {
     '&.Mui-focused fieldset': {
       borderColor: '#10C4FC',
     },
+
+    // Campo deshabilitado mientras guarda
+    '&.Mui-disabled': {
+      backgroundColor: '#111827',
+    },
+
+    '&.Mui-disabled fieldset': {
+      borderColor: '#1F2937',
+    },
+  },
+
+  // Mantener visible el texto al deshabilitar el campo
+  '& .MuiInputBase-input.Mui-disabled': {
+    WebkitTextFillColor: '#94A3B8',
+    opacity: 1,
+  },
+
+  '& .MuiSelect-select.Mui-disabled': {
+    WebkitTextFillColor: '#94A3B8',
+    opacity: 1,
   },
 
   '& .MuiInputLabel-root': {
@@ -46,12 +73,20 @@ const textFieldStyles = {
     color: '#10C4FC',
   },
 
+  '& .MuiInputLabel-root.Mui-disabled': {
+    color: '#64748B',
+  },
+
   '& .MuiFormHelperText-root': {
     color: '#94A3B8',
   },
 
   '& .MuiSvgIcon-root': {
     color: '#94A3B8',
+  },
+
+  '& .MuiSvgIcon-root.Mui-disabled': {
+    color: '#64748B',
   },
 }
 
@@ -90,8 +125,18 @@ const UserFormDialog = ({
     }))
   }
 
+  // Función para manejar el envío del formulario
   const handleSubmit = async (event) => {
     event.preventDefault()
+
+    // Si ya se está guardando, no hacer nada
+    if (isSaving) return
+
+    // Si no hay cambios en el formulario, mostrar un mensaje y no hacer nada
+    if (!hasFormChanges(user, formData, userFields)) {
+      toast.info('No hay cambios para guardar.')
+      return
+    }
 
     const selectedRole = rolesData.find((role) =>
       role.descripcion === formData.rol
@@ -289,6 +334,18 @@ const UserFormDialog = ({
 
                     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
                       backgroundColor: '#056EF8',
+                    },
+
+                    '& .MuiSwitch-switchBase.Mui-disabled': {
+                      color: '#64748B',
+                    },
+
+                    '& .MuiSwitch-switchBase.Mui-checked.Mui-disabled': {
+                      color: '#10C4FC',
+                    },
+
+                    '& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track': {
+                      opacity: 0.35,
                     },
                   }}
                 />

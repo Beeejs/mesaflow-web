@@ -20,6 +20,11 @@ export const queryKeys = {
   establishmentStates: ['establishment-states'],
   provinces: ['provinces'],
   districts: (provinceId) => ['districts', provinceId],
+  establishmentUsers: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'users',
+  ],
 }
 
 export default queryClient

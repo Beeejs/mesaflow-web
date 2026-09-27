@@ -14,6 +14,7 @@ import Login from './pages/auth/Login'
 import Dashboard from './pages/dashboard/Dashboard'
 import AdminUsers from './pages/dashboard/users/AdminUsers'
 import AdminEstablishments from './pages/dashboard/establishments/AdminEstablishments'
+import AdminEstablishmentUsers from './pages/dashboard/establishments/AdminEstablishmentUsers'
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
           {
             path: 'establecimientos',
             Component: AdminEstablishments,
+          },
+          {
+            path: 'establecimientos/:idEstablecimiento/usuarios',
+            Component: AdminEstablishmentUsers,
           },
         ],
       },

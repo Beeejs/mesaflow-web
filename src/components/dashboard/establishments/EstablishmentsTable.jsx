@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router'
 
 /* MUI */
 import IconButton from '@mui/material/IconButton'
@@ -5,6 +6,7 @@ import Tooltip from '@mui/material/Tooltip'
 
 /* MUI Icons */
 import EditIcon from '@mui/icons-material/Edit'
+import GroupIcon from '@mui/icons-material/Group'
 
 /* Components */
 import DashboardDataGrid from '../DashboardDataGrid'
@@ -25,6 +27,8 @@ const EstablishmentsTable = ({
   loading = false,
   onEditEstablishment,
 }) => {
+  const navigate = useNavigate()
+
   const columns = [
     {
       field: 'nombre',
@@ -82,22 +86,43 @@ const EstablishmentsTable = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params) => (
-        <Tooltip title="Editar establecimiento">
-          <IconButton
-            onClick={() => onEditEstablishment(params.row)}
-            disabled={!onEditEstablishment}
-            sx={{
-              color: '#94A3B8',
-              '&:hover': {
-                color: '#F8FAFC',
-                backgroundColor: '#111827',
-              },
-            }}
-          >
-            <EditIcon sx={{ fontSize: 20 }} />
-          </IconButton>
-        </Tooltip>
+        <div className="flex h-full items-center justify-end gap-1">
+          <Tooltip title="Administrar usuarios">
+            <IconButton
+              onClick={() =>
+                navigate(
+                  `/dashboard/establecimientos/${params.row.idEstablecimiento}/usuarios`
+                )
+              }
+              sx={{
+                color: '#94A3B8',
+                '&:hover': {
+                  color: '#10C4FC',
+                  backgroundColor: '#111827',
+                },
+              }}
+            >
+              <GroupIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Editar establecimiento">
+            <IconButton
+              onClick={() => onEditEstablishment(params.row)}
+              sx={{
+                color: '#94A3B8',
+                '&:hover': {
+                  color: '#F8FAFC',
+                  backgroundColor: '#111827',
+                },
+              }}
+            >
+              <EditIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Tooltip>
+        </div>
       ),
+
     },
   ]
 

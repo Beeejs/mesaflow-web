@@ -25,6 +25,7 @@ export const queryKeys = {
     idEstablecimiento,
     'users',
   ],
+  establishmentRoles: ['establishment-roles'],
 }
 
 export default queryClient

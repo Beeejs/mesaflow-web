@@ -1,6 +1,8 @@
 
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { useEffect } from 'react'
+
+/* Toast */
 import { toast } from 'sonner'
 
 /* Hooks */
@@ -9,9 +11,13 @@ import useEstablishmentsQuery from '../../../hooks/queries/useEstablishmentsQuer
 
 /* Components */
 import EstablishmentUsersTable from '../../../components/dashboard/establishments/EstablishmentUsersTable'
+import AddEstablishmentUserDialog from '../../../components/dashboard/establishments/AddEstablishmentUserDialog'
+import DefaultButton from '../../../components/button/DefaultButton'
 
 const AdminEstablishmentUsers = () => {
   const { idEstablecimiento } = useParams()
+
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const establishmentId = Number(idEstablecimiento)
 
   const {
@@ -43,7 +49,7 @@ const AdminEstablishmentUsers = () => {
         ← Volver a establecimientos
       </Link>
 
-      
+      {/* Encabezado y acción para agregar usuario */}
       <div className="mt-8">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-mesa-cyan">
           Establecimientos / Gestión de personal
@@ -58,15 +64,26 @@ const AdminEstablishmentUsers = () => {
         </p>
       </div>
 
-      <div className="mt-10 flex items-center justify-between gap-4">
-        <h3 className="font-display text-xl font-bold text-mesa-text">
-          Usuarios asociados
-        </h3>
+      {/* Agregar usuario */}
+      <div className="mt-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h3 className="font-display text-xl font-bold text-mesa-text">
+            Usuarios asociados
+          </h3>
 
-        <span className="rounded-full border border-mesa-border px-3 py-1 text-xs font-semibold text-mesa-muted">
-          {users.length} {users.length === 1 ? 'usuario' : 'usuarios'}
-        </span>
+          <p className="mt-2 text-sm text-mesa-muted">
+            {users.length} {users.length === 1 ? 'usuario' : 'usuarios'}
+          </p>
+        </div>
+
+        <DefaultButton
+          type="button"
+          onClick={() => setIsAddDialogOpen(true)}
+        >
+          Agregar usuario
+        </DefaultButton>
       </div>
+
 
 
       <div className="mt-8 min-w-0 rounded-3xl border border-mesa-border bg-mesa-surface p-3 sm:p-6">
@@ -75,6 +92,16 @@ const AdminEstablishmentUsers = () => {
           loading={isLoading}
         />
       </div>
+
+      {/* Diálogo para agregar usuario */}
+      {isAddDialogOpen && (
+        <AddEstablishmentUserDialog
+          open
+          idEstablecimiento={establishmentId}
+          onClose={() => setIsAddDialogOpen(false)}
+        />
+      )}
+
     </section>
   )
 }

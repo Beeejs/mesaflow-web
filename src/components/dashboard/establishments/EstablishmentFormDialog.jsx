@@ -472,11 +472,6 @@ const EstablishmentFormDialog = ({
               </MenuItem>
             ))}
           </TextField>
-
-          <p className="mt-3 text-xs leading-5 text-mesa-muted">
-            Al guardar, el backend actualizará los datos y volverá
-            a calcular las coordenadas del establecimiento.
-          </p>
         </DialogContent>
 
         <DialogActions

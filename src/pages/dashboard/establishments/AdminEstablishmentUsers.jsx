@@ -11,14 +11,15 @@ import useEstablishmentsQuery from '../../../hooks/queries/useEstablishmentsQuer
 
 /* Components */
 import EstablishmentUsersTable from '../../../components/dashboard/establishments/EstablishmentUsersTable'
-import AddEstablishmentUserDialog from '../../../components/dashboard/establishments/AddEstablishmentUserDialog'
+import EstablishmentUserFormDialog from '../../../components/dashboard/establishments/EstablishmentUserFormDialog'
 import DefaultButton from '../../../components/button/DefaultButton'
 
 const AdminEstablishmentUsers = () => {
   const { idEstablecimiento } = useParams()
-
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const establishmentId = Number(idEstablecimiento)
+
+  // Estado para controlar el usuario que se va a editar
+  const [userDialog, setUserDialog] = useState(null)
 
   const {
     data: users = [],
@@ -78,7 +79,7 @@ const AdminEstablishmentUsers = () => {
 
         <DefaultButton
           type="button"
-          onClick={() => setIsAddDialogOpen(true)}
+          onClick={() => setUserDialog({ mode: 'add' })}
         >
           Agregar usuario
         </DefaultButton>
@@ -90,17 +91,31 @@ const AdminEstablishmentUsers = () => {
         <EstablishmentUsersTable
           users={users}
           loading={isLoading}
+          onEditUser={(user) =>
+            setUserDialog({ mode: 'edit', user })
+          }
         />
       </div>
 
-      {/* Diálogo para agregar usuario */}
-      {isAddDialogOpen && (
-        <AddEstablishmentUserDialog
+      {/* Formulario para agregar o editar usuario */}
+      {userDialog && (
+        <EstablishmentUserFormDialog
+          key={
+            userDialog.mode === 'edit'
+              ? `edit-${userDialog.user.idUsuario}`
+              : 'add'
+          }
           open
+          user={
+            userDialog.mode === 'edit'
+              ? userDialog.user
+              : null
+          }
           idEstablecimiento={establishmentId}
-          onClose={() => setIsAddDialogOpen(false)}
+          onClose={() => setUserDialog(null)}
         />
       )}
+
 
     </section>
   )

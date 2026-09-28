@@ -2,6 +2,11 @@
 /* Components */
 import DashboardDataGrid from '../DashboardDataGrid'
 
+/* MUI */
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
+import EditIcon from '@mui/icons-material/Edit'
+
 const formatDate = (date) => {
   if (!date) return '-'
 
@@ -15,6 +20,7 @@ const formatDate = (date) => {
 const EstablishmentUsersTable = ({
   users = [],
   loading = false,
+  onEditUser
 }) => {
   const columns = [
     {
@@ -54,6 +60,36 @@ const EstablishmentUsersTable = ({
       minWidth: 145,
       valueFormatter: (value) => formatDate(value),
     },
+    {
+      field: 'acciones',
+      headerName: 'Acciones',
+      minWidth: 110,
+      flex: 0.5,
+      sortable: false,
+      filterable: false,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <div className="flex h-full items-center justify-center">
+          <Tooltip title="Modificar rol">
+            <IconButton
+              onClick={() => onEditUser(params.row)}
+              aria-label={`Modificar rol de ${params.row.nombre}`}
+              sx={{
+                color: '#94A3B8',
+                '&:hover': {
+                  color: '#10C4FC',
+                  backgroundColor: '#111827',
+                },
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ),
+    }
+
   ]
 
   return (

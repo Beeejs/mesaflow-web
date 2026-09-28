@@ -20,6 +20,7 @@ import { searchEstablishmentUser } from '../../../api/establishmentUserService'
 /* Hooks */
 import useEstablishmentRolesQuery from '../../../hooks/queries/useEstablishmentRolesQuery'
 import useAddEstablishmentUserMutation from '../../../hooks/mutations/useAddEstablishmentUserMutation'
+import useUpdateEstablishmentUserMutation from '../../../hooks/mutations/useUpdateEstablishmentUserMutation'
 
 const textFieldStyles = {
   '& .MuiOutlinedInput-root': {
@@ -69,61 +70,46 @@ const textFieldStyles = {
   },
 }
 
-const AddEstablishmentUserDialog = ({
+
+const EstablishmentUserFormDialog = ({
   open,
+  user = null,
   idEstablecimiento,
   onClose,
 }) => {
+  const isEditing = Boolean(user)
+
   const [email, setEmail] = useState('')
   const [selectedUser, setSelectedUser] = useState(null)
-  const [selectedRoleId, setSelectedRoleId] = useState('')
+  const [selectedRoleId, setSelectedRoleId] = useState(
+    user?.idRolEstablecimiento ?? ''
+  )
   const [isSearching, setIsSearching] = useState(false)
 
-  const {
-    data: roles = [],
-    isLoading: rolesLoading,
-  } = useEstablishmentRolesQuery()
+  const { data: roles = [], isLoading: rolesLoading } =
+    useEstablishmentRolesQuery()
 
-  const addMutation = useAddEstablishmentUserMutation(idEstablecimiento)
+  const addMutation =
+    useAddEstablishmentUserMutation(idEstablecimiento)
 
-  const isSaving = addMutation.isPending
+  const updateMutation =
+    useUpdateEstablishmentUserMutation(idEstablecimiento)
+
+  const isSaving =
+    addMutation.isPending || updateMutation.isPending
+
   const isBusy = isSaving || isSearching
 
-  const handleSearch = async (event) => {
-    event.preventDefault()
+  // En edición utilizamos el usuario recibido.
+  // En alta, el usuario obtenido mediante la búsqueda.
+  const currentUser = isEditing ? user : selectedUser
 
-    if (isBusy) return
+  const hasChanges =
+    Number(selectedRoleId) !==
+    Number(user?.idRolEstablecimiento)
 
-    if (!email.trim()) {
-      toast.error('Ingresá el email del usuario.')
-      return
-    }
-
-    try {
-      setIsSearching(true)
-      setSelectedUser(null)
-      setSelectedRoleId('')
-
-      const user = await searchEstablishmentUser(
-        idEstablecimiento,
-        email.trim()
-      )
-
-      if (!user) {
-        toast.error('No se encontró el usuario.')
-        return
-      }
-
-      setSelectedUser(user)
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          'No se pudo buscar el usuario.'
-      )
-    } finally {
-      setIsSearching(false)
-    }
+  const handleClose = () => {
+    if (!isBusy) onClose()
   }
 
   const handleEmailChange = (event) => {
@@ -132,34 +118,75 @@ const AddEstablishmentUserDialog = ({
     setSelectedRoleId('')
   }
 
-  const handleClose = () => {
-    if (isBusy) return
-    onClose()
+  const handleSearch = async (event) => {
+    event.preventDefault()
+
+    if (isBusy || isEditing) return
+
+    const trimmedEmail = email.trim()
+
+    if (!trimmedEmail) {
+      toast.error('Ingresá el email del usuario.')
+      return
+    }
+
+    setIsSearching(true)
+    setSelectedUser(null)
+    setSelectedRoleId('')
+
+    try {
+      const foundUser = await searchEstablishmentUser(
+        idEstablecimiento,
+        trimmedEmail
+      )
+
+      if (!foundUser) {
+        toast.error('No se encontró el usuario.')
+        return
+      }
+
+      setSelectedUser(foundUser)
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          'No se pudo buscar el usuario.'
+      )
+    } finally {
+      setIsSearching(false)
+    }
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    if (isBusy) return
+    if (isBusy || !currentUser || !selectedRoleId) return
 
-    if (!selectedUser || !selectedRoleId) {
-      toast.error('Seleccioná un usuario y un rol.')
+    if (isEditing && !hasChanges) {
+      toast.info('No hay cambios para guardar.')
       return
     }
 
-    try {
-      await addMutation.mutateAsync({
-        idUsuario: selectedUser.idUsuario,
-        idRolEstablecimiento: Number(selectedRoleId),
-      })
+    const payload = {
+      idUsuario: currentUser.idUsuario,
+      idRolEstablecimiento: Number(selectedRoleId),
+    }
 
-      toast.success('Usuario agregado correctamente.')
+    try {
+      if (isEditing) {
+        await updateMutation.mutateAsync(payload)
+        toast.success('Rol actualizado correctamente.')
+      } else {
+        await addMutation.mutateAsync(payload)
+        toast.success('Usuario agregado correctamente.')
+      }
+
       onClose()
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          error.message ||
-          'No se pudo agregar el usuario.'
+          (isEditing
+            ? 'No se pudo actualizar el rol.'
+            : 'No se pudo agregar el usuario.')
       )
     }
   }
@@ -179,7 +206,6 @@ const AddEstablishmentUserDialog = ({
             color: '#F8FAFC',
           },
         },
-
         backdrop: {
           sx: {
             backgroundColor: 'rgba(3, 7, 15, 0.78)',
@@ -196,7 +222,7 @@ const AddEstablishmentUserDialog = ({
           fontWeight: 800,
         }}
       >
-        Agregar usuario
+        {isEditing ? 'Modificar rol' : 'Agregar usuario'}
       </DialogTitle>
 
       <DialogContent
@@ -207,47 +233,52 @@ const AddEstablishmentUserDialog = ({
         }}
       >
         <p className="mb-6 text-sm leading-6 text-mesa-muted">
-          Buscá un usuario registrado en MesaFlow y asignale
-          un rol dentro del establecimiento.
+          {isEditing
+            ? 'Modificá el rol de este usuario dentro del establecimiento.'
+            : 'Buscá un usuario registrado en MesaFlow y asignale un rol dentro del establecimiento.'}
         </p>
 
-        {/* Buscar usuario */}
-        <form onSubmit={handleSearch}>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <TextField
-              label="Email del usuario"
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              disabled={isBusy}
-              fullWidth
-              required
-              sx={textFieldStyles}
-            />
+        {/* Búsqueda: únicamente al agregar */}
+        {!isEditing && (
+          <form onSubmit={handleSearch}>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <TextField
+                label="Email del usuario"
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                disabled={isBusy}
+                fullWidth
+                required
+                sx={textFieldStyles}
+              />
 
-            <DefaultButton
-              type="submit"
-              disabled={isBusy || !email.trim()}
-            >
-              {isSearching ? 'Buscando...' : 'Buscar'}
-            </DefaultButton>
-          </div>
-        </form>
+              <DefaultButton
+                type="submit"
+                disabled={isBusy || !email.trim()}
+              >
+                {isSearching ? 'Buscando...' : 'Buscar'}
+              </DefaultButton>
+            </div>
+          </form>
+        )}
 
-        {/* Usuario encontrado */}
-        {selectedUser && (
+        {/* Formulario compartido entre alta y edición */}
+        {currentUser && (
           <form onSubmit={handleSubmit}>
             <div className="mt-6 rounded-2xl border border-mesa-border bg-mesa-bg p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-mesa-cyan">
-                Usuario encontrado
+                {isEditing
+                  ? 'Usuario seleccionado'
+                  : 'Usuario encontrado'}
               </p>
 
               <p className="mt-3 font-semibold text-mesa-text">
-                {selectedUser.nombre} {selectedUser.apellido}
+                {currentUser.nombre} {currentUser.apellido}
               </p>
 
               <p className="mt-1 break-all text-sm text-mesa-muted">
-                {selectedUser.email}
+                {currentUser.email}
               </p>
             </div>
 
@@ -255,7 +286,15 @@ const AddEstablishmentUserDialog = ({
               <TextField
                 select
                 label="Rol en el establecimiento"
-                value={selectedRoleId}
+                value={
+                  roles.some(
+                    (role) =>
+                      role.idRolEstablecimiento ===
+                      Number(selectedRoleId)
+                  )
+                    ? selectedRoleId
+                    : ''
+                }
                 onChange={(event) =>
                   setSelectedRoleId(event.target.value)
                 }
@@ -263,15 +302,17 @@ const AddEstablishmentUserDialog = ({
                 fullWidth
                 required
                 sx={textFieldStyles}
-                SelectProps={{
-                  MenuProps: {
-                    slotProps: {
-                      paper: {
-                        sx: {
-                          backgroundColor: '#0B111C',
-                          color: '#F8FAFC',
-                          border: '1px solid #1F2937',
-                          borderRadius: '16px',
+                slotProps={{
+                  select: {
+                    MenuProps: {
+                      slotProps: {
+                        paper: {
+                          sx: {
+                            backgroundColor: '#0B111C',
+                            color: '#F8FAFC',
+                            border: '1px solid #1F2937',
+                            borderRadius: '16px',
+                          },
                         },
                       },
                     },
@@ -294,29 +335,22 @@ const AddEstablishmentUserDialog = ({
                 type="button"
                 onClick={handleClose}
                 disabled={isBusy}
-                className="cursor-pointer rounded-full border border-mesa-border px-5 py-3 text-sm font-bold text-mesa-muted transition hover:bg-mesa-card disabled:cursor-not-allowed disabled:opacity-60"
+                className="cursor-pointer rounded-full border border-mesa-border px-5 py-3 text-sm font-bold text-mesa-muted transition hover:border-mesa-primary/60 hover:bg-mesa-card hover:text-mesa-text disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancelar
               </button>
 
               <DefaultButton
                 type="submit"
-                disabled={
-                  isSaving ||
-                  rolesLoading ||
-                  !selectedRoleId
-                }
+                disabled={isBusy || rolesLoading || !selectedRoleId}
               >
                 {isSaving ? (
                   <span className="flex items-center gap-2">
-                    <CircularProgress
-                      size={16}
-                      color="inherit"
-                    />
+                    <CircularProgress size={16} color="inherit" />
                     Guardando...
                   </span>
                 ) : (
-                  'Agregar usuario'
+                  isEditing ? 'Guardar cambios' : 'Agregar usuario'
                 )}
               </DefaultButton>
             </div>
@@ -324,18 +358,15 @@ const AddEstablishmentUserDialog = ({
         )}
       </DialogContent>
 
-      {!selectedUser && (
+      {!currentUser && (
         <DialogActions
-          sx={{
-            px: { xs: 3, sm: 4 },
-            pb: 4,
-          }}
+          sx={{ px: { xs: 3, sm: 4 }, pb: 4 }}
         >
           <button
             type="button"
             onClick={handleClose}
             disabled={isBusy}
-            className="cursor-pointer rounded-full border border-mesa-border px-5 py-3 text-sm font-bold text-mesa-muted transition hover:bg-mesa-card disabled:opacity-60"
+            className="cursor-pointer rounded-full border border-mesa-border px-5 py-3 text-sm font-bold text-mesa-muted transition hover:bg-mesa-card disabled:cursor-not-allowed disabled:opacity-60"
           >
             Cancelar
           </button>
@@ -345,4 +376,5 @@ const AddEstablishmentUserDialog = ({
   )
 }
 
-export default AddEstablishmentUserDialog
+export default EstablishmentUserFormDialog
+

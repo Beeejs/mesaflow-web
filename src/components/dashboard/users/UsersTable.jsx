@@ -1,25 +1,13 @@
-/* MUI */
-import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
-
 /* MUI Icons */
 import EditIcon from '@mui/icons-material/Edit'
 
 /* Components */
 import DashboardDataGrid from '../../../components/dashboard/DashboardDataGrid'
 import UserStatusChip from './UserStatusChip'
+import DashboardTableActionButton from '../DashboardTableActionButton'
 
-const formatDate = (date) => {
-  if (!date) {
-    return '-'
-  }
-
-  return new Intl.DateTimeFormat('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(date))
-}
+/* Utils */
+import { formatDate } from '../../../utils/dateUtils'
 
 const UsersTable = ({ users = [], loading = false, onEditUser }) => {
   const columns = [
@@ -79,21 +67,13 @@ const UsersTable = ({ users = [], loading = false, onEditUser }) => {
       align: 'right',
       headerAlign: 'right',
       renderCell: (params) => (
-        <Tooltip title="Editar usuario">
-          <IconButton
-            type="button"
-            onClick={() => onEditUser(params.row)}
-            sx={{
-              color: '#94A3B8',
-              '&:hover': {
-                color: '#F8FAFC',
-                backgroundColor: '#111827',
-              },
-            }}
-          >
-            <EditIcon sx={{ fontSize: 20 }} />
-          </IconButton>
-        </Tooltip>
+        <DashboardTableActionButton
+          title="Editar usuario"
+          onClick={() => onEditUser(params.row)}
+          ariaLabel={`Editar usuario ${params.row.nombre}`}
+        >
+          <EditIcon sx={{ fontSize: 20 }} />
+        </DashboardTableActionButton>
       ),
     },
   ]

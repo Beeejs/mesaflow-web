@@ -1,9 +1,5 @@
 import { useNavigate } from 'react-router'
 
-/* MUI */
-import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
-
 /* MUI Icons */
 import EditIcon from '@mui/icons-material/Edit'
 import GroupIcon from '@mui/icons-material/Group'
@@ -11,16 +7,10 @@ import GroupIcon from '@mui/icons-material/Group'
 /* Components */
 import DashboardDataGrid from '../DashboardDataGrid'
 import EstablishmentStatusChip from './EstablishmentStatusChip'
+import DashboardTableActionButton from '../DashboardTableActionButton'
 
-const formatDate = (date) => {
-  if (!date) return '-'
-
-  return new Intl.DateTimeFormat('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(date))
-}
+/* Utils */
+import { formatDate } from '../../../utils/dateUtils'
 
 const EstablishmentsTable = ({
   establishments = [],
@@ -87,39 +77,26 @@ const EstablishmentsTable = ({
       headerAlign: 'right',
       renderCell: (params) => (
         <div className="flex h-full items-center justify-end gap-1">
-          <Tooltip title="Administrar usuarios">
-            <IconButton
-              onClick={() =>
-                navigate(
-                  `/dashboard/establecimientos/${params.row.idEstablecimiento}/usuarios`
-                )
-              }
-              sx={{
-                color: '#94A3B8',
-                '&:hover': {
-                  color: '#10C4FC',
-                  backgroundColor: '#111827',
-                },
-              }}
-            >
-              <GroupIcon sx={{ fontSize: 20 }} />
-            </IconButton>
-          </Tooltip>
+          <DashboardTableActionButton
+            title="Administrar usuarios"
+            onClick={() =>
+              navigate(
+                `/dashboard/establecimientos/${params.row.idEstablecimiento}/usuarios`
+              )
+            }
+            ariaLabel={`Administrar usuarios de ${params.row.nombre}`}
+            highlight
+          >
+            <GroupIcon sx={{ fontSize: 20 }} />
+          </DashboardTableActionButton>
 
-          <Tooltip title="Editar establecimiento">
-            <IconButton
-              onClick={() => onEditEstablishment(params.row)}
-              sx={{
-                color: '#94A3B8',
-                '&:hover': {
-                  color: '#F8FAFC',
-                  backgroundColor: '#111827',
-                },
-              }}
-            >
-              <EditIcon sx={{ fontSize: 20 }} />
-            </IconButton>
-          </Tooltip>
+          <DashboardTableActionButton
+            title="Editar establecimiento"
+            onClick={() => onEditEstablishment(params.row)}
+            ariaLabel={`Editar establecimiento ${params.row.nombre}`}
+          >
+            <EditIcon sx={{ fontSize: 20 }} />
+          </DashboardTableActionButton>
         </div>
       ),
 

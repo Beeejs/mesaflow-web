@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 /* Constants */
 import { navbarList } from '../constants/constants'
 /* Components */
-import DefaultButton from './button/DefaultButton'
+import DefaultButton from './common/button/DefaultButton'
 /* Context */
 import { SessionContext } from '../context/SessionContext'
 

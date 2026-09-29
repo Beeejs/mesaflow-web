@@ -1,6 +1,6 @@
 import TextField from '@mui/material/TextField'
 /* Components */
-import DefaultButton from '../../button/DefaultButton'
+import DefaultButton from '../../common/button/DefaultButton'
 
 const inputStyles = {
   '& label': {

@@ -12,7 +12,8 @@ import useEstablishmentsQuery from '../../../hooks/queries/useEstablishmentsQuer
 /* Components */
 import EstablishmentUsersTable from '../../../components/dashboard/establishments/EstablishmentUsersTable'
 import EstablishmentUserFormDialog from '../../../components/dashboard/establishments/EstablishmentUserFormDialog'
-import DefaultButton from '../../../components/button/DefaultButton'
+import DefaultButton from '../../../components/common/button/DefaultButton'
+import DashboardPageHeader from '../../../components/dashboard/DashboardPageHeader'
 
 const AdminEstablishmentUsers = () => {
   const { idEstablecimiento } = useParams()
@@ -52,17 +53,11 @@ const AdminEstablishmentUsers = () => {
 
       {/* Encabezado y acción para agregar usuario */}
       <div className="mt-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-mesa-cyan">
-          Establecimientos / Gestión de personal
-        </p>
-
-        <h2 className="mt-4 break-words font-display text-3xl font-bold text-mesa-text sm:text-4xl">
-          {establishment?.nombre || 'Establecimiento'}
-        </h2>
-
-        <p className="mt-4 max-w-2xl text-base leading-7 text-mesa-muted">
-          Administrá los usuarios asociados y sus roles dentro del establecimiento.
-        </p>
+        <DashboardPageHeader
+          eyebrow="Establecimientos / Gestión de personal"
+          title={establishment?.nombre || 'Establecimiento'}
+          description="Administrá los usuarios asociados y sus roles dentro del establecimiento."
+        />
       </div>
 
       {/* Agregar usuario */}

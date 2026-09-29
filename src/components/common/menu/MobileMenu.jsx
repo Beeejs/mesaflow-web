@@ -1,7 +1,7 @@
 
 /* Components */
-import Logo from '../Logo'
-import Navbar from '../Navbar'
+import Logo from '../../Logo'
+import Navbar from '../../Navbar'
 import SessionMenu from './SessionMenu'
 import MobileDrawer from './MobileDrawer'
 import MobileMenuButton from './MobileMenuButton'

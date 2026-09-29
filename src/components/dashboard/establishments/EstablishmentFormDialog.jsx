@@ -3,16 +3,11 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 /* MUI */
-import CircularProgress from '@mui/material/CircularProgress'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
 /* Components */
-import DefaultButton from '../../button/DefaultButton'
+import DashboardFormDialog from '../DashboardFormDialog'
 
 /* Hooks */
 import useProvincesQuery from '../../../hooks/queries/useProvincesQuery'
@@ -26,88 +21,11 @@ import { hasFormChanges } from '../../../utils/formUtils'
 /* Constants */
 import { establishmentFields } from '../../../constants/constants'
 
-const textFieldStyles = {
-  '& .MuiOutlinedInput-root': {
-    color: '#F8FAFC',
-    backgroundColor: '#03070F',
-    borderRadius: '14px',
-
-    '& fieldset': {
-      borderColor: '#1F2937',
-    },
-
-    '&:hover fieldset': {
-      borderColor: 'rgba(5, 110, 248, 0.6)',
-    },
-
-    '&.Mui-focused fieldset': {
-      borderColor: '#10C4FC',
-    },
-  },
-
-  '& .MuiInputLabel-root': {
-    color: '#94A3B8',
-  },
-
-  '& .MuiInputLabel-root.Mui-focused': {
-    color: '#10C4FC',
-  },
-
-  '& .MuiSvgIcon-root': {
-    color: '#94A3B8',
-  },
-  
-  '& .MuiOutlinedInput-root.Mui-disabled': {
-    backgroundColor: '#111827',
-  },
-
-  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#1F2937',
-  },
-
-  '& .MuiInputBase-input.Mui-disabled': {
-    WebkitTextFillColor: '#94A3B8',
-    opacity: 1,
-  },
-
-  '& .MuiSelect-select.Mui-disabled': {
-    WebkitTextFillColor: '#94A3B8',
-    opacity: 1,
-  },
-
-  '& .MuiInputLabel-root.Mui-disabled': {
-    color: '#64748B',
-  },
-
-  '& .MuiSvgIcon-root.Mui-disabled': {
-    color: '#64748B',
-  },
-}
-
-const selectSlotProps = {
-  select: {
-    MenuProps: {
-      slotProps: {
-        paper: {
-          sx: {
-            backgroundColor: '#0B111C',
-            color: '#F8FAFC',
-            border: '1px solid #1F2937',
-            borderRadius: '16px',
-
-            '& .MuiMenuItem-root:hover': {
-              backgroundColor: '#111827',
-            },
-
-            '& .MuiMenuItem-root.Mui-selected': {
-              backgroundColor: 'rgba(5, 110, 248, 0.18)',
-            },
-          },
-        },
-      },
-    },
-  },
-}
+/* Styles */
+import {
+  textFieldStyles,
+  selectSlotProps,
+} from '../../../styles/formStyles'
 
 const EstablishmentFormDialog = ({
   open,
@@ -249,263 +167,194 @@ const EstablishmentFormDialog = ({
     provincesLoading || districtsLoading || statesLoading
 
   return (
-    <Dialog
+    <DashboardFormDialog
       open={open}
-      onClose={isSaving ? undefined : onClose}
-      fullWidth
-      maxWidth="sm"
-      slotProps={{
-        paper: {
-          sx: {
-            borderRadius: '24px',
-            border: '1px solid #1F2937',
-            backgroundColor: '#0B111C',
-            color: '#F8FAFC',
-            maxHeight: '90dvh',
-          },
-        },
-        backdrop: {
-          sx: {
-            backgroundColor: 'rgba(3, 7, 15, 0.78)',
-            backdropFilter: 'blur(3px)',
-          },
-        },
-      }}
+      title="Editar establecimiento"
+      description="Modificá los datos del establecimiento y gestioná su estado."
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      isBusy={isSaving}
+      submitDisabled={selectsLoading}
+      submitLabel="Guardar cambios"
     >
-      <form onSubmit={handleSubmit}>
-        <DialogTitle
-          sx={{
-            px: { xs: 3, sm: 4 },
-            pt: 4,
-            fontFamily: 'Poppins, sans-serif',
-            fontWeight: 800,
-          }}
+      {/* Solicitante */}
+      <div className="mb-6 rounded-2xl border border-mesa-border bg-mesa-bg p-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-mesa-muted">
+          Solicitante
+        </p>
+
+        <p className="mt-2 font-semibold text-mesa-text">
+          {establishment.nombreUsuarioSolicitante}{' '}
+          {establishment.apellidoUsuarioSolicitante}
+        </p>
+
+        <p className="mt-1 break-all text-sm text-mesa-muted">
+          {establishment.emailUsuarioSolicitante}
+        </p>
+      </div>
+
+      {/* Datos comerciales */}
+      <h3 className="mb-4 font-display text-lg font-bold">
+        Datos comerciales
+      </h3>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextField
+          label="Nombre"
+          name="nombre"
+          value={formData.nombre}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          required
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Razón social"
+          name="razonSocial"
+          value={formData.razonSocial}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="CUIT"
+          name="cuit"
+          value={formData.cuit}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Teléfono"
+          name="telefono"
+          value={formData.telefono}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+      </div>
+
+      {/* Ubicación */}
+      <h3 className="mb-4 mt-8 font-display text-lg font-bold">
+        Ubicación
+      </h3>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextField
+          label="Dirección"
+          name="direccion"
+          value={formData.direccion}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          required
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Código postal"
+          name="codigoPostal"
+          value={formData.codigoPostal}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          select
+          label="Provincia"
+          name="idProvincia"
+          value={selectedProvince}
+          onChange={handleProvinceChange}
+          disabled={provincesLoading || isSaving}
+          fullWidth
+          required
+          sx={textFieldStyles}
+          slotProps={selectSlotProps}
         >
-          Editar establecimiento
-        </DialogTitle>
-
-        <DialogContent
-          sx={{
-            px: { xs: 3, sm: 4 },
-            pt: 2,
-            pb: 3,
-          }}
-        >
-          <p className="mb-6 text-sm text-mesa-muted">
-            Modificá los datos del establecimiento y gestioná su estado.
-          </p>
-
-          {/* Solicitante */}
-          <div className="mb-6 rounded-2xl border border-mesa-border bg-mesa-bg p-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-mesa-muted">
-              Solicitante
-            </p>
-
-            <p className="mt-2 font-semibold text-mesa-text">
-              {establishment.nombreUsuarioSolicitante}{' '}
-              {establishment.apellidoUsuarioSolicitante}
-            </p>
-
-            <p className="mt-1 break-all text-sm text-mesa-muted">
-              {establishment.emailUsuarioSolicitante}
-            </p>
-          </div>
-
-          {/* Datos comerciales */}
-          <h3 className="mb-4 font-display text-lg font-bold">
-            Datos comerciales
-          </h3>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <TextField
-              label="Nombre"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              disabled={isSaving}
-              fullWidth
-              required
-              sx={textFieldStyles}
-            />
-
-            <TextField
-              label="Razón social"
-              name="razonSocial"
-              value={formData.razonSocial}
-              onChange={handleChange}
-              disabled={isSaving}
-              fullWidth
-              sx={textFieldStyles}
-            />
-
-            <TextField
-              label="CUIT"
-              name="cuit"
-              value={formData.cuit}
-              onChange={handleChange}
-              disabled={isSaving}
-              fullWidth
-              sx={textFieldStyles}
-            />
-
-            <TextField
-              label="Teléfono"
-              name="telefono"
-              value={formData.telefono}
-              onChange={handleChange}
-              disabled={isSaving}
-              fullWidth
-              sx={textFieldStyles}
-            />
-
-            <TextField
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={isSaving}
-              fullWidth
-              sx={textFieldStyles}
-            />
-          </div>
-
-          {/* Ubicación */}
-          <h3 className="mb-4 mt-8 font-display text-lg font-bold">
-            Ubicación
-          </h3>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <TextField
-              label="Dirección"
-              name="direccion"
-              value={formData.direccion}
-              onChange={handleChange}
-              disabled={isSaving}
-              fullWidth
-              required
-              sx={textFieldStyles}
-            />
-
-            <TextField
-              label="Código postal"
-              name="codigoPostal"
-              value={formData.codigoPostal}
-              onChange={handleChange}
-              disabled={isSaving}
-              fullWidth
-              sx={textFieldStyles}
-            />
-
-            <TextField
-              select
-              label="Provincia"
-              name="idProvincia"
-              value={selectedProvince}
-              onChange={handleProvinceChange}
-              disabled={provincesLoading || isSaving}
-              fullWidth
-              required
-              sx={textFieldStyles}
-              slotProps={selectSlotProps}
+          {provinces.map((province) => (
+            <MenuItem
+              key={province.idProvincia}
+              value={province.idProvincia}
             >
-              {provinces.map((province) => (
-                <MenuItem
-                  key={province.idProvincia}
-                  value={province.idProvincia}
-                >
-                  {province.nombre}
-                </MenuItem>
-              ))}
-            </TextField>
+              {province.nombre}
+            </MenuItem>
+          ))}
+        </TextField>
 
-            <TextField
-              select
-              label="Partido"
-              name="idPartido"
-              value={selectedDistrict}
-              onChange={handleChange}
-              disabled={
-                !formData.idProvincia ||
-                districtsLoading ||
-                isSaving
-              }
-              fullWidth
-              required
-              sx={textFieldStyles}
-              slotProps={selectSlotProps}
-            >
-              {districts.map((district) => (
-                <MenuItem
-                  key={district.idPartido}
-                  value={district.idPartido}
-                >
-                  {district.nombre}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>
-
-          {/* Administración */}
-          <h3 className="mb-4 mt-8 font-display text-lg font-bold">
-            Administración
-          </h3>
-
-          <TextField
-            select
-            label="Estado del establecimiento"
-            name="idEstadoEstablecimiento"
-            value={selectedState}
-            onChange={handleChange}
-            disabled={statesLoading || isSaving}
-            fullWidth
-            required
-            sx={textFieldStyles}
-            slotProps={selectSlotProps}
-          >
-            {states.map((state) => (
-              <MenuItem
-                key={state.idEstadoEstablecimiento}
-                value={state.idEstadoEstablecimiento}
-              >
-                {state.descripcion}
-              </MenuItem>
-            ))}
-          </TextField>
-        </DialogContent>
-
-        <DialogActions
-          sx={{
-            px: { xs: 3, sm: 4 },
-            pb: 4,
-            gap: 2,
-          }}
+        <TextField
+          select
+          label="Partido"
+          name="idPartido"
+          value={selectedDistrict}
+          onChange={handleChange}
+          disabled={
+            !formData.idProvincia ||
+            districtsLoading ||
+            isSaving
+          }
+          fullWidth
+          required
+          sx={textFieldStyles}
+          slotProps={selectSlotProps}
         >
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isSaving}
-            className="cursor-pointer rounded-full border border-mesa-border px-5 py-3 text-sm font-bold text-mesa-muted transition hover:bg-mesa-card disabled:opacity-60"
-          >
-            Cancelar
-          </button>
+          {districts.map((district) => (
+            <MenuItem
+              key={district.idPartido}
+              value={district.idPartido}
+            >
+              {district.nombre}
+            </MenuItem>
+          ))}
+        </TextField>
+      </div>
 
-          <DefaultButton
-            type="submit"
-            disabled={isSaving || selectsLoading}
+      {/* Administración */}
+      <h3 className="mb-4 mt-8 font-display text-lg font-bold">
+        Administración
+      </h3>
+
+      <TextField
+        select
+        label="Estado del establecimiento"
+        name="idEstadoEstablecimiento"
+        value={selectedState}
+        onChange={handleChange}
+        disabled={statesLoading || isSaving}
+        fullWidth
+        required
+        sx={textFieldStyles}
+        slotProps={selectSlotProps}
+      >
+        {states.map((state) => (
+          <MenuItem
+            key={state.idEstadoEstablecimiento}
+            value={state.idEstadoEstablecimiento}
           >
-            {isSaving ? (
-              <span className="flex items-center gap-2">
-                <CircularProgress size={16} color="inherit" />
-                Guardando...
-              </span>
-            ) : (
-              'Guardar cambios'
-            )}
-          </DefaultButton>
-        </DialogActions>
-      </form>
-    </Dialog>
+            {state.descripcion}
+          </MenuItem>
+        ))}
+      </TextField>
+    </DashboardFormDialog>
   )
 }
 

@@ -1,21 +1,13 @@
 
 /* Components */
 import DashboardDataGrid from '../DashboardDataGrid'
+import DashboardTableActionButton from '../DashboardTableActionButton'
 
 /* MUI */
-import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
 import EditIcon from '@mui/icons-material/Edit'
 
-const formatDate = (date) => {
-  if (!date) return '-'
-
-  return new Intl.DateTimeFormat('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(date))
-}
+/* Utils */
+import { formatDate } from '../../../utils/dateUtils'
 
 const EstablishmentUsersTable = ({
   users = [],
@@ -71,21 +63,14 @@ const EstablishmentUsersTable = ({
       headerAlign: 'center',
       renderCell: (params) => (
         <div className="flex h-full items-center justify-center">
-          <Tooltip title="Modificar rol">
-            <IconButton
-              onClick={() => onEditUser(params.row)}
-              aria-label={`Modificar rol de ${params.row.nombre}`}
-              sx={{
-                color: '#94A3B8',
-                '&:hover': {
-                  color: '#10C4FC',
-                  backgroundColor: '#111827',
-                },
-              }}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          <DashboardTableActionButton
+            title="Modificar rol"
+            onClick={() => onEditUser(params.row)}
+            ariaLabel={`Modificar rol de ${params.row.nombre}`}
+            highlight
+          >
+            <EditIcon fontSize="small" />
+          </DashboardTableActionButton>
         </div>
       ),
     }

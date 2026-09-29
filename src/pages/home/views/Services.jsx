@@ -1,7 +1,7 @@
 import { servicesList } from "../../../constants/constants.js";
 
 /* Components */
-import ServiceCard from "../../../components/services/ServiceCard.jsx";
+import ServiceCard from "../../../components/home/services/ServiceCard.jsx";
 
 const Services = () => {
   return (

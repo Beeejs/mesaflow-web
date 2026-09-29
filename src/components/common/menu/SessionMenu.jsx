@@ -19,7 +19,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import HomeIcon from '@mui/icons-material/Home'
 
 /* Context */
-import { SessionContext } from '../../context/SessionContext'
+import { SessionContext } from '../../../context/SessionContext'
 
 // Función para obtener las iniciales del usuario
 const getInitials = (user) => {

@@ -5,10 +5,10 @@ import { toast } from 'sonner'
 /* Components */
 import Logo from './Logo'
 import Navbar from './Navbar'
-import AssociateDialog from './pages/associate/AssociateDialog'
-import SessionMenu from './menu/SessionMenu'
-import MobileMenu from './menu/MobileMenu'
-import MobileMenuButton from './menu/MobileMenuButton'
+import AssociateDialog from './home/associate/AssociateDialog'
+import SessionMenu from './common/menu/SessionMenu'
+import MobileMenu from './common/menu/MobileMenu'
+import MobileMenuButton from './common/menu/MobileMenuButton'
 
 /* Context */
 import { SessionContext } from '../context/SessionContext'

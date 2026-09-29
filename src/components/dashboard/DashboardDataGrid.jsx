@@ -1,7 +1,7 @@
 import { DataGrid } from '@mui/x-data-grid'
 
 /* Components */
-import Loader from '../loader/Loader'
+import Loader from '../common/loader/Loader'
 
 const DashboardDataGrid = ({
   rows = [],

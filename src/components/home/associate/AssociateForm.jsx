@@ -1,118 +1,285 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
+
+/* MUI */
+import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
-const inputStyles = {
-  '& label': {
-    color: '#94A3B8',
-  },
-  '& label.Mui-focused': {
-    color: '#10C4FC',
-  },
-  '& .MuiOutlinedInput-root': {
-    color: '#F8FAFC',
-    backgroundColor: '#03070F',
-    borderRadius: '16px',
-    '& fieldset': {
-      borderColor: '#1F2937',
-    },
-    '&:hover fieldset': {
-      borderColor: '#056EF8',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#10C4FC',
-    },
-  },
-}
+/* Components */
+import DefaultButton from '../../common/button/DefaultButton'
+
+/* Hooks */
+import useProvincesQuery from '../../../hooks/queries/useProvincesQuery'
+import useDistrictsQuery from '../../../hooks/queries/useDistrictsQuery'
+import useCreateEstablishmentMutation from '../../../hooks/mutations/useCreateEstablishmentMutation'
+
+/* Styles */
+import {
+  textFieldStyles,
+  selectSlotProps,
+} from '../../../styles/formStyles'
 
 const AssociateForm = ({ onClose }) => {
+  // Hooks
   const [formData, setFormData] = useState({
-    establishmentName: '',
+    nombre: '',
+    razonSocial: '',
+    cuit: '',
+    direccion: '',
+    idProvincia: '',
+    idPartido: '',
+    codigoPostal: '',
+    telefono: '',
     email: '',
-    phone: '',
-    message: '',
   })
 
+  const {
+    data: provinces = [],
+    isLoading: provincesLoading,
+  } = useProvincesQuery()
+
+  const {
+    data: districts = [],
+    isLoading: districtsLoading,
+  } = useDistrictsQuery(formData.idProvincia)
+
+  const createMutation = useCreateEstablishmentMutation()
+
+  // Constantes derivadas
+  const isSaving = createMutation.isPending
+
+  const selectedProvince = provinces.some(
+    (province) =>
+      province.idProvincia === Number(formData.idProvincia)
+  )
+    ? formData.idProvincia
+    : ''
+
+  const selectedDistrict = districts.some(
+    (district) =>
+      district.idPartido === Number(formData.idPartido)
+  )
+    ? formData.idPartido
+    : ''
+
+  // Funciones
   const handleChange = (event) => {
     const { name, value } = event.target
 
-    setFormData((prevState) => ({
-      ...prevState,
+    setFormData((current) => ({
+      ...current,
       [name]: value,
     }))
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
+  const handleProvinceChange = (event) => {
+    const provinceId = Number(event.target.value)
 
-    console.log('Solicitud de asociación:', formData)
-
-    onClose()
+    setFormData((current) => ({
+      ...current,
+      idProvincia: provinceId,
+      idPartido: '',
+    }))
   }
 
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (isSaving) return
+
+    if (
+      !formData.nombre.trim() ||
+      !formData.direccion.trim() ||
+      !selectedDistrict
+    ) {
+      toast.error('Completá los campos obligatorios.')
+      return
+    }
+
+    const establishmentData = {
+      nombre: formData.nombre.trim(),
+      razonSocial: formData.razonSocial.trim(),
+      cuit: formData.cuit.trim(),
+      direccion: formData.direccion.trim(),
+      idPartido: Number(selectedDistrict),
+      codigoPostal: formData.codigoPostal.trim(),
+      telefono: formData.telefono.trim(),
+      email: formData.email.trim(),
+    }
+
+    try {
+      await createMutation.mutateAsync(establishmentData)
+
+      toast.success(
+        'Solicitud enviada correctamente. El establecimiento quedó pendiente de revisión.'
+      )
+
+      onClose()
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          'No se pudo enviar la solicitud.'
+      )
+    }
+  }
+
+  // Renderizado
   return (
     <form onSubmit={handleSubmit} className="grid gap-5">
-      <TextField
-        name="establishmentName"
-        label="Nombre del establecimiento"
-        placeholder="Ej: Cervecería DobleSentido"
-        value={formData.establishmentName}
-        onChange={handleChange}
-        variant="outlined"
-        fullWidth
-        required
-        sx={inputStyles}
-      />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextField
+          label="Nombre del establecimiento"
+          name="nombre"
+          value={formData.nombre}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          required
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Razón social"
+          name="razonSocial"
+          value={formData.razonSocial}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="CUIT"
+          name="cuit"
+          value={formData.cuit}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Teléfono"
+          name="telefono"
+          value={formData.telefono}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          type="tel"
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Email de contacto"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          type="email"
+          sx={textFieldStyles}
+        />
+
+        <TextField
+          label="Código postal"
+          name="codigoPostal"
+          value={formData.codigoPostal}
+          onChange={handleChange}
+          disabled={isSaving}
+          fullWidth
+          sx={textFieldStyles}
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextField
+          select
+          label="Provincia"
+          name="idProvincia"
+          value={selectedProvince}
+          onChange={handleProvinceChange}
+          disabled={provincesLoading || isSaving}
+          fullWidth
+          required
+          helperText={
+            provincesLoading ? 'Cargando provincias...' : ' '
+          }
+          sx={textFieldStyles}
+          slotProps={selectSlotProps}
+        >
+          <MenuItem value="" disabled>
+            {provincesLoading
+              ? 'Cargando provincias...'
+              : 'Seleccioná una provincia'}
+          </MenuItem>
+
+          {provinces.map((province) => (
+            <MenuItem
+              key={province.idProvincia}
+              value={province.idProvincia}
+            >
+              {province.nombre}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          select
+          label="Partido"
+          name="idPartido"
+          value={selectedDistrict}
+          onChange={handleChange}
+          disabled={
+            !formData.idProvincia ||
+            districtsLoading ||
+            isSaving
+          }
+          fullWidth
+          required
+          helperText={
+            districtsLoading ? 'Cargando partidos...' : ' '
+          }
+          sx={textFieldStyles}
+          slotProps={selectSlotProps}
+        >
+          <MenuItem value="" disabled>
+            {districtsLoading
+              ? 'Cargando partidos...'
+              : 'Seleccioná un partido'}
+          </MenuItem>
+
+          {districts.map((district) => (
+            <MenuItem
+              key={district.idPartido}
+              value={district.idPartido}
+            >
+              {district.nombre}
+            </MenuItem>
+          ))}
+        </TextField>
+      </div>
 
       <TextField
-        name="email"
-        label="Email de contacto"
-        placeholder="Ej: contacto@restaurante.com"
-        value={formData.email}
+        label="Dirección"
+        name="direccion"
+        value={formData.direccion}
         onChange={handleChange}
-        variant="outlined"
+        disabled={isSaving}
         fullWidth
         required
-        type="email"
-        sx={inputStyles}
+        sx={textFieldStyles}
       />
 
-      <TextField
-        name="phone"
-        label="Teléfono / WhatsApp"
-        placeholder="Ej: +54 9 11 1234-5678"
-        value={formData.phone}
-        onChange={handleChange}
-        variant="outlined"
-        fullWidth
-        required
-        type="tel"
-        sx={inputStyles}
-      />
-
-      <TextField
-        name="message"
-        label="Mensaje"
-        placeholder="Contanos brevemente sobre tu establecimiento"
-        value={formData.message}
-        onChange={handleChange}
-        variant="outlined"
-        fullWidth
-        required
-        multiline
-        minRows={5}
-        sx={inputStyles}
-      />
-
-      <button
+      <DefaultButton
         type="submit"
-        className="rounded-xl cursor-pointer bg-mesa-primary px-6 py-3 font-semibold text-white shadow-lg shadow-mesa-primary/25 transition hover:bg-mesa-primary-dark"
+        loading={isSaving}
+        fullWidth
       >
-        Enviar solicitud
-      </button>
+        {isSaving ? 'Enviando...' : 'Enviar solicitud'}
+      </DefaultButton>
 
       <p className="text-sm leading-6 text-mesa-muted">
-        Esta solicitud no crea una cuenta automáticamente. Primero revisamos el
-        establecimiento y luego habilitamos el acceso.
+        La solicitud será revisada antes de habilitar el establecimiento.
       </p>
     </form>
   )

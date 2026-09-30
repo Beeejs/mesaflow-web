@@ -10,6 +10,8 @@ import DashboardRefreshButton from '../../../components/dashboard/DashboardRefre
 
 /* Hooks */
 import useEstablishmentsQuery from '../../../hooks/queries/useEstablishmentsQuery'
+import useEstablishmentStatesQuery from '../../../hooks/queries/useEstablishmentStatesQuery'
+import useUpdateEstablishmentMutation from '../../../hooks/mutations/useUpdateEstablishmentMutation'
 
 /* Components */
 import EstablishmentsTable from '../../../components/dashboard/establishments/EstablishmentsTable'
@@ -25,8 +27,19 @@ const AdminEstablishments = () => {
     refetch,
   } = useEstablishmentsQuery()
 
+  const {
+    data: establishmentStates = [],
+  } = useEstablishmentStatesQuery()
+
+  const updateMutation = useUpdateEstablishmentMutation()
+
   // Estado para manejar el establecimiento seleccionado para editar
   const [selectedEstablishment, setSelectedEstablishment] = useState(null)
+
+  // Constantes derivadas
+  const approvedState = establishmentStates.find(
+    (state) => state.descripcion?.toUpperCase() === 'APROBADO'
+  )
 
   // UseEffect para mostrar un toast de error si ocurre un error al cargar los establecimientos
   useEffect(() => {
@@ -34,6 +47,55 @@ const AdminEstablishments = () => {
       toast.error('No se pudieron cargar los establecimientos.')
     }
   }, [error])
+
+
+  // Funcion para manejar la aprobacion de un establecimiento
+  const handleApproveEstablishment = (establishment) => {
+    if (!approvedState || updateMutation.isPending) return
+
+    toast(
+      `¿Querés aprobar ${establishment.nombre}?`,
+      {
+        description:
+          'El establecimiento será aprobado y el solicitante pasará a ser encargado.',
+        action: {
+          label: 'Aprobar',
+          onClick: async () => {
+            try {
+              const establishmentData = {
+                nombre: establishment.nombre,
+                razonSocial: establishment.razonSocial,
+                cuit: establishment.cuit,
+                direccion: establishment.direccion,
+                idPartido: establishment.idPartido,
+                codigoPostal: establishment.codigoPostal,
+                telefono: establishment.telefono,
+                email: establishment.email,
+                idEstadoEstablecimiento:
+                  approvedState.idEstadoEstablecimiento,
+              }
+
+              await updateMutation.mutateAsync({
+                idEstablecimiento: establishment.idEstablecimiento,
+                establishmentData,
+              })
+
+              toast.success('Establecimiento aprobado correctamente.')
+            } catch (error) {
+              toast.error(
+                error.response?.data?.message ||
+                  'No se pudo aprobar el establecimiento.'
+              )
+            }
+          },
+        },
+        cancel: {
+          label: 'Cancelar',
+          onClick: () => {},
+        },
+      }
+    )
+  }
 
   return (
     <section>
@@ -55,6 +117,8 @@ const AdminEstablishments = () => {
           establishments={establishments}
           loading={isLoading}
           onEditEstablishment={setSelectedEstablishment}
+          onApproveEstablishment={handleApproveEstablishment}
+          approvalLoading={updateMutation.isPending}
         />
       </div>
 

@@ -9,7 +9,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 /* Components */
 import DashboardNavLink from './DashboardNavLink'
 import DashboardSidebarAction from './DashboardSidebarAction'
-import MobileMenuButton from '../../menu/MobileMenuButton'
+import MobileMenuButton from '../../common/menu/MobileMenuButton'
 
 /* Constants */
 import { dashboardNavigation } from '../../../constants/constants'

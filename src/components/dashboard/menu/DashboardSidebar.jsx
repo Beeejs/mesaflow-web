@@ -1,6 +1,6 @@
 
 /* Components */
-import MobileDrawer from '../../menu/MobileDrawer'
+import MobileDrawer from '../../common/menu/MobileDrawer'
 import DashboardSidebarContent from './DashboardSidebarContent'
 
 const DashboardSidebar = ({

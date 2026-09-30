@@ -1,6 +1,6 @@
 /* Components */
-import SessionMenu from '../../menu/SessionMenu'
-import MobileMenuButton from '../../menu/MobileMenuButton'
+import SessionMenu from '../../common/menu/SessionMenu'
+import MobileMenuButton from '../../common/menu/MobileMenuButton'
 
 const DashboardTopbar = ({ onOpenSidebar, triggerRef }) => {
   return (

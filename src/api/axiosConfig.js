@@ -47,84 +47,8 @@ const api = axios.create({
 
 const methodsWithCsrf = ['post', 'put', 'patch', 'delete']
 
-/*
- * IMPLEMENTACIÓN ANTERIOR
- *
- * El token CSRF se buscaba en document.cookie.
- *
- * Si no existía, se llamaba a /api/csrf para que Spring
- * generara la cookie XSRF-TOKEN y luego se intentaba
- * leer nuevamente desde document.cookie.
- */
 
 /*
-let csrfRequest = null
-
-const ensureCsrfToken = async () => {
-  let csrfToken = getCookieValue('XSRF-TOKEN')
-
-  if (csrfToken) {
-    return csrfToken
-  }
-
-  if (!csrfRequest) {
-    csrfRequest = csrfApi.get('/api/csrf')
-  }
-
-  await csrfRequest
-  csrfRequest = null
-
-  return getCookieValue('XSRF-TOKEN')
-}
-*/
-
-
-/*
- * IMPLEMENTACIÓN INTERMEDIA
- *
- * Esta versión obtenía el token desde el body de /api/csrf
- * y lo guardaba en memoria.
- *
- * Permitía trabajar entre Vercel y Azure, pero podía producir
- * una desincronización si Spring cambiaba la cookie XSRF-TOKEN
- * mientras React seguía conservando un token anterior.
- */
-
-/*
-let csrfToken = null
-let csrfRequest = null
-
-export const clearCsrfToken = () => {
-  csrfToken = null
-}
-
-const ensureCsrfToken = async () => {
-
-  if (csrfToken) {
-    return csrfToken
-  }
-
-  if (!csrfRequest) {
-    csrfRequest = csrfApi.get('/api/csrf')
-  }
-
-  try {
-    const response = await csrfRequest
-
-    csrfToken = response.data.response
-
-    return csrfToken
-
-  } finally {
-    csrfRequest = null
-  }
-}
-*/
-
-
-/*
- * NUEVA IMPLEMENTACIÓN
- *
  * Antes de cada operación que modifica datos:
  *
  * POST

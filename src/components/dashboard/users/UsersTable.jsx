@@ -1,5 +1,6 @@
 /* MUI Icons */
 import EditIcon from '@mui/icons-material/Edit'
+import GroupAddIcon from '@mui/icons-material/GroupAdd'
 
 /* Components */
 import DashboardDataGrid from '../../../components/dashboard/DashboardDataGrid'
@@ -9,7 +10,7 @@ import DashboardTableActionButton from '../DashboardTableActionButton'
 /* Utils */
 import { formatDate } from '../../../utils/dateUtils'
 
-const UsersTable = ({ users = [], loading = false, onEditUser }) => {
+const UsersTable = ({ users = [], loading = false, onEditUser, onAssignUser }) => {
   const columns = [
     {
       field: 'usuario',
@@ -61,19 +62,35 @@ const UsersTable = ({ users = [], loading = false, onEditUser }) => {
       field: 'acciones',
       headerName: 'Acciones',
       flex: 0.5,
-      minWidth: 110,
+      minWidth: 130,
       sortable: false,
       filterable: false,
       align: 'right',
       headerAlign: 'right',
       renderCell: (params) => (
-        <DashboardTableActionButton
-          title="Editar usuario"
-          onClick={() => onEditUser(params.row)}
-          ariaLabel={`Editar usuario ${params.row.nombre}`}
-        >
-          <EditIcon sx={{ fontSize: 20 }} />
-        </DashboardTableActionButton>
+        <div className="flex h-full items-center justify-end gap-1">
+          <DashboardTableActionButton
+            title={
+              params.row.activo
+                ? 'Asignar a establecimiento'
+                : 'El usuario debe estar activo para ser asignado'
+            }
+            onClick={() => onAssignUser(params.row)}
+            ariaLabel={`Asignar ${params.row.nombre} a un establecimiento`}
+            disabled={!params.row.activo}
+            highlight
+          >
+            <GroupAddIcon sx={{ fontSize: 20 }} />
+          </DashboardTableActionButton>
+
+          <DashboardTableActionButton
+            title="Editar usuario"
+            onClick={() => onEditUser(params.row)}
+            ariaLabel={`Editar usuario ${params.row.nombre}`}
+          >
+            <EditIcon sx={{ fontSize: 20 }} />
+          </DashboardTableActionButton>
+        </div>
       ),
     },
   ]

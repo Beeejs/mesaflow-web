@@ -9,10 +9,11 @@ import UsersTable from '../../../components/dashboard/users/UsersTable'
 import UserFormDialog from '../../../components/dashboard/users/UserFormDialog'
 import DashboardPageHeader from '../../../components/dashboard/DashboardPageHeader'
 import DashboardRefreshButton from '../../../components/dashboard/DashboardRefreshButton'
+import AssignUserEstablishmentDialog from '../../../components/dashboard/users/AssignUserEstablishmentDialog'
 
 const AdminUsers = () => {
   // Usuario seleccionado para editar
-  const [selectedUser, setSelectedUser] = useState(null)
+  const [userDialog, setUserDialog] = useState(null)
 
   // Listado de usuarios
   const {
@@ -22,11 +23,6 @@ const AdminUsers = () => {
     error: usersError,
     refetch: refetchUsers,
   } = useUsersQuery()
-
-  // Manejador de edición de usuario
-  const handleEditUser = (user) => {
-    setSelectedUser(user)
-  }
 
   // Manejador de errores
   useEffect(() => {
@@ -54,18 +50,32 @@ const AdminUsers = () => {
 
       <div className="mt-12">
         <UsersTable
-          users={usersData || []}
+          users={usersData}
           loading={usersLoading}
-          onEditUser={handleEditUser}
+          onEditUser={(user) =>
+            setUserDialog({ mode: 'edit', user })
+          }
+          onAssignUser={(user) =>
+            setUserDialog({ mode: 'assign', user })
+          }
         />
       </div>
 
-      {selectedUser && (
+      {userDialog?.mode === 'edit' && (
         <UserFormDialog
-          key={selectedUser.idUsuario}
-          open={Boolean(selectedUser)}
-          user={selectedUser}
-          onClose={() => setSelectedUser(null)}
+          key={`edit-${userDialog.user.idUsuario}`}
+          open
+          user={userDialog.user}
+          onClose={() => setUserDialog(null)}
+        />
+      )}
+
+      {userDialog?.mode === 'assign' && (
+        <AssignUserEstablishmentDialog
+          key={`assign-${userDialog.user.idUsuario}`}
+          open
+          user={userDialog.user}
+          onClose={() => setUserDialog(null)}
         />
       )}
     </section>

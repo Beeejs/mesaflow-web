@@ -5,6 +5,7 @@ import DashboardTableActionButton from '../DashboardTableActionButton'
 
 /* MUI */
 import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete';
 
 /* Utils */
 import { formatDate } from '../../../utils/dateUtils'
@@ -12,7 +13,8 @@ import { formatDate } from '../../../utils/dateUtils'
 const EstablishmentUsersTable = ({
   users = [],
   loading = false,
-  onEditUser
+  onEditUser,
+  onRemoveUser
 }) => {
   const columns = [
     {
@@ -62,7 +64,7 @@ const EstablishmentUsersTable = ({
       align: 'center',
       headerAlign: 'center',
       renderCell: (params) => (
-        <div className="flex h-full items-center justify-center">
+        <div className="flex h-full items-center justify-center gap-1">
           <DashboardTableActionButton
             title="Modificar rol"
             onClick={() => onEditUser(params.row)}
@@ -70,6 +72,14 @@ const EstablishmentUsersTable = ({
             highlight
           >
             <EditIcon fontSize="small" />
+          </DashboardTableActionButton>
+
+          <DashboardTableActionButton
+            title="Desasociar usuario"
+            onClick={() => onRemoveUser(params.row)}
+            ariaLabel={`Desasociar a ${params.row.nombre}`}
+          >
+            <DeleteIcon fontSize="small" />
           </DashboardTableActionButton>
         </div>
       ),

@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 /* Hooks */
-import useUsersQuery from '../../../hooks/queries/useUsersQuery'
+import useUsersQuery from '../../../../hooks/queries/useUsersQuery'
 
 /* Components */
-import UsersTable from '../../../components/dashboard/users/UsersTable'
-import UserFormDialog from '../../../components/dashboard/users/UserFormDialog'
-import DashboardPageHeader from '../../../components/dashboard/DashboardPageHeader'
-import DashboardRefreshButton from '../../../components/dashboard/DashboardRefreshButton'
-import AssignUserEstablishmentDialog from '../../../components/dashboard/users/AssignUserEstablishmentDialog'
+import UsersTable from '../../../../components/dashboard/admin/users/UsersTable'
+import UserFormDialog from '../../../../components/dashboard/admin/users/UserFormDialog'
+import DashboardPageHeader from '../../../../components/dashboard/DashboardPageHeader'
+import DashboardRefreshButton from '../../../../components/dashboard/DashboardRefreshButton'
+import AssignUserEstablishmentDialog from '../../../../components/dashboard/admin/users/AssignUserEstablishmentDialog'
 
 const AdminUsers = () => {
   // Usuario seleccionado para editar

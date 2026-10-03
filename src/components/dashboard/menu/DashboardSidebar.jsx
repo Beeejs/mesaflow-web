@@ -4,6 +4,7 @@ import MobileDrawer from '../../common/menu/MobileDrawer'
 import DashboardSidebarContent from './DashboardSidebarContent'
 
 const DashboardSidebar = ({
+  navigation,
   onLogout,
   isOpen = false,
   onClose,
@@ -19,6 +20,7 @@ const DashboardSidebar = ({
         triggerRef={triggerRef}
       >
         <DashboardSidebarContent
+          navigation={navigation}
           onLogout={onLogout}
           onClose={onClose}
           mobile
@@ -36,6 +38,7 @@ const DashboardSidebar = ({
         aria-label="Navegación del dashboard"
       >
         <DashboardSidebarContent
+          navigation={navigation}
           onLogout={onLogout}
           onClose={onClose}
         />

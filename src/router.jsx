@@ -11,10 +11,11 @@ import ProtectedRoute from './components/route/ProtectedRoute'
 /* Pages */
 import Home from './pages/home/Home'
 import Login from './pages/auth/Login'
-import Dashboard from './pages/dashboard/Dashboard'
-import AdminUsers from './pages/dashboard/users/AdminUsers'
-import AdminEstablishments from './pages/dashboard/establishments/AdminEstablishments'
-import AdminEstablishmentUsers from './pages/dashboard/establishments/AdminEstablishmentUsers'
+import AdminDashboard from './pages/dashboard/admin/AdminDashboard'
+import AdminUsers from './pages/dashboard/admin/users/AdminUsers'
+import AdminEstablishments from './pages/dashboard/admin/establishments/AdminEstablishments'
+import AdminEstablishmentUsers from './pages/dashboard/admin/establishments/AdminEstablishmentUsers'
+import WorkspaceSelector from './pages/workspace/WorkspaceSelector'
 
 const router = createBrowserRouter([
   {
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: Dashboard,
+            Component: AdminDashboard,
           },
           {
             path: 'usuarios',
@@ -61,6 +62,19 @@ const router = createBrowserRouter([
             Component: AdminEstablishmentUsers,
           },
         ],
+      },
+    ],
+  },
+  {
+    element: (
+      <ProtectedRoute
+        allowedRoles={['ADMIN', 'ENCARGADO', 'MOZO']}
+      />
+    ),
+    children: [
+      {
+        path: '/workspace',
+        Component: WorkspaceSelector,
       },
     ],
   },

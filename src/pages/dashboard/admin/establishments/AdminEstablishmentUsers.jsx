@@ -6,15 +6,15 @@ import { Link, useParams } from 'react-router'
 import { toast } from 'sonner'
 
 /* Hooks */
-import useEstablishmentUsersQuery from '../../../hooks/queries/useEstablishmentUsersQuery'
-import useEstablishmentsQuery from '../../../hooks/queries/useEstablishmentsQuery'
-import useRemoveEstablishmentUserMutation from '../../../hooks/mutations/useRemoveEstablishmentUserMutation'
+import useEstablishmentUsersQuery from '../../../../hooks/queries/useEstablishmentUsersQuery'
+import useEstablishmentsQuery from '../../../../hooks/queries/useEstablishmentsQuery'
+import useRemoveEstablishmentUserMutation from '../../../../hooks/mutations/useRemoveEstablishmentUserMutation'
 
 /* Components */
-import EstablishmentUsersTable from '../../../components/dashboard/establishments/EstablishmentUsersTable'
-import EstablishmentUserFormDialog from '../../../components/dashboard/establishments/EstablishmentUserFormDialog'
-import DefaultButton from '../../../components/common/button/DefaultButton'
-import DashboardPageHeader from '../../../components/dashboard/DashboardPageHeader'
+import EstablishmentUsersTable from '../../../../components/dashboard/admin/establishments/EstablishmentUsersTable'
+import EstablishmentUserFormDialog from '../../../../components/dashboard/admin/establishments/EstablishmentUserFormDialog'
+import DefaultButton from '../../../../components/common/button/DefaultButton'
+import DashboardPageHeader from '../../../../components/dashboard/DashboardPageHeader'
 
 const AdminEstablishmentUsers = () => {
   const { idEstablecimiento } = useParams()

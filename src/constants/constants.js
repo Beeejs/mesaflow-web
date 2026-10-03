@@ -4,6 +4,11 @@ import GroupIcon from '@mui/icons-material/Group'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import EventSeatIcon from '@mui/icons-material/EventSeat'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
+import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlined'
+import QrCode2OutlinedIcon from '@mui/icons-material/QrCode2Outlined'
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 
 export const navbarList = [
   {
@@ -154,7 +159,7 @@ export const metricsList = [
 ]
 
 
-export const dashboardNavigation = [
+export const adminDashboardNavigation  = [
   {
     label: 'Panel',
     to: '/dashboard',
@@ -170,6 +175,40 @@ export const dashboardNavigation = [
     label: 'Establecimientos',
     to: '/dashboard/establecimientos',
     icon: StorefrontIcon,
+  },
+]
+
+export const managerDashboardNavigation = [
+  {
+    label: 'Inicio',
+    to: '',
+    icon: DashboardIcon,
+    end: true,
+  },
+  {
+    label: 'Pedidos',
+    to: 'pedidos',
+    icon: AssignmentOutlinedIcon,
+  },
+  {
+    label: 'Reservas',
+    to: 'reservas',
+    icon: CalendarMonthOutlinedIcon,
+  },
+  {
+    label: 'Menú y stock',
+    to: 'menu-stock',
+    icon: RestaurantMenuOutlinedIcon,
+  },
+  {
+    label: 'Mesas',
+    to: 'mesas',
+    icon: QrCode2OutlinedIcon,
+  },
+  {
+    label: 'Usuarios',
+    to: 'usuarios',
+    icon: GroupOutlinedIcon,
   },
 ]
 

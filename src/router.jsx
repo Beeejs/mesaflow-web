@@ -3,10 +3,12 @@ import { createBrowserRouter } from 'react-router'
 /* Layouts */
 import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
-import DashboardLayout from './layouts/DashboardLayout'
+import AdminDashboardLayout from './layouts/AdminDashboardLayout'
+import EstablishmentDashboardLayout from './layouts/EstablishmentDashboardLayout'
 
 /* Routes */
 import ProtectedRoute from './components/route/ProtectedRoute'
+import EstablishmentRoute from './components/route/EstablishmentRoute'
 
 /* Pages */
 import Home from './pages/home/Home'
@@ -43,7 +45,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/dashboard',
-        Component: DashboardLayout,
+        Component: AdminDashboardLayout,
         children: [
           {
             index: true,
@@ -60,6 +62,30 @@ const router = createBrowserRouter([
           {
             path: 'establecimientos/:idEstablecimiento/usuarios',
             Component: AdminEstablishmentUsers,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <EstablishmentRoute />,
+        children: [
+          {
+            path: '/establecimientos/:idEstablecimiento',
+            Component: EstablishmentDashboardLayout,
+            children: [
+              {
+                index: true,
+                element: (
+                  <div>
+                    Dashboard del establecimiento
+                  </div>
+                ),
+              },
+            ],
           },
         ],
       },

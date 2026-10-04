@@ -12,6 +12,7 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 
 /* MUI Icons */
 import DashboardIcon from '@mui/icons-material/Dashboard'
@@ -77,6 +78,12 @@ const SessionMenu = ({ variant = 'default' }) => {
 
     navigate('/dashboard')
   }
+
+  // Función para navegar al selector de establecimientos
+  const handleGoToWorkspace = () => {
+    handleCloseMenu()
+    navigate('/workspace')
+}
 
   // Función para cerrar sesión y manejar la navegación
   const handleLogout = async () => {
@@ -219,8 +226,40 @@ const SessionMenu = ({ variant = 'default' }) => {
 
         <Divider sx={{ borderColor: '#1F2937' }} />
 
+        {(isDashboardVariant || user.rol === 'ADMIN') && (
+          <MenuItem
+            onClick={handleGoToDashboard}
+            sx={{
+              gap: 1,
+              py: 1.2,
+              fontSize: 14,
+              color: '#F8FAFC',
+              backgroundColor: '#0B111C',
+              '&:hover': {
+                backgroundColor: '#111827',
+                color: '#10C4FC',
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 32,
+                color: '#FFFFFF',
+              }}
+            >
+              {isDashboardVariant ? (
+                <HomeIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
+              ) : (
+                <DashboardIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
+              )}
+            </ListItemIcon>
+
+            {isDashboardVariant ? 'Inicio' : 'Mi panel'}
+          </MenuItem>
+        )}
+
         <MenuItem
-          onClick={handleGoToDashboard}
+          onClick={handleGoToWorkspace}
           sx={{
             gap: 1,
             py: 1.2,
@@ -239,13 +278,15 @@ const SessionMenu = ({ variant = 'default' }) => {
               color: '#FFFFFF',
             }}
           >
-            {isDashboardVariant ? (
-              <HomeIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
-            ) : (
-              <DashboardIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
-            )}
+            <StorefrontOutlinedIcon
+              sx={{
+                color: '#FFFFFF',
+                fontSize: 20,
+              }}
+            />
           </ListItemIcon>
-          {isDashboardVariant ? 'Inicio' : 'Mi panel'}
+
+          Mis establecimientos
         </MenuItem>
 
         <MenuItem

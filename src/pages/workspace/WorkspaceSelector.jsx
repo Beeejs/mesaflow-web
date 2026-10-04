@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 /* MUI Icons */
 import StorefrontIcon from '@mui/icons-material/Storefront'
@@ -14,10 +15,15 @@ import useMyEstablishmentsQuery from '../../hooks/queries/useMyEstablishmentsQue
 
 /* Context */
 import { SessionContext } from '../../context/SessionContext'
+import { WorkspaceContext } from '../../context/WorkspaceContext'
 
 const WorkspaceSelector = () => {
   // Hooks
   const { user } = useContext(SessionContext)
+
+  const { selectEstablishment } = useContext(WorkspaceContext)
+
+  const navigate = useNavigate()
 
   const [isRequestsOpen, setIsRequestsOpen] = useState(false)
 
@@ -41,9 +47,10 @@ const WorkspaceSelector = () => {
 
   // Funciones
   const handleSelectEstablishment = (establishment) => {
-    console.log(
-      'Establecimiento seleccionado:',
-      establishment
+    selectEstablishment(establishment)
+
+    navigate(
+      `/establecimientos/${establishment.idEstablecimiento}`
     )
   }
 

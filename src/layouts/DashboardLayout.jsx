@@ -9,10 +9,7 @@ import DashboardTopbar from '../components/dashboard/menu/DashboardTopbar'
 /* Context */
 import { SessionContext } from '../context/SessionContext'
 
-/* Constants */
-import { adminDashboardNavigation } from '../constants/constants'
-
-const DashboardLayout = () => {
+const DashboardLayout = ({ navigation }) => {
   const { logoutUser } = useContext(SessionContext)
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -28,7 +25,7 @@ const DashboardLayout = () => {
     <div className="min-h-screen bg-mesa-bg text-mesa-text">
       <div className="flex min-h-screen">
         <DashboardSidebar
-          navigation={adminDashboardNavigation}
+          navigation={navigation}
           onLogout={logoutUser}
           isOpen={isSidebarOpen}
           onClose={handleCloseSidebar}

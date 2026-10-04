@@ -212,6 +212,25 @@ export const managerDashboardNavigation = [
   },
 ]
 
+export const waiterDashboardNavigation = [
+  {
+    label: 'Inicio',
+    to: '',
+    icon: DashboardIcon,
+    end: true,
+  },
+  {
+    label: 'Pedidos',
+    to: 'pedidos',
+    icon: AssignmentOutlinedIcon,
+  },
+  {
+    label: 'Mesas',
+    to: 'mesas',
+    icon: QrCode2OutlinedIcon,
+  },
+]
+
 
 export const dashboardCards = [
   {

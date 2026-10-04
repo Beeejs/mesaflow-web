@@ -13,28 +13,31 @@ import router from './router.jsx'
 import queryClient from './api/queryClient'
 /* Context */
 import { SessionProvider } from './context/SessionContext.jsx'
+import { WorkspaceProvider } from './context/WorkspaceContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <SessionProvider>
-          <RouterProvider router={router} />
+          <WorkspaceProvider>
+            <RouterProvider router={router} />
 
-          <Toaster
-            richColors
-            position="top-right"
-            closeButton
-            toastOptions={{
-              style: {
-                background: '#0B111C',
-                color: '#F8FAFC',
-                border: '1px solid #1F2937',
-              },
-            }}
-          />
+            <Toaster
+              richColors
+              position="top-right"
+              closeButton
+              toastOptions={{
+                style: {
+                  background: '#0B111C',
+                  color: '#F8FAFC',
+                  border: '1px solid #1F2937',
+                },
+              }}
+            />
 
-          <ReactQueryDevtools initialIsOpen={false} />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </WorkspaceProvider>
         </SessionProvider>
       </QueryClientProvider>
     </GoogleOAuthProvider>

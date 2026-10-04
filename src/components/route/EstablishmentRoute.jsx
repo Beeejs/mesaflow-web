@@ -14,7 +14,10 @@ const EstablishmentRoute = () => {
   // Hooks
   const { idEstablecimiento } = useParams()
 
-  const { selectEstablishment } = useContext(WorkspaceContext)
+  const {
+    selectedEstablishment,
+    selectEstablishment,
+  } = useContext(WorkspaceContext)
 
   const {
     data: assignedEstablishments = [],
@@ -27,6 +30,10 @@ const EstablishmentRoute = () => {
     (item) =>
       item.idEstablecimiento === Number(idEstablecimiento)
   )
+
+  const isSelectedEstablishmentReady =
+  selectedEstablishment?.idEstablecimiento ===
+  establishment?.idEstablecimiento
 
   // useEffect
   useEffect(() => {
@@ -53,6 +60,16 @@ const EstablishmentRoute = () => {
       <Navigate
         to="/workspace"
         replace
+      />
+    )
+  }
+
+  if (!isSelectedEstablishmentReady) {
+    return (
+      <Loader
+        fullScreen
+        size={250}
+        showText={false}
       />
     )
   }

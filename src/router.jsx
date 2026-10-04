@@ -9,6 +9,7 @@ import EstablishmentDashboardLayout from './layouts/EstablishmentDashboardLayout
 /* Routes */
 import ProtectedRoute from './components/route/ProtectedRoute'
 import EstablishmentRoute from './components/route/EstablishmentRoute'
+import WorkspaceRoute from './components/route/WorkspaceRoute'
 
 /* Pages */
 import Home from './pages/home/Home'
@@ -18,6 +19,7 @@ import AdminUsers from './pages/dashboard/admin/users/AdminUsers'
 import AdminEstablishments from './pages/dashboard/admin/establishments/AdminEstablishments'
 import AdminEstablishmentUsers from './pages/dashboard/admin/establishments/AdminEstablishmentUsers'
 import WorkspaceSelector from './pages/workspace/WorkspaceSelector'
+import EstablishmentDashboard from './pages/dashboard/establishment/EstablishmentDashboard'
 
 const router = createBrowserRouter([
   {
@@ -79,11 +81,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: (
-                  <div>
-                    Dashboard del establecimiento
-                  </div>
-                ),
+                Component: EstablishmentDashboard,
               },
             ],
           },
@@ -92,15 +90,16 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: (
-      <ProtectedRoute
-        allowedRoles={['ADMIN', 'ENCARGADO', 'MOZO']}
-      />
-    ),
+    element: <ProtectedRoute />,
     children: [
       {
-        path: '/workspace',
-        Component: WorkspaceSelector,
+        element: <WorkspaceRoute />,
+        children: [
+          {
+            path: '/workspace',
+            Component: WorkspaceSelector,
+          },
+        ],
       },
     ],
   },

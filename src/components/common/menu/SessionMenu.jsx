@@ -22,6 +22,9 @@ import HomeIcon from '@mui/icons-material/Home'
 /* Context */
 import { SessionContext } from '../../../context/SessionContext'
 
+/* Hooks */
+import useAssignedEstablishmentsQuery from '../../../hooks/queries/useAssignedEstablishmentsQuery'
+
 // Función para obtener las iniciales del usuario
 const getInitials = (user) => {
   if (!user) {
@@ -54,8 +57,14 @@ const SessionMenu = ({ variant = 'default' }) => {
     logoutUser,
   } = useContext(SessionContext)
 
+  const {
+    data: assignedEstablishments = [],
+    isLoading: assignedEstablishmentsLoading,
+  } = useAssignedEstablishmentsQuery()
+
   const isMenuOpen = Boolean(anchorEl)
   const isDashboardVariant = variant === 'dashboard'
+  const hasAssignedEstablishments = assignedEstablishments.length > 0
 
   // Función para abrir el menú de sesión
   const handleOpenMenu = (event) => {
@@ -258,36 +267,38 @@ const SessionMenu = ({ variant = 'default' }) => {
           </MenuItem>
         )}
 
-        <MenuItem
-          onClick={handleGoToWorkspace}
-          sx={{
-            gap: 1,
-            py: 1.2,
-            fontSize: 14,
-            color: '#F8FAFC',
-            backgroundColor: '#0B111C',
-            '&:hover': {
-              backgroundColor: '#111827',
-              color: '#10C4FC',
-            },
-          }}
-        >
-          <ListItemIcon
+        {!assignedEstablishmentsLoading && hasAssignedEstablishments && (
+          <MenuItem
+            onClick={handleGoToWorkspace}
             sx={{
-              minWidth: 32,
-              color: '#FFFFFF',
+              gap: 1,
+              py: 1.2,
+              fontSize: 14,
+              color: '#F8FAFC',
+              backgroundColor: '#0B111C',
+              '&:hover': {
+                backgroundColor: '#111827',
+                color: '#10C4FC',
+              },
             }}
           >
-            <StorefrontOutlinedIcon
+            <ListItemIcon
               sx={{
+                minWidth: 32,
                 color: '#FFFFFF',
-                fontSize: 20,
               }}
-            />
-          </ListItemIcon>
+            >
+              <StorefrontOutlinedIcon
+                sx={{
+                  color: '#FFFFFF',
+                  fontSize: 20,
+                }}
+              />
+            </ListItemIcon>
 
-          Mis establecimientos
-        </MenuItem>
+            Mis establecimientos
+          </MenuItem>
+        )}
 
         <MenuItem
           onClick={handleLogout}

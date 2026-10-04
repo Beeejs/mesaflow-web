@@ -4,6 +4,7 @@ import GroupIcon from '@mui/icons-material/Group'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import EventSeatIcon from '@mui/icons-material/EventSeat'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu'
 
 export const navbarList = [
   {
@@ -170,6 +171,16 @@ export const dashboardNavigation = [
     label: 'Establecimientos',
     to: '/dashboard/establecimientos',
     icon: StorefrontIcon,
+  },
+]
+
+
+// Navegación del panel de gestión del establecimiento (encargado)
+export const managementNavigation = [
+  {
+    label: 'Menú y stock',
+    to: '/gestion/menu-stock',
+    icon: RestaurantMenuIcon,
   },
 ]
 

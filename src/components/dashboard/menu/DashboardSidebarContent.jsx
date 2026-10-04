@@ -1,4 +1,5 @@
 
+import { useContext } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 
@@ -12,13 +13,24 @@ import DashboardSidebarAction from './DashboardSidebarAction'
 import MobileMenuButton from '../../common/menu/MobileMenuButton'
 
 /* Constants */
-import { dashboardNavigation } from '../../../constants/constants'
+import {
+  dashboardNavigation,
+  managementNavigation,
+} from '../../../constants/constants'
+
+/* Context */
+import { SessionContext } from '../../../context/SessionContext'
 
 const DashboardSidebarContent = ({
   onLogout,
   onClose,
   mobile = false,
 }) => {
+  const { user } = useContext(SessionContext)
+
+  const navigationItems =
+    user?.rol === 'ADMIN' ? dashboardNavigation : managementNavigation
+
   const handleLogout = async () => {
     try {
       await onLogout()
@@ -63,7 +75,7 @@ const DashboardSidebarContent = ({
       </div>
 
       <nav className="mt-10 grid gap-2">
-        {dashboardNavigation.map((item) => (
+        {navigationItems.map((item) => (
           <DashboardNavLink
             key={item.to}
             to={item.to}

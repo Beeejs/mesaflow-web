@@ -75,7 +75,7 @@ const SessionMenu = ({ variant = 'default' }) => {
       return
     }
 
-    navigate('/dashboard')
+    navigate(user?.rol === 'ADMIN' ? '/dashboard' : '/gestion')
   }
 
   // Función para cerrar sesión y manejar la navegación

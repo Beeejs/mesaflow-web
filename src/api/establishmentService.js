@@ -17,6 +17,13 @@ export const listMyEstablishments = async () => {
   return handleApiResponse(response.data)
 }
 
+// Función para listar los establecimientos en los que el usuario tiene una asignación activa
+export const listAssignedEstablishments = async () => {
+  const response = await api.get('/api/establecimientos/asignados')
+
+  return handleApiResponse(response.data)
+}
+
 // Función para crear un establecimiento
 export const createEstablishment = async (establishmentData) => {
   const response = await api.post(

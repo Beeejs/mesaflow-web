@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, Navigate } from 'react-router'
 
 /* Layouts */
 import MainLayout from './layouts/MainLayout'
@@ -15,6 +15,7 @@ import Dashboard from './pages/dashboard/Dashboard'
 import AdminUsers from './pages/dashboard/users/AdminUsers'
 import AdminEstablishments from './pages/dashboard/establishments/AdminEstablishments'
 import AdminEstablishmentUsers from './pages/dashboard/establishments/AdminEstablishmentUsers'
+import MenuStock from './pages/dashboard/menu-stock/MenuStock'
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,26 @@ const router = createBrowserRouter([
           {
             path: 'establecimientos/:idEstablecimiento/usuarios',
             Component: AdminEstablishmentUsers,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    // El acceso real lo controla el backend según el rol en el establecimiento
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: '/gestion',
+        Component: DashboardLayout,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="menu-stock" replace />,
+          },
+          {
+            path: 'menu-stock',
+            Component: MenuStock,
           },
         ],
       },

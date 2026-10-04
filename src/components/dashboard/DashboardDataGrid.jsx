@@ -11,10 +11,12 @@ const DashboardDataGrid = ({
   emptyMessage = 'No hay datos para mostrar.',
   pageSize = 10,
   minHeight = 360,
+  rowHeight,
 }) => {
   return (
     <DataGrid
       rows={rows}
+      rowHeight={rowHeight}
       columns={columns}
       getRowId={getRowId}
       loading={loading}

@@ -1,0 +1,80 @@
+import { useContext, useEffect } from 'react'
+import { Navigate, Outlet, useParams } from 'react-router'
+
+/* Components */
+import Loader from '../common/loader/Loader'
+
+/* Hooks */
+import useAssignedEstablishmentsQuery from '../../hooks/queries/useAssignedEstablishmentsQuery'
+
+/* Context */
+import { WorkspaceContext } from '../../context/WorkspaceContext'
+
+const AssignedEstablishmentRoute = () => {
+  // Hooks
+  const { idEstablecimiento } = useParams()
+
+  const {
+    selectedEstablishment,
+    selectEstablishment,
+  } = useContext(WorkspaceContext)
+
+  const {
+    data: establishments = [],
+    isLoading,
+    isError,
+  } = useAssignedEstablishmentsQuery()
+
+  // Constantes derivadas
+  const establishment = establishments.find(
+    (item) =>
+      item.idEstablecimiento === Number(idEstablecimiento)
+  )
+
+  const isSelectedEstablishmentReady =
+    selectedEstablishment?.idEstablecimiento ===
+    establishment?.idEstablecimiento
+
+  // useEffect
+  useEffect(() => {
+    if (!establishment) {
+      return
+    }
+
+    selectEstablishment(establishment)
+  }, [establishment, selectEstablishment])
+
+  // Renderizado
+  if (isLoading) {
+    return (
+      <Loader
+        fullScreen
+        size={250}
+        showText={false}
+      />
+    )
+  }
+
+  if (isError || !establishment) {
+    return (
+      <Navigate
+        to="/dashboard/mis-establecimientos"
+        replace
+      />
+    )
+  }
+
+  if (!isSelectedEstablishmentReady) {
+    return (
+      <Loader
+        fullScreen
+        size={250}
+        showText={false}
+      />
+    )
+  }
+
+  return <Outlet />
+}
+
+export default AssignedEstablishmentRoute

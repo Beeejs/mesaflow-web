@@ -20,8 +20,8 @@ import HomeIcon from '@mui/icons-material/Home'
 
 /* Context */
 import { SessionContext } from '../../../context/SessionContext'
+import { WorkspaceContext } from '../../../context/WorkspaceContext'
 
-// Función para obtener las iniciales del usuario
 const getInitials = (user) => {
   if (!user) {
     return ''
@@ -53,6 +53,9 @@ const SessionMenu = ({ variant = 'default' }) => {
     logoutUser,
   } = useContext(SessionContext)
 
+  const { clearEstablishment } = useContext(WorkspaceContext)
+
+
   const isMenuOpen = Boolean(anchorEl)
   const isDashboardVariant = variant === 'dashboard'
 
@@ -83,6 +86,7 @@ const SessionMenu = ({ variant = 'default' }) => {
     try {
       await logoutUser()
 
+      clearEstablishment()
       handleCloseMenu()
 
       toast.success('Sesión cerrada correctamente.')
@@ -245,8 +249,10 @@ const SessionMenu = ({ variant = 'default' }) => {
               <DashboardIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
             )}
           </ListItemIcon>
+
           {isDashboardVariant ? 'Inicio' : 'Mi panel'}
         </MenuItem>
+
 
         <MenuItem
           onClick={handleLogout}

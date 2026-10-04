@@ -8,9 +8,12 @@ import DashboardTopbar from '../components/dashboard/menu/DashboardTopbar'
 
 /* Context */
 import { SessionContext } from '../context/SessionContext'
+import { WorkspaceContext } from '../context/WorkspaceContext'
 
-const DashboardLayout = () => {
+
+const DashboardLayout = ({ navigation }) => {
   const { logoutUser } = useContext(SessionContext)
+  const { clearEstablishment } = useContext(WorkspaceContext)
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
@@ -21,11 +24,17 @@ const DashboardLayout = () => {
     setIsSidebarOpen(false)
   }
 
+  const handleLogout = async () => {
+    await logoutUser()
+    clearEstablishment()
+  }
+
   return (
     <div className="min-h-screen bg-mesa-bg text-mesa-text">
       <div className="flex min-h-screen">
         <DashboardSidebar
-          onLogout={logoutUser}
+          navigation={navigation}
+          onLogout={handleLogout}
           isOpen={isSidebarOpen}
           onClose={handleCloseSidebar}
           triggerRef={sidebarTriggerRef}

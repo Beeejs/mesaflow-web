@@ -7,25 +7,25 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
 /* Components */
-import DashboardFormDialog from '../DashboardFormDialog'
+import DashboardFormDialog from '../../DashboardFormDialog'
 
 /* Hooks */
-import useProvincesQuery from '../../../hooks/queries/useProvincesQuery'
-import useDistrictsQuery from '../../../hooks/queries/useDistrictsQuery'
-import useEstablishmentStatesQuery from '../../../hooks/queries/useEstablishmentStatesQuery'
-import useUpdateEstablishmentMutation from '../../../hooks/mutations/useUpdateEstablishmentMutation'
+import useProvincesQuery from '../../../../hooks/queries/useProvincesQuery'
+import useDistrictsQuery from '../../../../hooks/queries/useDistrictsQuery'
+import useEstablishmentStatesQuery from '../../../../hooks/queries/useEstablishmentStatesQuery'
+import useUpdateEstablishmentMutation from '../../../../hooks/mutations/useUpdateEstablishmentMutation'
 
 /* Utils */
-import { hasFormChanges } from '../../../utils/formUtils'
+import { hasFormChanges } from '../../../../utils/formUtils'
 
 /* Constants */
-import { establishmentFields } from '../../../constants/constants'
+import { establishmentFields } from '../../../../constants/constants'
 
 /* Styles */
 import {
   textFieldStyles,
   selectSlotProps,
-} from '../../../styles/formStyles'
+} from '../../../../styles/formStyles'
 
 const EstablishmentFormDialog = ({
   open,

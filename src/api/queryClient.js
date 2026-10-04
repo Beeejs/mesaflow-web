@@ -26,6 +26,7 @@ export const queryKeys = {
     'users',
   ],
   establishmentRoles: ['establishment-roles'],
+  assignedEstablishments: ['assigned-establishments'],
 }
 
 export default queryClient

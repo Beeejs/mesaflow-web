@@ -1,14 +1,14 @@
 
 /* Components */
-import DashboardDataGrid from '../DashboardDataGrid'
-import DashboardTableActionButton from '../DashboardTableActionButton'
+import DashboardDataGrid from '../../DashboardDataGrid'
+import DashboardTableActionButton from '../../DashboardTableActionButton'
 
 /* MUI */
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
 
 /* Utils */
-import { formatDate } from '../../../utils/dateUtils'
+import { formatDate } from '../../../../utils/dateUtils'
 
 const EstablishmentUsersTable = ({
   users = [],

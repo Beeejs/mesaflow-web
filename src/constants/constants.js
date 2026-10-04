@@ -1,9 +1,11 @@
 /* MUI Icons */
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import GroupIcon from '@mui/icons-material/Group'
-import StorefrontIcon from '@mui/icons-material/Storefront'
-import EventSeatIcon from '@mui/icons-material/EventSeat'
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
+import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlined'
+import QrCode2OutlinedIcon from '@mui/icons-material/QrCode2Outlined'
 
 export const navbarList = [
   {
@@ -153,55 +155,69 @@ export const metricsList = [
   },
 ]
 
-
-export const dashboardNavigation = [
+export const adminDashboardNavigation = [
   {
-    label: 'Panel',
+    label: 'Usuarios',
+    to: '/dashboard/usuarios',
+    icon: GroupOutlinedIcon,
+  },
+  {
+    label: 'Establecimientos',
+    to: '/dashboard/establecimientos',
+    icon: StorefrontOutlinedIcon,
+  },
+]
+
+export const userDashboardNavigation = [
+  {
+    label: 'Inicio',
     to: '/dashboard',
     icon: DashboardIcon,
     end: true,
   },
   {
-    label: 'Usuarios',
-    to: '/dashboard/usuarios',
-    icon: GroupIcon,
+    label: 'Mis solicitudes',
+    to: '/dashboard/mis-solicitudes',
+    icon: AssignmentOutlinedIcon,
   },
   {
-    label: 'Establecimientos',
-    to: '/dashboard/establecimientos',
-    icon: StorefrontIcon,
+    label: 'Mis establecimientos',
+    to: '/dashboard/mis-establecimientos',
+    icon: StorefrontOutlinedIcon,
   },
 ]
 
-
-export const dashboardCards = [
+export const getEstablishmentDashboardNavigation = (idEstablecimiento) => [
   {
-    title: 'Usuarios',
-    description: 'Administrá los usuarios globales de MesaFlow.',
-    to: '/dashboard/usuarios',
-    icon: GroupIcon,
-    available: true,
+    label: 'Inicio',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}`,
+    icon: DashboardIcon,
+    end: true,
   },
   {
-    title: 'Establecimientos',
-    description: 'Consultá y gestioná los establecimientos registrados.',
-    to: '/dashboard/establecimientos',
-    icon: StorefrontIcon,
-    available: true,
+    label: 'Pedidos',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/pedidos`,
+    icon: AssignmentOutlinedIcon,
   },
   {
-    title: 'Reservas',
-    description: 'Módulo pendiente de implementación.',
-    to: '#',
-    icon: EventSeatIcon,
-    available: false,
+    label: 'Reservas',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/reservas`,
+    icon: CalendarMonthOutlinedIcon,
   },
   {
-    title: 'Pedidos',
-    description: 'Módulo pendiente de implementación.',
-    to: '#',
-    icon: ReceiptLongIcon,
-    available: false,
+    label: 'Menú y stock',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/menu-stock`,
+    icon: RestaurantMenuOutlinedIcon,
+  },
+  {
+    label: 'Mesas',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/mesas`,
+    icon: QrCode2OutlinedIcon,
+  },
+  {
+    label: 'Usuarios',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/usuarios`,
+    icon: GroupOutlinedIcon,
   },
 ]
 

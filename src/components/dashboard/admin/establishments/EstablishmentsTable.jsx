@@ -6,12 +6,12 @@ import GroupIcon from '@mui/icons-material/Group'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 /* Components */
-import DashboardDataGrid from '../DashboardDataGrid'
+import DashboardDataGrid from '../../DashboardDataGrid'
 import EstablishmentStatusChip from './EstablishmentStatusChip'
-import DashboardTableActionButton from '../DashboardTableActionButton'
+import DashboardTableActionButton from '../../DashboardTableActionButton'
 
 /* Utils */
-import { formatDate } from '../../../utils/dateUtils'
+import { formatDate } from '../../../../utils/dateUtils'
 
 const EstablishmentsTable = ({
   establishments = [],

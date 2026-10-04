@@ -39,3 +39,12 @@ export const updateEstablishment = async (
 
   return handleApiResponse(response.data)
 }
+
+// Función para listar los establecimientos asignados al usuario
+export const listAssignedEstablishments = async () => {
+  const response = await api.get(
+    '/api/establecimientos/asignados'
+  )
+
+  return handleApiResponse(response.data)
+}

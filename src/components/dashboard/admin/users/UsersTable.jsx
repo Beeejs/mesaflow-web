@@ -3,12 +3,12 @@ import EditIcon from '@mui/icons-material/Edit'
 import GroupAddIcon from '@mui/icons-material/GroupAdd'
 
 /* Components */
-import DashboardDataGrid from '../../../components/dashboard/DashboardDataGrid'
+import DashboardDataGrid from '../../../../components/dashboard/DashboardDataGrid'
 import UserStatusChip from './UserStatusChip'
-import DashboardTableActionButton from '../DashboardTableActionButton'
+import DashboardTableActionButton from '../../DashboardTableActionButton'
 
 /* Utils */
-import { formatDate } from '../../../utils/dateUtils'
+import { formatDate } from '../../../../utils/dateUtils'
 
 const UsersTable = ({ users = [], loading = false, onEditUser, onAssignUser }) => {
   const columns = [

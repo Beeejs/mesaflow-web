@@ -7,21 +7,21 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
 /* Components */
-import DashboardFormDialog from '../DashboardFormDialog'
+import DashboardFormDialog from '../../DashboardFormDialog'
 
 /* API */
-import { searchEstablishmentUser } from '../../../api/establishmentUserService'
+import { searchEstablishmentUser } from '../../../../api/establishmentUserService'
 
 /* Hooks */
-import useEstablishmentRolesQuery from '../../../hooks/queries/useEstablishmentRolesQuery'
-import useAddEstablishmentUserMutation from '../../../hooks/mutations/useAddEstablishmentUserMutation'
-import useUpdateEstablishmentUserMutation from '../../../hooks/mutations/useUpdateEstablishmentUserMutation'
+import useEstablishmentRolesQuery from '../../../../hooks/queries/useEstablishmentRolesQuery'
+import useAddEstablishmentUserMutation from '../../../../hooks/mutations/useAddEstablishmentUserMutation'
+import useUpdateEstablishmentUserMutation from '../../../../hooks/mutations/useUpdateEstablishmentUserMutation'
 
 /* Styles */
 import {
   textFieldStyles,
   selectSlotProps,
-} from '../../../styles/formStyles'
+} from '../../../../styles/formStyles'
 
 
 const EstablishmentUserFormDialog = ({

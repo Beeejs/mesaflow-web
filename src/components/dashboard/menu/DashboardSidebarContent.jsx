@@ -11,10 +11,8 @@ import DashboardNavLink from './DashboardNavLink'
 import DashboardSidebarAction from './DashboardSidebarAction'
 import MobileMenuButton from '../../common/menu/MobileMenuButton'
 
-/* Constants */
-import { dashboardNavigation } from '../../../constants/constants'
-
 const DashboardSidebarContent = ({
+  navigation,
   onLogout,
   onClose,
   mobile = false,
@@ -63,7 +61,7 @@ const DashboardSidebarContent = ({
       </div>
 
       <nav className="mt-10 grid gap-2">
-        {dashboardNavigation.map((item) => (
+        {navigation.map((item) => (
           <DashboardNavLink
             key={item.to}
             to={item.to}

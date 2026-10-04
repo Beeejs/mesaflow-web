@@ -8,23 +8,23 @@ import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 
 /* Components */
-import DashboardFormDialog from '../DashboardFormDialog'
+import DashboardFormDialog from '../../DashboardFormDialog'
 
 /* Hooks */
-import useRolesQuery from '../../../hooks/queries/useRolesQuery'
-import useUpdateUserMutation from '../../../hooks/mutations/useUpdateUserMutation'
+import useRolesQuery from '../../../../hooks/queries/useRolesQuery'
+import useUpdateUserMutation from '../../../../hooks/mutations/useUpdateUserMutation'
 
 /* Constants */
-import { userFields } from '../../../constants/constants'
+import { userFields } from '../../../../constants/constants'
 
 /* Utils */
-import { hasFormChanges } from '../../../utils/formUtils'
+import { hasFormChanges } from '../../../../utils/formUtils'
 
 /* Styles */
 import {
   textFieldStyles,
   selectSlotProps,
-} from '../../../styles/formStyles'
+} from '../../../../styles/formStyles'
 
 const UserFormDialog = ({
   open,

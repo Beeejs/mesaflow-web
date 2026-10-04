@@ -2,8 +2,8 @@ import { getStockStatus } from '../../../utils/productUtils'
 
 const dotColors = {
   green: 'bg-green-500',
-  yellow: 'bg-yellow-500',
   orange: 'bg-orange-500',
+  red: 'bg-red-500',
 }
 
 const SummaryCard = ({ label, value, dot, active = false, onClick }) => {
@@ -43,15 +43,13 @@ const MenuStockSummary = ({
     (product) => product.visibleMenu
   ).length
 
-  // Sin cantidades informadas por el backend no se puede calcular
-  const hasStockData = products.some(
-    (product) => getStockStatus(product) !== 'SIN_DATO' &&
-      getStockStatus(product) !== 'SIN_CONTROL'
-  )
-  const countByStatus = (status) =>
-    hasStockData
-      ? products.filter((product) => getStockStatus(product) === status).length
-      : '-'
+  const hiddenCount = products.filter(
+    (product) => !product.visibleMenu
+  ).length
+  const outOfStockCount = products.filter(
+    (product) => getStockStatus(product) === 'SIN_STOCK'
+  ).length
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <SummaryCard
@@ -70,17 +68,17 @@ const MenuStockSummary = ({
       />
 
       <SummaryCard
-        label="Stock bajo"
-        value={countByStatus('BAJO')}
-        dot="yellow"
-        active={filter === 'bajo'}
-        onClick={() => onFilterChange('bajo')}
+        label="Ocultos del menú"
+        value={hiddenCount}
+        dot="orange"
+        active={filter === 'ocultos'}
+        onClick={() => onFilterChange('ocultos')}
       />
 
       <SummaryCard
         label="Sin stock"
-        value={countByStatus('SIN_STOCK')}
-        dot="orange"
+        value={outOfStockCount}
+        dot="red"
         active={filter === 'sin'}
         onClick={() => onFilterChange('sin')}
       />

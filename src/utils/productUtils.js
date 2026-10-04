@@ -55,18 +55,14 @@ export const formatPrice = (value) => {
   }).format(number)
 }
 
-// Umbral provisorio hasta que el backend informe un stock mínimo por producto
-export const LOW_STOCK_THRESHOLD = 5
-
-// Devuelve 'SIN_CONTROL', 'SIN_DATO', 'SIN_STOCK', 'BAJO' u 'OK'
+// Devuelve 'SIN_CONTROL', 'SIN_DATO', 'SIN_STOCK' u 'OK'
 export const getStockStatus = (product) => {
   if (!product?.controlaStock) return 'SIN_CONTROL'
 
-  const quantity = product.cantidadActual
+  const quantity = product.stockActual
 
   if (typeof quantity !== 'number') return 'SIN_DATO'
   if (quantity <= 0) return 'SIN_STOCK'
-  if (quantity <= (product.stockMinimo ?? LOW_STOCK_THRESHOLD)) return 'BAJO'
 
   return 'OK'
 }

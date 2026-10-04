@@ -9,9 +9,6 @@ import TextField from '@mui/material/TextField'
 /* MUI Icons */
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 
-/* Utils */
-import { getProductImage } from '../../../utils/productUtils'
-
 /* Components */
 import DashboardFormDialog from '../DashboardFormDialog'
 import DefaultButton from '../../common/button/DefaultButton'
@@ -22,7 +19,6 @@ import useCreateProductMutation from '../../../hooks/mutations/useCreateProductM
 import useUpdateProductMutation from '../../../hooks/mutations/useUpdateProductMutation'
 import useCreateProductCategoryMutation from '../../../hooks/mutations/useCreateProductCategoryMutation'
 
-/* Utils */
 /* Styles */
 import {
   textFieldStyles,
@@ -62,10 +58,8 @@ const ProductFormDialog = ({
     visibleMenu: product?.visibleMenu ?? true,
   })
 
-  // Los campos de stock se muestran pero aún no se envían al backend
   const [stockData, setStockData] = useState({
     stockInicial: '0',
-    stockMinimo: '5',
   })
   const [imageFile, setImageFile] = useState(null)
   const imageInputRef = useRef(null)
@@ -145,11 +139,6 @@ const ProductFormDialog = ({
     ? formData.idCategoriaProducto
     : ''
 
-  const selectedCategoryName = categories.find(
-    (category) =>
-      category.idCategoriaProducto === Number(selectedCategory)
-  )?.nombre ?? product?.categoria
-
   const handleCreateCategory = async () => {
     const nombre = newCategoryName.trim()
 
@@ -193,6 +182,20 @@ const ProductFormDialog = ({
       return
     }
 
+    const needsInitialStock =
+      formData.controlaStock && !product?.stockInicializado
+    const initialStock = Number(stockData.stockInicial)
+
+    if (
+      needsInitialStock &&
+      (!Number.isInteger(initialStock) || initialStock < 0)
+    ) {
+      toast.error(
+        'El stock inicial debe ser un número entero igual o mayor a cero.'
+      )
+      return
+    }
+
     const productData = {
       idCategoriaProducto: Number(selectedCategory),
       nombre: formData.nombre.trim(),
@@ -200,6 +203,7 @@ const ProductFormDialog = ({
       precio: price,
       controlaStock: formData.controlaStock,
       visibleMenu: formData.visibleMenu,
+      ...(needsInitialStock && { stockInicial: initialStock }),
     }
 
     try {
@@ -248,17 +252,15 @@ const ProductFormDialog = ({
           }}
           className="flex shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-mesa-bg text-slate-500"
         >
-          <img
-            src={
-              imagePreview ??
-              getProductImage({
-                imagenUrl: product?.imagenUrl,
-                categoria: selectedCategoryName,
-              })
-            }
-            alt="Imagen del producto"
-            className="h-full w-full object-cover"
-          />
+          {imagePreview || product?.imagenUrl ? (
+            <img
+              src={imagePreview ?? product.imagenUrl}
+              alt="Imagen del producto"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <ImageOutlinedIcon sx={{ fontSize: 48 }} />
+          )}
         </div>
 
         <div>
@@ -280,13 +282,16 @@ const ProductFormDialog = ({
                 onClick={() => setImageFile(null)}
                 disabled={isSaving}
               >
-                Quitar
+                Descartar foto nueva
               </DefaultButton>
             )}
           </div>
 
           <p className="mt-3 text-xs text-slate-500">
-            JPG, PNG o WEBP de hasta 2 MB. Si no subís una, se usa una genérica.
+            JPG, PNG o WEBP de hasta 2 MB.
+            {product?.imagenUrl && !imageFile
+              ? ' Para quitar una foto guardada hace falta una operación del backend; por ahora podés reemplazarla.'
+              : ' Si no subís una, el producto queda sin foto propia.'}
           </p>
 
           <input
@@ -434,33 +439,22 @@ const ProductFormDialog = ({
         />
       </div>
 
-      {formData.controlaStock && (
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <TextField
-            label="Stock inicial"
-            name="stockInicial"
-            type="number"
-            value={stockData.stockInicial}
-            onChange={handleStockChange}
-            disabled={isSaving || isEditing}
-            fullWidth
-            sx={textFieldStyles}
-            slotProps={{ htmlInput: { min: 0, step: 1 } }}
-          />
-
-          <TextField
-            label="Avisar con stock bajo en"
-            name="stockMinimo"
-            type="number"
-            value={stockData.stockMinimo}
-            onChange={handleStockChange}
-            disabled={isSaving}
-            fullWidth
-            sx={textFieldStyles}
-            slotProps={{ htmlInput: { min: 0, step: 1 } }}
-          />
-        </div>
-      )}
+      {formData.controlaStock &&
+        (!isEditing || !product.stockInicializado) && (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <TextField
+              label="Stock inicial"
+              name="stockInicial"
+              type="number"
+              value={stockData.stockInicial}
+              onChange={handleStockChange}
+              disabled={isSaving}
+              fullWidth
+              sx={textFieldStyles}
+              slotProps={{ htmlInput: { min: 0, step: 1 } }}
+            />
+          </div>
+        )}
 
       <div className="mt-6 flex items-center justify-between gap-4 border-t border-mesa-border pt-5">
         <div>

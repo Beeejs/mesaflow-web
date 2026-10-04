@@ -29,12 +29,19 @@ const ActionButton = ({ tone, title, onClick, disabled, children }) => (
   </button>
 )
 
-const MenuSwitch = ({ checked, disabled, label, onChange }) => (
+const MenuSwitch = ({
+  checked,
+  disabled,
+  disabledReason,
+  label,
+  onChange,
+}) => (
   <button
     type="button"
     role="switch"
     aria-checked={checked}
     aria-label={label}
+    title={disabledReason}
     disabled={disabled}
     onClick={onChange}
     className={`relative h-[26px] w-[46px] cursor-pointer rounded-full transition disabled:cursor-wait disabled:opacity-60 ${
@@ -74,7 +81,7 @@ const AvailabilityChip = ({ product }) => {
   if (status === 'SIN_DATO') {
     return (
       <span className={`${chipBase} border-white/10 bg-white/5 text-slate-400`}>
-        Stock pendiente
+        Stock sin inicializar
       </span>
     )
   }
@@ -88,17 +95,22 @@ const AvailabilityChip = ({ product }) => {
 
 const StockCell = ({ product, onClick }) => {
   const status = getStockStatus(product)
+  const stockInitialized = Boolean(product.stockInicializado)
 
   return (
     <div className="flex items-center gap-2">
       <button
         type="button"
         onClick={onClick}
-        title="Registrar movimiento"
+        title={
+          stockInitialized
+            ? 'Registrar movimiento'
+            : 'Configurar el stock inicial'
+        }
         className="cursor-pointer text-lg font-bold text-white hover:text-mesa-primary"
       >
-        {typeof product.cantidadActual === 'number'
-          ? product.cantidadActual
+        {typeof product.stockActual === 'number'
+          ? product.stockActual
           : '-'}
       </button>
 
@@ -107,10 +119,9 @@ const StockCell = ({ product, onClick }) => {
           Sin stock
         </span>
       )}
-
-      {status === 'BAJO' && (
-        <span className="rounded-md bg-yellow-500/15 px-2 py-0.5 text-xs font-semibold text-yellow-500">
-          Bajo
+      {status === 'SIN_DATO' && (
+        <span className="rounded-md bg-white/5 px-2 py-0.5 text-xs font-semibold text-slate-400">
+          Sin iniciar
         </span>
       )}
     </div>
@@ -201,17 +212,35 @@ const ProductsTable = ({
                 {product.controlaStock ? (
                   <StockCell
                     product={product}
-                    onClick={() => onAdjustStock(product)}
+                    onClick={() =>
+                      product.stockInicializado
+                        ? onAdjustStock(product)
+                        : onEditProduct(product)
+                    }
                   />
                 ) : (
-                  <span className="text-sm text-slate-500">Sin control</span>
+                  <button
+                    type="button"
+                    onClick={() => onEditProduct(product)}
+                    className="cursor-pointer text-sm font-semibold text-mesa-primary hover:text-mesa-cyan"
+                  >
+                    Activar stock
+                  </button>
                 )}
               </td>
 
               <td className="px-4 py-4">
                 <MenuSwitch
                   checked={Boolean(product.visibleMenu)}
-                  disabled={togglingId === product.idProducto}
+                  disabled={
+                    togglingId === product.idProducto ||
+                    (product.controlaStock && !product.stockInicializado)
+                  }
+                  disabledReason={
+                    product.controlaStock && !product.stockInicializado
+                      ? 'Inicializá el stock desde Editar producto'
+                      : undefined
+                  }
                   label={`Mostrar ${product.nombre} en el menú`}
                   onChange={() => onToggleVisible(product)}
                 />
@@ -225,9 +254,16 @@ const ProductsTable = ({
                 <div className="flex items-center justify-center gap-2">
                   <ActionButton
                     tone="stock"
-                    title={`Reingresar stock de ${product.nombre}`}
-                    onClick={() => onAdjustStock(product)}
-                    disabled={!product.controlaStock}
+                    title={
+                      product.stockInicializado
+                        ? `Registrar movimiento de ${product.nombre}`
+                        : `Configurar stock inicial de ${product.nombre}`
+                    }
+                    onClick={() =>
+                      product.controlaStock && product.stockInicializado
+                        ? onAdjustStock(product)
+                        : onEditProduct(product)
+                    }
                   >
                     <AddIcon sx={{ fontSize: 20 }} />
                   </ActionButton>

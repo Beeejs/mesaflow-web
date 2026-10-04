@@ -117,7 +117,12 @@ const MenuStock = () => {
   const {
     data: movements = [],
     isLoading: movementsLoading,
-  } = useStockMovementsQuery(idEstablecimiento)
+    error: movementsError,
+  } = useStockMovementsQuery(
+    idEstablecimiento,
+    products,
+    !productsLoading
+  )
 
   const updateMutation = useUpdateProductMutation(idEstablecimiento)
   const deleteMutation = useDeleteProductMutation(idEstablecimiento)
@@ -129,6 +134,17 @@ const MenuStock = () => {
       )
     }
   }, [productsError])
+
+  useEffect(() => {
+    if (movementsError) {
+      toast.error(
+        getErrorMessage(
+          movementsError,
+          'No se pudieron cargar los movimientos de stock.'
+        )
+      )
+    }
+  }, [movementsError])
 
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase()
@@ -143,12 +159,12 @@ const MenuStock = () => {
         !categoryFilter ||
         product.idCategoriaProducto === Number(categoryFilter)
 
-      const status = getStockStatus(product)
       const matchesSummary =
         summaryFilter === 'todos' ||
         (summaryFilter === 'menu' && product.visibleMenu) ||
-        (summaryFilter === 'bajo' && status === 'BAJO') ||
-        (summaryFilter === 'sin' && status === 'SIN_STOCK')
+        (summaryFilter === 'ocultos' && !product.visibleMenu) ||
+        (summaryFilter === 'sin' &&
+          getStockStatus(product) === 'SIN_STOCK')
 
       return matchesSearch && matchesCategory && matchesSummary
     })

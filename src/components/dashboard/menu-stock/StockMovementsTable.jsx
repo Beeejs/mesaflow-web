@@ -25,12 +25,8 @@ const formatHour = (value) =>
       })
     : '-'
 
-const isOutgoing = (movement) =>
-  movement.tipo === 'EGRESO' ||
-  movement.tipo === 'VENTA' ||
-  Number(movement.cantidad) < 0
+const isOutgoing = (movement) => Number(movement.cantidad) < 0
 
-// Las claves de los campos son provisorias hasta que el backend defina el contrato
 const StockMovementsTable = ({ movements = [], loading = false }) => {
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
@@ -39,10 +35,16 @@ const StockMovementsTable = ({ movements = [], loading = false }) => {
     const term = search.trim().toLowerCase()
 
     return movements.filter((movement) => {
-      const matchesType = !typeFilter || movement.tipo === typeFilter
+      const matchesType =
+        !typeFilter || movement.tipoMovimiento === typeFilter
       const matchesSearch =
         !term ||
-        [movement.producto, movement.usuario, movement.motivo]
+        [
+          movement.producto,
+          movement.usuario,
+          movement.motivo,
+          movement.detalle,
+        ]
           .join(' ')
           .toLowerCase()
           .includes(term)
@@ -108,7 +110,7 @@ const StockMovementsTable = ({ movements = [], loading = false }) => {
 
             <tbody>
               {filtered.map((movement) => {
-                const config = typeConfig[movement.tipo]
+                const config = typeConfig[movement.tipoMovimiento]
                 const quantity = Math.abs(Number(movement.cantidad))
 
                 return (
@@ -132,7 +134,7 @@ const StockMovementsTable = ({ movements = [], loading = false }) => {
                           'border-white/10 bg-white/5 text-slate-400'
                         }`}
                       >
-                        {config?.label ?? movement.tipo}
+                        {config?.label ?? movement.tipoMovimiento}
                       </span>
                     </td>
                     <td
@@ -144,13 +146,13 @@ const StockMovementsTable = ({ movements = [], loading = false }) => {
                       {quantity}
                     </td>
                     <td className="px-4 py-3 text-base font-bold text-white">
-                      {movement.saldo ?? '-'}
+                      {movement.saldoResultante ?? '-'}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-300">
                       {movement.usuario}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-500">
-                      {[movement.motivo, movement.observacion]
+                      {[movement.motivo, movement.detalle]
                         .filter(Boolean)
                         .join(' · ')}
                     </td>

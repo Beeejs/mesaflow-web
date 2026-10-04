@@ -1,32 +1,53 @@
-/*
- * PENDIENTE DE BACKEND
- *
- * Todavía no existen endpoints para el stock ni para los movimientos.
- * Estas funciones mantienen el contrato que usará la web para que,
- * cuando el backend los publique, solo haya que reemplazar el cuerpo.
- *
- * Endpoints esperados (a confirmar con backend):
- * GET  /api/establecimientos/{id}/movimientos-stock
- * POST /api/establecimientos/{id}/movimientos-stock
- * GET  /api/motivos-movimiento-stock
- */
+import api from './axiosConfig'
+import { handleApiResponse } from './handleApiResponse'
 
-export const STOCK_NOT_AVAILABLE_MESSAGE =
-  'La gestión de stock todavía no está disponible en el backend.'
+export const listStockMovements = async (idEstablecimiento, products) => {
+  const stockProducts = products.filter(
+    (product) => product.controlaStock && product.stockInicializado
+  )
 
-// Función para listar el historial de movimientos de stock
-// eslint-disable-next-line no-unused-vars
-export const listStockMovements = async (idEstablecimiento) => {
-  return []
+  const responses = await Promise.all(
+    stockProducts.map((product) =>
+      api.get(
+        `/api/establecimientos/${idEstablecimiento}/productos/${product.idProducto}/stock/movimientos`
+      )
+    )
+  )
+
+  return responses
+    .flatMap((response) => handleApiResponse(response.data))
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
 }
 
-// Función para listar los motivos de movimiento de stock
-export const listStockMovementReasons = async () => {
-  return []
+export const listStockMovementReasons = async (
+  idEstablecimiento,
+  tipoMovimiento
+) => {
+  const response = await api.get(
+    `/api/establecimientos/${idEstablecimiento}/stock/motivos`,
+    { params: { tipo: tipoMovimiento } }
+  )
+
+  return handleApiResponse(response.data)
 }
 
-// Función para registrar un movimiento de stock
-// eslint-disable-next-line no-unused-vars
-export const createStockMovement = async (movementData) => {
-  throw new Error(STOCK_NOT_AVAILABLE_MESSAGE)
+export const createStockMovement = async ({
+  idEstablecimiento,
+  idProducto,
+  tipoMovimiento,
+  idMotivoMovimiento,
+  cantidad,
+  detalle,
+}) => {
+  const response = await api.post(
+    `/api/establecimientos/${idEstablecimiento}/productos/${idProducto}/stock/movimientos`,
+    {
+      tipoMovimiento,
+      idMotivoMovimiento,
+      cantidad,
+      detalle,
+    }
+  )
+
+  return handleApiResponse(response.data)
 }

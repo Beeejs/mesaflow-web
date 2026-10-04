@@ -37,10 +37,22 @@ export const queryKeys = {
     idEstablecimiento,
     'product-categories',
   ],
-  stockMovements: (idEstablecimiento) => [
+  stockMovements: (idEstablecimiento, productIds = []) => [
     'establishments',
     idEstablecimiento,
     'stock-movements',
+    productIds,
+  ],
+  stockMovementsPrefix: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'stock-movements',
+  ],
+  stockMovementReasons: (idEstablecimiento, tipoMovimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'stock-movement-reasons',
+    tipoMovimiento,
   ],
 }
 

@@ -3,23 +3,22 @@ import { createBrowserRouter } from 'react-router'
 /* Layouts */
 import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
-import AdminDashboardLayout from './layouts/AdminDashboardLayout'
-import EstablishmentDashboardLayout from './layouts/EstablishmentDashboardLayout'
 
 /* Routes */
 import ProtectedRoute from './components/route/ProtectedRoute'
-import EstablishmentRoute from './components/route/EstablishmentRoute'
-import WorkspaceRoute from './components/route/WorkspaceRoute'
+import UserDashboardLayout from './layouts/UserDashboardLayout'
+import AssignedEstablishmentRoute from './components/route/AssignedEstablishmentRoute'
 
 /* Pages */
 import Home from './pages/home/Home'
 import Login from './pages/auth/Login'
-import AdminDashboard from './pages/dashboard/admin/AdminDashboard'
 import AdminUsers from './pages/dashboard/admin/users/AdminUsers'
 import AdminEstablishments from './pages/dashboard/admin/establishments/AdminEstablishments'
 import AdminEstablishmentUsers from './pages/dashboard/admin/establishments/AdminEstablishmentUsers'
-import WorkspaceSelector from './pages/workspace/WorkspaceSelector'
-import EstablishmentDashboard from './pages/dashboard/establishment/EstablishmentDashboard'
+import MyRequests from './pages/dashboard/user/MyRequests'
+import AssignedEstablishments from './pages/dashboard/user/AssignedEstablishments'
+import EstablishmentHome from './pages/dashboard/user/EstablishmentHome'
+import DashboardHome from './pages/dashboard/user/DashboardHome'
 
 const router = createBrowserRouter([
   {
@@ -43,61 +42,53 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <ProtectedRoute allowedRoles={['ADMIN']} />,
+    element: <ProtectedRoute />,
     children: [
       {
         path: '/dashboard',
-        Component: AdminDashboardLayout,
+        Component: UserDashboardLayout,
         children: [
           {
             index: true,
-            Component: AdminDashboard,
+            Component: DashboardHome,
+          },
+
+          // Rutas comunes
+          {
+            path: 'mis-solicitudes',
+            Component: MyRequests,
           },
           {
-            path: 'usuarios',
-            Component: AdminUsers,
+            path: 'mis-establecimientos',
+            Component: AssignedEstablishments,
           },
           {
-            path: 'establecimientos',
-            Component: AdminEstablishments,
-          },
-          {
-            path: 'establecimientos/:idEstablecimiento/usuarios',
-            Component: AdminEstablishmentUsers,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    element: <ProtectedRoute />,
-    children: [
-      {
-        element: <EstablishmentRoute />,
-        children: [
-          {
-            path: '/establecimientos/:idEstablecimiento',
-            Component: EstablishmentDashboardLayout,
+            element: <AssignedEstablishmentRoute />,
             children: [
               {
-                index: true,
-                Component: EstablishmentDashboard,
+                path: 'mis-establecimientos/:idEstablecimiento',
+                Component: EstablishmentHome,
               },
             ],
           },
-        ],
-      },
-    ],
-  },
-  {
-    element: <ProtectedRoute />,
-    children: [
-      {
-        element: <WorkspaceRoute />,
-        children: [
+
+          // Rutas exclusivas de ADMIN
           {
-            path: '/workspace',
-            Component: WorkspaceSelector,
+            element: <ProtectedRoute allowedRoles={['ADMIN']} />,
+            children: [
+              {
+                path: 'usuarios',
+                Component: AdminUsers,
+              },
+              {
+                path: 'establecimientos',
+                Component: AdminEstablishments,
+              },
+              {
+                path: 'establecimientos/:idEstablecimiento/usuarios',
+                Component: AdminEstablishmentUsers,
+              },
+            ],
           },
         ],
       },

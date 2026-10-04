@@ -1,4 +1,8 @@
-import { createContext, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useState,
+} from 'react'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const WorkspaceContext = createContext()
@@ -8,13 +12,13 @@ export const WorkspaceProvider = ({ children }) => {
   const [selectedEstablishment, setSelectedEstablishment] = useState(null)
 
   // Funciones
-  const selectEstablishment = (establishment) => {
+  const selectEstablishment = useCallback((establishment) => {
     setSelectedEstablishment(establishment)
-  }
+  }, [])
 
-  const clearEstablishment = () => {
+  const clearEstablishment = useCallback(() => {
     setSelectedEstablishment(null)
-  }
+  }, [])
 
   // Renderizado
   return (

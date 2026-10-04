@@ -10,7 +10,7 @@ import useAssignedEstablishmentsQuery from '../../hooks/queries/useAssignedEstab
 /* Context */
 import { WorkspaceContext } from '../../context/WorkspaceContext'
 
-const EstablishmentRoute = () => {
+const AssignedEstablishmentRoute = () => {
   // Hooks
   const { idEstablecimiento } = useParams()
 
@@ -20,20 +20,20 @@ const EstablishmentRoute = () => {
   } = useContext(WorkspaceContext)
 
   const {
-    data: assignedEstablishments = [],
+    data: establishments = [],
     isLoading,
     isError,
   } = useAssignedEstablishmentsQuery()
 
   // Constantes derivadas
-  const establishment = assignedEstablishments.find(
+  const establishment = establishments.find(
     (item) =>
       item.idEstablecimiento === Number(idEstablecimiento)
   )
 
   const isSelectedEstablishmentReady =
-  selectedEstablishment?.idEstablecimiento ===
-  establishment?.idEstablecimiento
+    selectedEstablishment?.idEstablecimiento ===
+    establishment?.idEstablecimiento
 
   // useEffect
   useEffect(() => {
@@ -58,7 +58,7 @@ const EstablishmentRoute = () => {
   if (isError || !establishment) {
     return (
       <Navigate
-        to="/workspace"
+        to="/dashboard/mis-establecimientos"
         replace
       />
     )
@@ -77,4 +77,4 @@ const EstablishmentRoute = () => {
   return <Outlet />
 }
 
-export default EstablishmentRoute
+export default AssignedEstablishmentRoute

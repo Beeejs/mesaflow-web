@@ -1,14 +1,11 @@
 /* MUI Icons */
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import GroupIcon from '@mui/icons-material/Group'
-import StorefrontIcon from '@mui/icons-material/Storefront'
-import EventSeatIcon from '@mui/icons-material/EventSeat'
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlined'
 import QrCode2OutlinedIcon from '@mui/icons-material/QrCode2Outlined'
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 
 export const navbarList = [
   {
@@ -158,108 +155,69 @@ export const metricsList = [
   },
 ]
 
-
-export const adminDashboardNavigation  = [
+export const adminDashboardNavigation = [
   {
-    label: 'Panel',
+    label: 'Usuarios',
+    to: '/dashboard/usuarios',
+    icon: GroupOutlinedIcon,
+  },
+  {
+    label: 'Establecimientos',
+    to: '/dashboard/establecimientos',
+    icon: StorefrontOutlinedIcon,
+  },
+]
+
+export const userDashboardNavigation = [
+  {
+    label: 'Inicio',
     to: '/dashboard',
     icon: DashboardIcon,
     end: true,
   },
   {
-    label: 'Usuarios',
-    to: '/dashboard/usuarios',
-    icon: GroupIcon,
+    label: 'Mis solicitudes',
+    to: '/dashboard/mis-solicitudes',
+    icon: AssignmentOutlinedIcon,
   },
   {
-    label: 'Establecimientos',
-    to: '/dashboard/establecimientos',
-    icon: StorefrontIcon,
+    label: 'Mis establecimientos',
+    to: '/dashboard/mis-establecimientos',
+    icon: StorefrontOutlinedIcon,
   },
 ]
 
-export const managerDashboardNavigation = [
+export const getEstablishmentDashboardNavigation = (idEstablecimiento) => [
   {
     label: 'Inicio',
-    to: '',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}`,
     icon: DashboardIcon,
     end: true,
   },
   {
     label: 'Pedidos',
-    to: 'pedidos',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/pedidos`,
     icon: AssignmentOutlinedIcon,
   },
   {
     label: 'Reservas',
-    to: 'reservas',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/reservas`,
     icon: CalendarMonthOutlinedIcon,
   },
   {
     label: 'Menú y stock',
-    to: 'menu-stock',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/menu-stock`,
     icon: RestaurantMenuOutlinedIcon,
   },
   {
     label: 'Mesas',
-    to: 'mesas',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/mesas`,
     icon: QrCode2OutlinedIcon,
   },
   {
     label: 'Usuarios',
-    to: 'usuarios',
+    to: `/dashboard/mis-establecimientos/${idEstablecimiento}/usuarios`,
     icon: GroupOutlinedIcon,
-  },
-]
-
-export const waiterDashboardNavigation = [
-  {
-    label: 'Inicio',
-    to: '',
-    icon: DashboardIcon,
-    end: true,
-  },
-  {
-    label: 'Pedidos',
-    to: 'pedidos',
-    icon: AssignmentOutlinedIcon,
-  },
-  {
-    label: 'Mesas',
-    to: 'mesas',
-    icon: QrCode2OutlinedIcon,
-  },
-]
-
-
-export const dashboardCards = [
-  {
-    title: 'Usuarios',
-    description: 'Administrá los usuarios globales de MesaFlow.',
-    to: '/dashboard/usuarios',
-    icon: GroupIcon,
-    available: true,
-  },
-  {
-    title: 'Establecimientos',
-    description: 'Consultá y gestioná los establecimientos registrados.',
-    to: '/dashboard/establecimientos',
-    icon: StorefrontIcon,
-    available: true,
-  },
-  {
-    title: 'Reservas',
-    description: 'Módulo pendiente de implementación.',
-    to: '#',
-    icon: EventSeatIcon,
-    available: false,
-  },
-  {
-    title: 'Pedidos',
-    description: 'Módulo pendiente de implementación.',
-    to: '#',
-    icon: ReceiptLongIcon,
-    available: false,
   },
 ]
 

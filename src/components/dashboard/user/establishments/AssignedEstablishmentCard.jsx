@@ -3,7 +3,7 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 
 /* Components */
-import DefaultButton from '../../common/button/DefaultButton'
+import DefaultButton from '../../../common/button/DefaultButton'
 
 const AssignedEstablishmentCard = ({
   establishment,

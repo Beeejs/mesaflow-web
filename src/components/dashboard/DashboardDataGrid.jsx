@@ -11,6 +11,7 @@ const DashboardDataGrid = ({
   emptyMessage = 'No hay datos para mostrar.',
   pageSize = 10,
   minHeight = 360,
+  rowHeight,
 }) => {
   return (
     <DataGrid
@@ -18,6 +19,7 @@ const DashboardDataGrid = ({
       columns={columns}
       getRowId={getRowId}
       loading={loading}
+      rowHeight={rowHeight}
       disableRowSelectionOnClick
       showToolbar
       pageSizeOptions={[5, 10, 25]}

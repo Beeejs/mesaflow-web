@@ -1,8 +1,8 @@
 /* Components */
-import EstablishmentStatusChip from '../../dashboard/admin/establishments/EstablishmentStatusChip'
+import EstablishmentStatusChip from '../../../dashboard/admin/establishments/EstablishmentStatusChip'
 
 /* Utils */
-import { formatDate } from '../../../utils/dateUtils'
+import { formatDate } from '../../../../utils/dateUtils'
 
 const RequestCard = ({ request }) => {
   // Renderizado

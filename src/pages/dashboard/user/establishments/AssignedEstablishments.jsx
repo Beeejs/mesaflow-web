@@ -2,15 +2,15 @@ import { useContext } from 'react'
 import { useNavigate } from 'react-router'
 
 /* Components */
-import Loader from '../../../components/common/loader/Loader'
-import AssignedEstablishmentCard from '../../../components/dashboard/user/AssignedEstablishmentCard'
+import Loader from '../../../../components/common/loader/Loader'
+import AssignedEstablishmentCard from '../../../../components/dashboard/user/establishments/AssignedEstablishmentCard'
 
 /* Hooks */
-import useAssignedEstablishmentsQuery from '../../../hooks/queries/useAssignedEstablishmentsQuery'
+import useAssignedEstablishmentsQuery from '../../../../hooks/queries/useAssignedEstablishmentsQuery'
 
 /* Context */
-import { WorkspaceContext } from '../../../context/WorkspaceContext'
-import { SessionContext } from '../../../context/SessionContext'
+import { WorkspaceContext } from '../../../../context/WorkspaceContext'
+import { SessionContext } from '../../../../context/SessionContext'
 
 const AssignedEstablishments = () => {
   // Hooks

@@ -1,9 +1,9 @@
 /* Components */
-import Loader from '../../../components/common/loader/Loader'
-import RequestCard from '../../../components/dashboard/user/RequestCard'
+import Loader from '../../../../components/common/loader/Loader'
+import RequestCard from '../../../../components/dashboard/user/requests/RequestCard'
 
 /* Hooks */
-import useMyEstablishmentsQuery from '../../../hooks/queries/useMyEstablishmentsQuery'
+import useMyEstablishmentsQuery from '../../../../hooks/queries/useMyEstablishmentsQuery'
 
 const MyRequests = () => {
   // Hooks

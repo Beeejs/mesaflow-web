@@ -27,6 +27,41 @@ export const queryKeys = {
   ],
   establishmentRoles: ['establishment-roles'],
   assignedEstablishments: ['assigned-establishments'],
+  products: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'products',
+  ],
+  productCategories: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'product-categories',
+  ],
+  stockMovements: (
+    idEstablecimiento,
+    productIds = []
+  ) => [
+    'establishments',
+    idEstablecimiento,
+    'stock-movements',
+    productIds,
+  ],
+
+  stockMovementsPrefix: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'stock-movements',
+  ],
+
+  stockMovementReasons: (
+    idEstablecimiento,
+    tipoMovimiento
+  ) => [
+    'establishments',
+    idEstablecimiento,
+    'stock-movement-reasons',
+    tipoMovimiento,
+  ],
 }
 
 export default queryClient

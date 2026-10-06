@@ -15,10 +15,11 @@ import Login from './pages/auth/Login'
 import AdminUsers from './pages/dashboard/admin/users/AdminUsers'
 import AdminEstablishments from './pages/dashboard/admin/establishments/AdminEstablishments'
 import AdminEstablishmentUsers from './pages/dashboard/admin/establishments/AdminEstablishmentUsers'
-import MyRequests from './pages/dashboard/user/MyRequests'
-import AssignedEstablishments from './pages/dashboard/user/AssignedEstablishments'
+import MyRequests from './pages/dashboard/user/requests/MyRequests'
+import AssignedEstablishments from './pages/dashboard/user/establishments/AssignedEstablishments'
 import EstablishmentHome from './pages/dashboard/user/EstablishmentHome'
 import DashboardHome from './pages/dashboard/user/DashboardHome'
+import MenuStock from './pages/dashboard/user/menuStock/MenuStock'
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
               {
                 path: 'mis-establecimientos/:idEstablecimiento',
                 Component: EstablishmentHome,
+              },
+              {
+                path: 'mis-establecimientos/:idEstablecimiento/menu-stock',
+                Component: MenuStock,
               },
             ],
           },

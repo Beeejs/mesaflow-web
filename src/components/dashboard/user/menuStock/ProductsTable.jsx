@@ -116,7 +116,7 @@ const ProductsTable = ({
               className="shrink-0 cursor-pointer rounded-xl transition hover:opacity-80"
             >
               <img
-                src={getProductImage(product)}
+                src={getProductImage(product, 96)}
                 alt={product.nombre}
                 className="h-12 w-12 rounded-xl object-cover"
               />

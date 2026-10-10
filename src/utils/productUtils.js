@@ -1,5 +1,10 @@
-export const GENERIC_FOOD_IMAGE = '/img/products/plato.jpg'
-export const GENERIC_DRINK_IMAGE = '/img/products/bebida.jpg'
+import plateImage from '../assets/products/plato.svg'
+import drinkImage from '../assets/products/bebida.svg'
+import sideImage from '../assets/products/acompanamiento.svg'
+import starterImage from '../assets/products/entrada.svg'
+
+export const GENERIC_FOOD_IMAGE = plateImage
+export const GENERIC_DRINK_IMAGE = drinkImage
 
 const drinkKeywords = [
   'bebida',
@@ -29,14 +34,59 @@ export const isDrinkCategory = (categoryName) => {
   )
 }
 
-export const getProductImage = (product) => {
-  if (product?.imagenUrl) {
-    return product.imagenUrl
+export const hasProductImage = (product) => {
+  const url = normalize(product?.imagenUrl)
+
+  return Boolean(url) && url !== 'sin imagen'
+}
+
+export const getProductImage = (product, width = 320) => {
+  if (hasProductImage(product)) {
+    const imageUrl = product.imagenUrl.trim()
+
+    if (!URL.canParse(imageUrl)) {
+      return imageUrl
+    }
+
+    const url = new URL(imageUrl)
+
+    if (
+      url.hostname !== 'ik.imagekit.io' ||
+      url.protocol !== 'https:' ||
+      url.searchParams.has('ik-s')
+    ) {
+      return imageUrl
+    }
+
+    // Las URLs firmadas requieren una nueva firma si cambia la transformacion.
+    const transformation = `w-${width},q-75,f-auto`
+    const existing = url.searchParams.get('tr')
+
+    url.searchParams.set(
+      'tr',
+      existing
+        ? `${existing}:${transformation}`
+        : transformation
+    )
+
+    return url.toString()
   }
 
-  return isDrinkCategory(product?.categoria)
-    ? GENERIC_DRINK_IMAGE
-    : GENERIC_FOOD_IMAGE
+  const category = normalize(product?.categoria)
+
+  if (isDrinkCategory(category)) {
+    return GENERIC_DRINK_IMAGE
+  }
+
+  if (category.includes('acompa')) {
+    return sideImage
+  }
+
+  if (category.includes('entrada')) {
+    return starterImage
+  }
+
+  return GENERIC_FOOD_IMAGE
 }
 
 export const formatPrice = (value) => {
@@ -68,4 +118,9 @@ export const getStockStatus = (product) => {
   }
 
   return 'OK'
+}
+export const MOVEMENT_FILTER_TYPES = {
+  ingresos: ['INICIAL', 'INGRESO'],
+  egresos: ['EGRESO', 'VENTA'],
+  ajustes: ['AJUSTE'],
 }

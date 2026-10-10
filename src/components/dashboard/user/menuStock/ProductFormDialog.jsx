@@ -12,9 +12,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 
-/* MUI Icons */
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-
 /* Components */
 import DashboardFormDialog from '../../DashboardFormDialog'
 import DefaultButton from '../../../common/button/DefaultButton'
@@ -23,6 +20,12 @@ import DefaultButton from '../../../common/button/DefaultButton'
 import useCreateProductMutation from '../../../../hooks/mutations/useCreateProductMutation'
 import useUpdateProductMutation from '../../../../hooks/mutations/useUpdateProductMutation'
 import useCreateProductCategoryMutation from '../../../../hooks/mutations/useCreateProductCategoryMutation'
+
+/* Utils */
+import {
+  getProductImage,
+  hasProductImage,
+} from '../../../../utils/productUtils'
 
 /* Styles */
 import {
@@ -76,6 +79,12 @@ const ProductFormDialog = ({
 
   // Constantes derivadas
   const isEditing = Boolean(product)
+  const hasSavedImage = hasProductImage(product)
+  const selectedCategory = categories.find(
+    (category) =>
+      category.idCategoriaProducto ===
+      Number(formData.idCategoriaProducto)
+  )
 
   const isSaving =
     createMutation.isPending ||
@@ -324,22 +333,25 @@ const ProductFormDialog = ({
         <div className="sm:col-span-2">
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex h-32 w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-mesa-card text-mesa-muted sm:w-40">
-              {imagePreview || product?.imagenUrl ? (
-                <img
-                  src={
-                    imagePreview ??
-                    product.imagenUrl
-                  }
-                  alt="Imagen del producto"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <ImageOutlinedIcon
-                  sx={{
-                    fontSize: 48,
-                  }}
-                />
-              )}
+              <img
+                src={
+                  imagePreview ??
+                  getProductImage({
+                    imagenUrl: product?.imagenUrl,
+                    categoria: selectedCategory?.nombre ?? product?.categoria,
+                  }, 320)
+                }
+                alt={
+                  imagePreview || hasSavedImage
+                    ? 'Imagen del producto'
+                    : `Ícono de ${selectedCategory?.nombre ?? 'plato'}`
+                }
+                className={`h-full w-full ${
+                  imagePreview || hasSavedImage
+                    ? 'object-cover'
+                    : 'object-contain'
+                }`}
+              />
             </div>
 
             <div className="flex flex-1 flex-col justify-center">
@@ -367,14 +379,24 @@ const ProductFormDialog = ({
                     Descartar foto nueva
                   </DefaultButton>
                 )}
+
+                {hasSavedImage && (
+                  <DefaultButton
+                    variant="secondary"
+                    disabled
+                  >
+                    Eliminar imagen
+                  </DefaultButton>
+                )}
               </div>
 
               <p className="mt-3 text-xs text-mesa-muted">
                 JPG, PNG o WEBP de hasta 2 MB.
-                {product?.imagenUrl &&
-                !imageFile
-                  ? ' Podés reemplazar la foto actual.'
-                  : ' Si no subís una, el producto queda sin foto propia.'}
+                {imageFile
+                  ? ' La foto elegida se subirá al guardar.'
+                  : hasSavedImage
+                    ? ' Podés reemplazar la foto actual.'
+                    : ' Sin foto propia se muestra un ícono local de la categoría; no se sube a ImageKit.'}
               </p>
 
               <input

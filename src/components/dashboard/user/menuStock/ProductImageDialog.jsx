@@ -19,7 +19,10 @@ import DefaultButton from '../../../common/button/DefaultButton'
 import useUpdateProductMutation from '../../../../hooks/mutations/useUpdateProductMutation'
 
 /* Utils */
-import { getProductImage } from '../../../../utils/productUtils'
+import {
+  getProductImage,
+  hasProductImage,
+} from '../../../../utils/productUtils'
 
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024
 
@@ -190,10 +193,14 @@ const ProductImageDialog = ({
         <img
           src={
             preview ??
-            getProductImage(product)
+            getProductImage(product, 1024)
           }
           alt={product.nombre}
-          className="aspect-[4/3] w-full rounded-2xl object-cover"
+          className={`aspect-[4/3] w-full rounded-2xl bg-mesa-surface ${
+            preview || hasProductImage(product)
+              ? 'object-cover'
+              : 'object-contain'
+          }`}
         />
 
         {file && (
@@ -205,6 +212,8 @@ const ProductImageDialog = ({
         <p className="mt-3 text-xs text-mesa-muted">
           JPG, PNG o WEBP, hasta 2 MB.
           Recomendado en formato 4:3.
+          {!hasProductImage(product) && !file &&
+            ' El ícono predeterminado es local y no se sube a ImageKit.'}
         </p>
 
         <input
@@ -217,7 +226,16 @@ const ProductImageDialog = ({
           className="hidden"
         />
 
-        <div className="mt-5 flex justify-end gap-3">
+        <div className="mt-5 flex flex-wrap justify-end gap-3">
+          {hasProductImage(product) && (
+            <DefaultButton
+              variant="secondary"
+              disabled
+            >
+              Eliminar imagen
+            </DefaultButton>
+          )}
+
           <DefaultButton
             variant="secondary"
             onClick={() =>
@@ -229,6 +247,16 @@ const ProductImageDialog = ({
               ? 'Elegir otra'
               : 'Cambiar imagen'}
           </DefaultButton>
+
+          {file && (
+            <DefaultButton
+              variant="secondary"
+              onClick={() => setFile(null)}
+              disabled={isSaving}
+            >
+              Descartar foto nueva
+            </DefaultButton>
+          )}
 
           {file && (
             <DefaultButton

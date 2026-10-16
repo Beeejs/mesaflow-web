@@ -238,3 +238,31 @@ Fuentes principales:
 Manrope → interfaz general
 Poppins → títulos y elementos destacados
 ```
+
+---
+
+## 11. Imagenes de productos
+
+Los productos sin foto propia muestran un icono SVG local de
+`src/assets/products`, importado por Vite, segun su categoria: Plato, Bebida, Entrada o
+Acompanamiento. Otras categorias usan el icono de Plato.
+Estos archivos no se envian al backend ni a ImageKit.
+
+`imagenUrl` vacia, nula o con el texto `SIN IMAGEN` activa el icono local.
+Una foto elegida por el usuario se envia como archivo al backend usando
+el flujo de alta o edicion existente; el backend gestiona ImageKit y la
+referencia persistida.
+
+El boton **Eliminar imagen** permanece deshabilitado hasta conectar la
+operacion de backend que borre el archivo en ImageKit y deje `SIN IMAGEN`
+en la base de datos. No se simula una eliminacion local ni se expone la
+clave privada de ImageKit en la web. Descartar una foto nueva no elimina
+la foto guardada.
+
+Las fotos de `https://ik.imagekit.io` se solicitan con transformaciones
+de ancho, calidad 75 y formato automatico: 96 px en la tabla, 320 px en
+el formulario y 1024 px en la vista ampliada. No se modifica el original
+ni la URL persistida. Los iconos locales, las previsualizaciones de
+archivos nuevos y las URLs de otros proveedores no se transforman.
+Se conservan los parametros existentes; las URLs firmadas (`ik-s`)
+no se alteran porque necesitan una nueva firma desde el backend.

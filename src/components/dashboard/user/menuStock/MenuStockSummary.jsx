@@ -1,5 +1,8 @@
 /* Utils */
-import { getStockStatus } from '../../../../utils/productUtils'
+import {
+  getStockStatus,
+  MOVEMENT_FILTER_TYPES,
+} from '../../../../utils/productUtils'
 
 const dotColors = {
   green: 'bg-green-500',
@@ -50,9 +53,55 @@ const SummaryCard = ({
 
 const MenuStockSummary = ({
   products = [],
+  movements = [],
+  mode = 'productos',
   filter = 'todos',
   onFilterChange,
 }) => {
+  if (mode === 'historial') {
+    const countByFilter = (key) =>
+      movements.filter((movement) =>
+        MOVEMENT_FILTER_TYPES[key].includes(
+          movement.tipoMovimiento
+        )
+      ).length
+
+    return (
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          label="Movimientos"
+          value={movements.length}
+          active={filter === 'todos'}
+          onClick={() => onFilterChange('todos')}
+        />
+
+        <SummaryCard
+          label="Ingresos"
+          value={countByFilter('ingresos')}
+          dot="green"
+          active={filter === 'ingresos'}
+          onClick={() => onFilterChange('ingresos')}
+        />
+
+        <SummaryCard
+          label="Egresos y ventas"
+          value={countByFilter('egresos')}
+          dot="red"
+          active={filter === 'egresos'}
+          onClick={() => onFilterChange('egresos')}
+        />
+
+        <SummaryCard
+          label="Ajustes"
+          value={countByFilter('ajustes')}
+          dot="orange"
+          active={filter === 'ajustes'}
+          onClick={() => onFilterChange('ajustes')}
+        />
+      </div>
+    )
+  }
+
   // Constantes derivadas
   const visibleCount = products.filter(
     (product) => product.visibleMenu

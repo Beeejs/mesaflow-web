@@ -27,13 +27,21 @@ import useUpdateProductMutation from '../../../../hooks/mutations/useUpdateProdu
 import useDeleteProductMutation from '../../../../hooks/mutations/useDeleteProductMutation'
 
 /* Utils */
-import { getStockStatus } from '../../../../utils/productUtils'
+import {
+  getStockStatus,
+  MOVEMENT_FILTER_TYPES,
+} from '../../../../utils/productUtils'
 
 /* Styles */
 import {
   selectSlotProps,
   textFieldStyles,
 } from '../../../../styles/formStyles'
+
+const TABS = [
+  { id: 'productos', label: 'Productos' },
+  { id: 'historial', label: 'Historial de stock' },
+]
 
 const getErrorMessage = (
   error,
@@ -49,6 +57,12 @@ const MenuStock = () => {
     useParams()
 
   const [summaryFilter, setSummaryFilter] =
+    useState('todos')
+
+  const [activeTab, setActiveTab] =
+    useState('productos')
+
+  const [movementFilter, setMovementFilter] =
     useState('todos')
 
   const [categoryFilter, setCategoryFilter] =
@@ -141,6 +155,18 @@ const MenuStock = () => {
     categoryFilter,
     summaryFilter,
   ])
+
+  const filteredMovements = useMemo(() => {
+    if (movementFilter === 'todos') {
+      return movements
+    }
+
+    return movements.filter((movement) =>
+      MOVEMENT_FILTER_TYPES[
+        movementFilter
+      ].includes(movement.tipoMovimiento)
+    )
+  }, [movements, movementFilter])
 
   const isRefreshing =
     productsLoading ||
@@ -363,12 +389,51 @@ const MenuStock = () => {
 
       <MenuStockSummary
         products={products}
-        filter={summaryFilter}
+        movements={movements}
+        mode={activeTab}
+        filter={
+          activeTab === 'historial'
+            ? movementFilter
+            : summaryFilter
+        }
         onFilterChange={
-          setSummaryFilter
+          activeTab === 'historial'
+            ? setMovementFilter
+            : setSummaryFilter
         }
       />
 
+      <div
+        role="tablist"
+        aria-label="Menú y stock"
+        className="flex gap-6 border-b border-white/10"
+      >
+        {TABS.map((tab) => {
+          const selected =
+            activeTab === tab.id
+
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() =>
+                setActiveTab(tab.id)
+              }
+              className={`-mb-px border-b-2 px-1 pb-3 text-sm font-semibold transition-colors ${
+                selected
+                  ? 'border-mesa-cyan-light text-mesa-text'
+                  : 'border-transparent text-mesa-muted hover:text-mesa-text'
+              }`}
+            >
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
+
+      {activeTab === 'productos' && (
       <section className="space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -446,7 +511,9 @@ const MenuStock = () => {
           }
         />
       </section>
+      )}
 
+      {activeTab === 'historial' && (
       <section className="space-y-4">
         <div>
           <h2 className="font-display text-xl font-bold text-mesa-text">
@@ -461,12 +528,13 @@ const MenuStock = () => {
         </div>
 
         <StockMovementsTable
-          movements={movements}
+          movements={filteredMovements}
           loading={
             movementsLoading
           }
         />
       </section>
+      )}
 
       {productForm && (
         <ProductFormDialog

@@ -14,7 +14,8 @@ const EstablishmentUsersTable = ({
   users = [],
   loading = false,
   onEditUser,
-  onRemoveUser
+  onRemoveUser,
+  canRemoveUser,
 }) => {
   const columns = [
     {
@@ -65,6 +66,7 @@ const EstablishmentUsersTable = ({
       headerAlign: 'center',
       renderCell: (params) => (
         <div className="flex h-full items-center justify-center gap-1">
+          {onEditUser && (
           <DashboardTableActionButton
             title="Modificar rol"
             onClick={() => onEditUser(params.row)}
@@ -73,7 +75,9 @@ const EstablishmentUsersTable = ({
           >
             <EditIcon fontSize="small" />
           </DashboardTableActionButton>
+          )}
 
+          {onRemoveUser && (!canRemoveUser || canRemoveUser(params.row)) && (
           <DashboardTableActionButton
             title="Desasociar usuario"
             onClick={() => onRemoveUser(params.row)}
@@ -81,6 +85,7 @@ const EstablishmentUsersTable = ({
           >
             <DeleteIcon fontSize="small" />
           </DashboardTableActionButton>
+          )}
         </div>
       ),
     }

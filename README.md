@@ -266,3 +266,18 @@ ni la URL persistida. Los iconos locales, las previsualizaciones de
 archivos nuevos y las URLs de otros proveedores no se transforman.
 Se conservan los parametros existentes; las URLs firmadas (`ik-s`)
 no se alteran porque necesitan una nueva firma desde el backend.
+
+## 12. Usuarios del establecimiento
+
+La opcion Usuarios del panel del establecimiento permite al encargado
+listar el personal, buscar una cuenta activa por email y asociarla con
+el rol MOZO. El identificador del rol se obtiene del backend; no se fija
+un ID en la web. Tambien permite desasociar mozos sin eliminar su cuenta
+de MesaFlow. La pantalla administrativa conserva la seleccion de roles
+y sus acciones existentes.
+
+Este flujo usa la asociacion directa disponible en el backend: no envia
+una invitacion ni requiere aceptacion del destinatario. La invitacion,
+su aceptacion o rechazo y su presentacion en el perfil quedan pendientes
+de acordar con el backend y mobile. Los permisos efectivos siguen
+validandose en el backend.

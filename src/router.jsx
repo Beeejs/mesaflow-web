@@ -20,6 +20,7 @@ import AssignedEstablishments from './pages/dashboard/user/establishments/Assign
 import EstablishmentHome from './pages/dashboard/user/EstablishmentHome'
 import DashboardHome from './pages/dashboard/user/DashboardHome'
 import MenuStock from './pages/dashboard/user/menuStock/MenuStock'
+import EstablishmentUsers from './pages/dashboard/user/establishments/EstablishmentUsers'
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
               {
                 path: 'mis-establecimientos/:idEstablecimiento/menu-stock',
                 Component: MenuStock,
+              },
+              {
+                path: 'mis-establecimientos/:idEstablecimiento/usuarios',
+                Component: EstablishmentUsers,
               },
             ],
           },

@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 /* MUI */
@@ -28,6 +28,7 @@ const EstablishmentUserFormDialog = ({
   open,
   user = null,
   idEstablecimiento,
+  mozoOnly = false,
   onClose,
 }) => {
   const isEditing = Boolean(user)
@@ -39,8 +40,21 @@ const EstablishmentUserFormDialog = ({
   )
   const [isSearching, setIsSearching] = useState(false)
 
-  const { data: roles = [], isLoading: rolesLoading } =
+  const { data: roles = [], isLoading: rolesLoading, error: rolesError } =
     useEstablishmentRolesQuery()
+
+  const mozoRole = roles.find((role) => role.descripcion === 'MOZO')
+  const roleId = mozoOnly
+    ? mozoRole?.idRolEstablecimiento
+    : selectedRoleId
+
+  useEffect(() => {
+    if (rolesError) {
+      toast.error('No se pudieron cargar los roles del establecimiento.')
+    } else if (mozoOnly && !rolesLoading && !mozoRole) {
+      toast.error('El rol Mozo no está disponible para asociar usuarios.')
+    }
+  }, [rolesError, mozoOnly, rolesLoading, mozoRole])
 
   const addMutation =
     useAddEstablishmentUserMutation(idEstablecimiento)
@@ -113,7 +127,12 @@ const EstablishmentUserFormDialog = ({
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    if (isBusy || !currentUser || !selectedRoleId) return
+    if (isBusy || !currentUser) return
+
+    if (!roleId || rolesError) {
+      toast.error('No hay un rol disponible para asociar el usuario.')
+      return
+    }
 
     if (isEditing && !hasChanges) {
       toast.info('No hay cambios para guardar.')
@@ -122,7 +141,7 @@ const EstablishmentUserFormDialog = ({
 
     const payload = {
       idUsuario: currentUser.idUsuario,
-      idRolEstablecimiento: Number(selectedRoleId),
+      idRolEstablecimiento: Number(roleId),
     }
 
     try {
@@ -161,14 +180,16 @@ const EstablishmentUserFormDialog = ({
       description={
         isEditing
           ? 'Modificá el rol de este usuario dentro del establecimiento.'
-          : 'Buscá un usuario registrado en MesaFlow y asignale un rol dentro del establecimiento.'
+          : mozoOnly
+            ? 'Buscá por email un usuario registrado en MesaFlow y agregalo como mozo/a a este establecimiento.'
+            : 'Buscá un usuario registrado en MesaFlow y asignale un rol dentro del establecimiento.'
       }
       onClose={handleClose}
       onSubmit={handleFormSubmit}
       isBusy={isBusy}
       submitDisabled={
         currentUser
-          ? rolesLoading || !selectedRoleId
+          ? rolesLoading || Boolean(rolesError) || !roleId
           : !email.trim()
       }
       submitLabel={
@@ -218,6 +239,15 @@ const EstablishmentUserFormDialog = ({
           </div>
 
           <div className="mt-6">
+            {mozoOnly ? (
+              <TextField
+                label="Rol en el establecimiento"
+                value="Mozo/a"
+                disabled
+                fullWidth
+                sx={textFieldStyles}
+              />
+            ) : (
             <TextField
               select
               label="Rol en el establecimiento"
@@ -255,6 +285,7 @@ const EstablishmentUserFormDialog = ({
                 </MenuItem>
               ))}
             </TextField>
+            )}
           </div>
         </>
       )}
@@ -264,4 +295,3 @@ const EstablishmentUserFormDialog = ({
 }
 
 export default EstablishmentUserFormDialog
-

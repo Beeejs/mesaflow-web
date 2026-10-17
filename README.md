@@ -253,11 +253,18 @@ Una foto elegida por el usuario se envia como archivo al backend usando
 el flujo de alta o edicion existente; el backend gestiona ImageKit y la
 referencia persistida.
 
-El boton **Eliminar imagen** permanece deshabilitado hasta conectar la
-operacion de backend que borre el archivo en ImageKit y deje `SIN IMAGEN`
-en la base de datos. No se simula una eliminacion local ni se expone la
-clave privada de ImageKit en la web. Descartar una foto nueva no elimina
-la foto guardada.
+El boton **Eliminar imagen**, tanto en edicion como en la vista ampliada,
+previsualiza el icono local. Solo al guardar se envia `eliminarImagen=true`
+en el multipart del PUT existente. El backend deja las referencias de
+imagen en null e intenta borrar el archivo anterior en ImageKit.
+Cancelar o restaurar la imagen antes de guardar no ejecuta el borrado.
+Elegir una foto nueva cancela la solicitud de borrado y usa el reemplazo
+existente; nunca se envian un archivo y la bandera de borrado juntos.
+No se escribe `SIN IMAGEN`; solo se reconoce por compatibilidad.
+
+Pendiente de backend: actualmente una falla al borrar el archivo remoto
+se captura sin informarla al cliente. La web no puede confirmar la limpieza
+de ImageKit con la respuesta actual. No se expone ninguna clave privada.
 
 Las fotos de `https://ik.imagekit.io` se solicitan con transformaciones
 de ancho, calidad 75 y formato automatico: 96 px en la tabla, 320 px en

@@ -41,6 +41,10 @@ const ProductImageDialog = ({
   const inputRef = useRef(null)
 
   const [file, setFile] = useState(null)
+  const [removeImage, setRemoveImage] = useState(false)
+  const displayedProduct = removeImage
+    ? { ...product, imagenUrl: null }
+    : product
 
   const updateMutation =
     useUpdateProductMutation(idEstablecimiento)
@@ -98,10 +102,11 @@ const ProductImageDialog = ({
     }
 
     setFile(selectedFile)
+    setRemoveImage(false)
   }
 
   const handleSave = async () => {
-    if (!file || isSaving) {
+    if ((!file && !removeImage) || isSaving) {
       return
     }
 
@@ -122,10 +127,11 @@ const ProductImageDialog = ({
             product.visibleMenu,
         },
         image: file,
+        eliminarImagen: removeImage,
       })
 
       toast.success(
-        'Imagen actualizada correctamente.'
+        'Cambios de imagen guardados correctamente.'
       )
 
       onClose()
@@ -193,11 +199,11 @@ const ProductImageDialog = ({
         <img
           src={
             preview ??
-            getProductImage(product, 1024)
+            getProductImage(displayedProduct, 1024)
           }
           alt={product.nombre}
           className={`aspect-[4/3] w-full rounded-2xl bg-mesa-surface ${
-            preview || hasProductImage(product)
+            preview || hasProductImage(displayedProduct)
               ? 'object-cover'
               : 'object-contain'
           }`}
@@ -209,10 +215,16 @@ const ProductImageDialog = ({
           </p>
         )}
 
+        {removeImage && (
+          <p className="mt-3 text-sm text-mesa-muted">
+            La foto se quitará al guardar los cambios.
+          </p>
+        )}
+
         <p className="mt-3 text-xs text-mesa-muted">
           JPG, PNG o WEBP, hasta 2 MB.
           Recomendado en formato 4:3.
-          {!hasProductImage(product) && !file &&
+          {!hasProductImage(displayedProduct) && !file &&
             ' El ícono predeterminado es local y no se sube a ImageKit.'}
         </p>
 
@@ -230,9 +242,13 @@ const ProductImageDialog = ({
           {hasProductImage(product) && (
             <DefaultButton
               variant="secondary"
-              disabled
+              onClick={() => {
+                setRemoveImage((current) => !current)
+                setFile(null)
+              }}
+              disabled={isSaving}
             >
-              Eliminar imagen
+              {removeImage ? 'Restaurar imagen' : 'Eliminar imagen'}
             </DefaultButton>
           )}
 
@@ -258,13 +274,13 @@ const ProductImageDialog = ({
             </DefaultButton>
           )}
 
-          {file && (
+          {(file || removeImage) && (
             <DefaultButton
               onClick={handleSave}
               loading={isSaving}
               disabled={isSaving}
             >
-              Guardar imagen
+              Guardar cambios
             </DefaultButton>
           )}
         </div>

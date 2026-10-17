@@ -1,7 +1,7 @@
 import api from './axiosConfig'
 import { handleApiResponse } from './handleApiResponse'
 
-const buildProductFormData = (productData, image) => {
+const buildProductFormData = (productData, image, eliminarImagen = false) => {
   const formData = new FormData()
 
   formData.append(
@@ -16,6 +16,10 @@ const buildProductFormData = (productData, image) => {
 
   if (image) {
     formData.append('imagen', image)
+  }
+
+  if (eliminarImagen) {
+    formData.append('eliminarImagen', 'true')
   }
 
   return formData
@@ -50,10 +54,15 @@ export const updateProduct = async ({
   idProducto,
   productData,
   image = null,
+  eliminarImagen = false,
 }) => {
+  if (image && eliminarImagen) {
+    throw new Error('No se puede reemplazar y eliminar la imagen al mismo tiempo.')
+  }
+
   const response = await api.put(
     `/api/establecimientos/${idEstablecimiento}/productos/${idProducto}`,
-    buildProductFormData(productData, image)
+    buildProductFormData(productData, image, eliminarImagen)
   )
 
   return handleApiResponse(response.data)

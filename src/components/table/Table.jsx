@@ -3,16 +3,22 @@ import { DataGrid } from '@mui/x-data-grid'
 /* Components */
 import Loader from '../common/loader/Loader'
 
-const DashboardDataGrid = ({
+const Table = ({
   rows = [],
   columns = [],
   getRowId,
   loading = false,
   emptyMessage = 'No hay datos para mostrar.',
   pageSize = 10,
+  pageSizeOptions = [5, 10, 25],
   minHeight = 360,
   rowHeight,
+  showToolbar = true,
+  disableRowSelectionOnClick = true,
+  sx,
+  ...dataGridProps
 }) => {
+  // Renderizado
   return (
     <DataGrid
       rows={rows}
@@ -20,9 +26,9 @@ const DashboardDataGrid = ({
       getRowId={getRowId}
       loading={loading}
       rowHeight={rowHeight}
-      disableRowSelectionOnClick
-      showToolbar
-      pageSizeOptions={[5, 10, 25]}
+      disableRowSelectionOnClick={disableRowSelectionOnClick}
+      showToolbar={showToolbar}
+      pageSizeOptions={pageSizeOptions}
       initialState={{
         pagination: {
           paginationModel: {
@@ -124,6 +130,7 @@ const DashboardDataGrid = ({
             ? `${count.toLocaleString()} filas seleccionadas`
             : `${count.toLocaleString()} fila seleccionada`,
       }}
+      {...dataGridProps}
       sx={{
         minHeight,
         width: '100%',
@@ -294,9 +301,11 @@ const DashboardDataGrid = ({
           backgroundColor: '#0B111C',
           color: '#94A3B8',
         },
+
+        ...sx,
       }}
     />
   )
 }
 
-export default DashboardDataGrid
+export default Table

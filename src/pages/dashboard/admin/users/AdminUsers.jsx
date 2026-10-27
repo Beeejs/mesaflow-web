@@ -5,17 +5,19 @@ import { toast } from 'sonner'
 import useUsersQuery from '../../../../hooks/queries/useUsersQuery'
 
 /* Components */
-import UsersTable from '../../../../components/dashboard/admin/users/UsersTable'
+import Table from '../../../../components/table/Table'
 import UserFormDialog from '../../../../components/dashboard/admin/users/UserFormDialog'
 import DashboardPageHeader from '../../../../components/dashboard/DashboardPageHeader'
 import DashboardRefreshButton from '../../../../components/dashboard/DashboardRefreshButton'
 import AssignUserEstablishmentDialog from '../../../../components/dashboard/admin/users/AssignUserEstablishmentDialog'
 
+/* Columns */
+import { getUserColumns } from '../../../../components/table/columns/userColumns'
+
 const AdminUsers = () => {
-  // Usuario seleccionado para editar
+  // Hooks
   const [userDialog, setUserDialog] = useState(null)
 
-  // Listado de usuarios
   const {
     data: usersData = [],
     isLoading: usersLoading,
@@ -24,15 +26,39 @@ const AdminUsers = () => {
     refetch: refetchUsers,
   } = useUsersQuery()
 
-  // Manejador de errores
+  // Funciones
+  const handleEditUser = (user) => {
+    setUserDialog({
+      mode: 'edit',
+      user,
+    })
+  }
+
+  const handleAssignUser = (user) => {
+    setUserDialog({
+      mode: 'assign',
+      user,
+    })
+  }
+
+  // Constantes derivadas
+  const columns = getUserColumns({
+    onEditUser: handleEditUser,
+    onAssignUser: handleAssignUser,
+  })
+
+  // useEffect
   useEffect(() => {
     if (!usersError) {
       return
     }
 
-    toast.error('No se pudieron cargar los usuarios.')
+    toast.error(
+      'No se pudieron cargar los usuarios.'
+    )
   }, [usersError])
 
+  // Renderizado
   return (
     <section>
       <DashboardPageHeader
@@ -49,15 +75,14 @@ const AdminUsers = () => {
       />
 
       <div className="mt-12">
-        <UsersTable
-          users={usersData}
+        <Table
+          rows={usersData}
+          columns={columns}
+          getRowId={(user) =>
+            user.idUsuario
+          }
           loading={usersLoading}
-          onEditUser={(user) =>
-            setUserDialog({ mode: 'edit', user })
-          }
-          onAssignUser={(user) =>
-            setUserDialog({ mode: 'assign', user })
-          }
+          emptyMessage="No hay usuarios para mostrar."
         />
       </div>
 
@@ -66,7 +91,9 @@ const AdminUsers = () => {
           key={`edit-${userDialog.user.idUsuario}`}
           open
           user={userDialog.user}
-          onClose={() => setUserDialog(null)}
+          onClose={() =>
+            setUserDialog(null)
+          }
         />
       )}
 
@@ -75,7 +102,9 @@ const AdminUsers = () => {
           key={`assign-${userDialog.user.idUsuario}`}
           open
           user={userDialog.user}
-          onClose={() => setUserDialog(null)}
+          onClose={() =>
+            setUserDialog(null)
+          }
         />
       )}
     </section>

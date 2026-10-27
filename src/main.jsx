@@ -11,33 +11,40 @@ import './globals.css'
 import router from './router.jsx'
 /* Api */
 import queryClient from './api/queryClient'
+/* Componentes */
+import DashboardActionDialog from './components/dashboard/DashboardActionDialog'
 /* Context */
 import { SessionProvider } from './context/SessionContext.jsx'
 import { WorkspaceProvider } from './context/WorkspaceContext'
+import { ActionDialogProvider } from './context/ActionDialogContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <SessionProvider>
-          <WorkspaceProvider>
-            <RouterProvider router={router} />
+          <ActionDialogProvider>
+            <WorkspaceProvider>
+              <RouterProvider router={router} />
 
-            <Toaster
-              richColors
-              position="top-right"
-              closeButton
-              toastOptions={{
-                style: {
-                  background: '#0B111C',
-                  color: '#F8FAFC',
-                  border: '1px solid #1F2937',
-                },
-              }}
-            />
+              <Toaster
+                richColors
+                position="bottom-left"
+                duration={2500}
+                closeButton
+                toastOptions={{
+                  style: {
+                    background: '#0B111C',
+                    color: '#F8FAFC',
+                    border: '1px solid #1F2937',
+                  },
+                }}
+              />
 
-            <ReactQueryDevtools initialIsOpen={false} />
-          </WorkspaceProvider>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <DashboardActionDialog />
+            </WorkspaceProvider>
+          </ActionDialogProvider>
         </SessionProvider>
       </QueryClientProvider>
     </GoogleOAuthProvider>

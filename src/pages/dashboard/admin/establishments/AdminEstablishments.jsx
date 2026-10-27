@@ -1,24 +1,32 @@
-
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 
-
 /* Components */
+import Table from '../../../../components/table/Table'
 import DashboardPageHeader from '../../../../components/dashboard/DashboardPageHeader'
 import DashboardRefreshButton from '../../../../components/dashboard/DashboardRefreshButton'
+import EstablishmentFormDialog from '../../../../components/dashboard/admin/establishments/EstablishmentFormDialog'
 
+/* Columns */
+import { getEstablishmentColumns } from '../../../../components/table/columns/establishmentColumns'
+
+/* Context */
+import { ActionDialogContext } from '../../../../context/ActionDialogContext'
 
 /* Hooks */
 import useEstablishmentsQuery from '../../../../hooks/queries/useEstablishmentsQuery'
 import useEstablishmentStatesQuery from '../../../../hooks/queries/useEstablishmentStatesQuery'
 import useUpdateEstablishmentMutation from '../../../../hooks/mutations/useUpdateEstablishmentMutation'
 
-/* Components */
-import EstablishmentsTable from '../../../../components/dashboard/admin/establishments/EstablishmentsTable'
-import EstablishmentFormDialog from '../../../../components/dashboard/admin/establishments/EstablishmentFormDialog'
-
 const AdminEstablishments = () => {
-  // Query para obtener los establecimientos
+  // Hooks
+  const navigate = useNavigate()
+  const { openActionDialog } = useContext(ActionDialogContext)
+
+  const [selectedEstablishment, setSelectedEstablishment] =
+    useState(null)
+
   const {
     data: establishments = [],
     isLoading,
@@ -31,72 +39,95 @@ const AdminEstablishments = () => {
     data: establishmentStates = [],
   } = useEstablishmentStatesQuery()
 
-  const updateMutation = useUpdateEstablishmentMutation()
-
-  // Estado para manejar el establecimiento seleccionado para editar
-  const [selectedEstablishment, setSelectedEstablishment] = useState(null)
+  const updateMutation =
+    useUpdateEstablishmentMutation()
 
   // Constantes derivadas
   const approvedState = establishmentStates.find(
-    (state) => state.descripcion?.toUpperCase() === 'APROBADO'
+    (state) =>
+      state.descripcion?.toUpperCase() === 'APROBADO'
   )
 
-  // UseEffect para mostrar un toast de error si ocurre un error al cargar los establecimientos
+  // useEffect
   useEffect(() => {
     if (error) {
-      toast.error('No se pudieron cargar los establecimientos.')
+      toast.error(
+        'No se pudieron cargar los establecimientos.'
+      )
     }
   }, [error])
 
-
-  // Funcion para manejar la aprobacion de un establecimiento
+  // Funciones
   const handleApproveEstablishment = (establishment) => {
-    if (!approvedState || updateMutation.isPending) return
+    if (!approvedState || updateMutation.isPending) {
+      return
+    }
 
-    toast(
-      `¿Querés aprobar ${establishment.nombre}?`,
-      {
-        description:
-          'El establecimiento será aprobado y el solicitante pasará a ser encargado.',
-        action: {
-          label: 'Aprobar',
-          onClick: async () => {
-            try {
-              const establishmentData = {
-                nombre: establishment.nombre,
-                razonSocial: establishment.razonSocial,
-                cuit: establishment.cuit,
-                direccion: establishment.direccion,
-                idPartido: establishment.idPartido,
-                codigoPostal: establishment.codigoPostal,
-                telefono: establishment.telefono,
-                email: establishment.email,
-                idEstadoEstablecimiento:
-                  approvedState.idEstadoEstablecimiento,
-              }
+    openActionDialog({
+      title: 'Aprobar establecimiento',
+      description: `¿Querés aprobar "${establishment.nombre}"? El establecimiento será aprobado y el solicitante pasará a ser encargado.`,
+      actionLabel: 'Aprobar',
+      cancelLabel: 'Cancelar',
+      variant: 'primary',
+      icon: 'confirm',
+      onAction: async () => {
+        try {
+          const establishmentData = {
+            nombre: establishment.nombre,
+            razonSocial: establishment.razonSocial,
+            cuit: establishment.cuit,
+            direccion: establishment.direccion,
+            idPartido: establishment.idPartido,
+            codigoPostal: establishment.codigoPostal,
+            telefono: establishment.telefono,
+            email: establishment.email,
+            idEstadoEstablecimiento:
+              approvedState.idEstadoEstablecimiento,
+          }
 
-              await updateMutation.mutateAsync({
-                idEstablecimiento: establishment.idEstablecimiento,
-                establishmentData,
-              })
+          await updateMutation.mutateAsync({
+            idEstablecimiento:
+              establishment.idEstablecimiento,
+            establishmentData,
+          })
 
-              toast.success('Establecimiento aprobado correctamente.')
-            } catch (error) {
-              toast.error(
-                error.response?.data?.message ||
-                  'No se pudo aprobar el establecimiento.'
-              )
-            }
-          },
-        },
-        cancel: {
-          label: 'Cancelar',
-          onClick: () => {},
-        },
-      }
+          toast.success(
+            'Establecimiento aprobado correctamente.'
+          )
+        } catch (error) {
+          toast.error(
+            error.response?.data?.message ||
+              'No se pudo aprobar el establecimiento.'
+          )
+
+          throw error
+        }
+      },
+    })
+  }
+
+  const handleManageUsers = (establishment) => {
+    navigate(
+      `/dashboard/establecimientos/${establishment.idEstablecimiento}/usuarios`
     )
   }
 
+  const handleEditEstablishment = (establishment) => {
+    setSelectedEstablishment(establishment)
+  }
+
+  // Constantes derivadas
+  const columns = getEstablishmentColumns({
+    onApproveEstablishment:
+      handleApproveEstablishment,
+    onManageUsers: handleManageUsers,
+    onEditEstablishment:
+      handleEditEstablishment,
+    approvalLoading:
+      updateMutation.isPending,
+  })
+
+  // Renderizado
   return (
     <section>
       <DashboardPageHeader
@@ -113,22 +144,31 @@ const AdminEstablishments = () => {
       />
 
       <div className="mt-8 min-w-0 rounded-3xl border border-mesa-border bg-mesa-surface p-3 sm:p-6">
-        <EstablishmentsTable
-          establishments={establishments}
+        <Table
+          rows={establishments}
+          columns={columns}
+          getRowId={(row) =>
+            row.idEstablecimiento
+          }
           loading={isLoading}
-          onEditEstablishment={setSelectedEstablishment}
-          onApproveEstablishment={handleApproveEstablishment}
-          approvalLoading={updateMutation.isPending}
+          emptyMessage="No hay establecimientos registrados."
         />
       </div>
 
-      {/* Dialog para editar un establecimiento */}
       {selectedEstablishment && (
         <EstablishmentFormDialog
-          key={selectedEstablishment.idEstablecimiento}
-          open={Boolean(selectedEstablishment)}
-          establishment={selectedEstablishment}
-          onClose={() => setSelectedEstablishment(null)}
+          key={
+            selectedEstablishment.idEstablecimiento
+          }
+          open={Boolean(
+            selectedEstablishment
+          )}
+          establishment={
+            selectedEstablishment
+          }
+          onClose={() =>
+            setSelectedEstablishment(null)
+          }
         />
       )}
     </section>

@@ -1,9 +1,11 @@
-
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 /* Toast */
 import { toast } from 'sonner'
+
+/* Context */
+import { ActionDialogContext } from '../../../../context/ActionDialogContext'
 
 /* Hooks */
 import useEstablishmentUsersQuery from '../../../../hooks/queries/useEstablishmentUsersQuery'
@@ -11,17 +13,22 @@ import useEstablishmentsQuery from '../../../../hooks/queries/useEstablishmentsQ
 import useRemoveEstablishmentUserMutation from '../../../../hooks/mutations/useRemoveEstablishmentUserMutation'
 
 /* Components */
-import EstablishmentUsersTable from '../../../../components/dashboard/admin/establishments/EstablishmentUsersTable'
+import Table from '../../../../components/table/Table'
 import EstablishmentUserFormDialog from '../../../../components/dashboard/admin/establishments/EstablishmentUserFormDialog'
 import DefaultButton from '../../../../components/common/button/DefaultButton'
 import DashboardPageHeader from '../../../../components/dashboard/DashboardPageHeader'
 
-const AdminEstablishmentUsers = () => {
-  const { idEstablecimiento } = useParams()
-  const establishmentId = Number(idEstablecimiento)
+/* Columns */
+import { getEstablishmentUsersColumns } from '../../../../components/table/columns/establishmentUsersColumns'
 
-  // Estado para controlar el formulario de alta o edición de usuario
+const AdminEstablishmentUsers = () => {
+  // Hooks
+  const { openActionDialog } = useContext(ActionDialogContext)
+  const { idEstablecimiento } = useParams()
+
   const [userDialog, setUserDialog] = useState(null)
+
+  const establishmentId = Number(idEstablecimiento)
 
   const {
     data: users = [],
@@ -33,48 +40,70 @@ const AdminEstablishmentUsers = () => {
     data: establishments = [],
   } = useEstablishmentsQuery()
 
-  const removeMutation = useRemoveEstablishmentUserMutation(establishmentId)
+  const removeMutation =
+    useRemoveEstablishmentUserMutation(establishmentId)
 
+  // Constantes derivadas
   const establishment = establishments.find(
-    (item) => item.idEstablecimiento === establishmentId
+    (item) =>
+      item.idEstablecimiento === establishmentId
   )
 
+  // useEffect
   useEffect(() => {
     if (error) {
-      toast.error('No se pudieron cargar los usuarios del establecimiento.')
+      toast.error(
+        'No se pudieron cargar los usuarios del establecimiento.'
+      )
     }
   }, [error])
 
+  // Funciones
   const handleRemoveUser = (user) => {
-    toast(
-      `¿Querés desasociar a ${user.nombre} ${user.apellido}?`,
-      {
-        description:
-          'El usuario dejará de estar asociado a este establecimiento.',
-        action: {
-          label: 'Desasociar',
-          onClick: async () => {
-            try {
-              await removeMutation.mutateAsync(user.idUsuario)
+    if (removeMutation.isPending) return
 
-              toast.success('Usuario desasociado correctamente.')
-            } catch (error) {
-              toast.error(
-                error.response?.data?.message ||
-                  'No se pudo desasociar el usuario.'
-              )
-            }
-          },
-        },
-        cancel: {
-          label: 'Cancelar',
-          onClick: () => {},
-        },
-      }
-    )
+    openActionDialog({
+      title: 'Desasociar usuario',
+      description: `¿Querés desasociar a ${user.nombre} ${user.apellido}? El usuario dejará de estar asociado a este establecimiento.`,
+      actionLabel: 'Desasociar',
+      cancelLabel: 'Cancelar',
+      variant: 'danger',
+      icon: 'cancel',
+      onAction: async () => {
+        try {
+          await removeMutation.mutateAsync(
+            user.idUsuario
+          )
+
+          toast.success(
+            'Usuario desasociado correctamente.'
+          )
+        } catch (error) {
+          toast.error(
+            error.response?.data?.message ||
+              'No se pudo desasociar el usuario.'
+          )
+
+          throw error
+        }
+      },
+    })
   }
 
+  const handleEditUser = (user) => {
+    setUserDialog({
+      mode: 'edit',
+      user,
+    })
+  }
 
+  // Constantes derivadas
+  const columns = getEstablishmentUsersColumns({
+    onEditUser: handleEditUser,
+    onRemoveUser: handleRemoveUser,
+  })
+
+  // Renderizado
   return (
     <section className="min-w-0">
       <Link
@@ -84,7 +113,6 @@ const AdminEstablishmentUsers = () => {
         ← Volver a establecimientos
       </Link>
 
-      {/* Encabezado y acción para agregar usuario */}
       <div className="mt-8">
         <DashboardPageHeader
           eyebrow="Establecimientos / Gestión de personal"
@@ -93,7 +121,6 @@ const AdminEstablishmentUsers = () => {
         />
       </div>
 
-      {/* Agregar usuario */}
       <div className="mt-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h3 className="font-display text-xl font-bold text-mesa-text">
@@ -101,32 +128,35 @@ const AdminEstablishmentUsers = () => {
           </h3>
 
           <p className="mt-2 text-sm text-mesa-muted">
-            {users.length} {users.length === 1 ? 'usuario' : 'usuarios'}
+            {users.length}{' '}
+            {users.length === 1
+              ? 'usuario'
+              : 'usuarios'}
           </p>
         </div>
 
         <DefaultButton
           type="button"
-          onClick={() => setUserDialog({ mode: 'add' })}
+          onClick={() =>
+            setUserDialog({
+              mode: 'add',
+            })
+          }
         >
           Agregar usuario
         </DefaultButton>
       </div>
 
-
-
       <div className="mt-8 min-w-0 rounded-3xl border border-mesa-border bg-mesa-surface p-3 sm:p-6">
-        <EstablishmentUsersTable
-          users={users}
+        <Table
+          rows={users}
+          columns={columns}
+          getRowId={(row) => row.idUsuario}
           loading={isLoading}
-          onEditUser={(user) =>
-            setUserDialog({ mode: 'edit', user })
-          }
-          onRemoveUser={handleRemoveUser}
+          emptyMessage="No hay usuarios asociados a este establecimiento."
         />
       </div>
 
-      {/* Formulario para agregar o editar usuario */}
       {userDialog && (
         <EstablishmentUserFormDialog
           key={
@@ -141,11 +171,11 @@ const AdminEstablishmentUsers = () => {
               : null
           }
           idEstablecimiento={establishmentId}
-          onClose={() => setUserDialog(null)}
+          onClose={() =>
+            setUserDialog(null)
+          }
         />
       )}
-
-
     </section>
   )
 }

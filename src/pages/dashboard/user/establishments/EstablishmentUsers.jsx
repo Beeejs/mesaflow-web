@@ -6,24 +6,34 @@ import { toast } from 'sonner'
 /* Context */
 import { WorkspaceContext } from '../../../../context/WorkspaceContext'
 import { SessionContext } from '../../../../context/SessionContext'
+import { ActionDialogContext } from '../../../../context/ActionDialogContext'
 
 /* Hooks */
 import useEstablishmentUsersQuery from '../../../../hooks/queries/useEstablishmentUsersQuery'
 import useRemoveEstablishmentUserMutation from '../../../../hooks/mutations/useRemoveEstablishmentUserMutation'
 
 /* Components */
-import EstablishmentUsersTable from '../../../../components/dashboard/admin/establishments/EstablishmentUsersTable'
+import Table from '../../../../components/table/Table'
 import EstablishmentUserFormDialog from '../../../../components/dashboard/admin/establishments/EstablishmentUserFormDialog'
 import DashboardPageHeader from '../../../../components/dashboard/DashboardPageHeader'
 import DefaultButton from '../../../../components/common/button/DefaultButton'
 
-const canRemoveMozo = (user) => user.rolEstablecimiento === 'MOZO'
+/* Columns */
+import { getEstablishmentUsersColumns } from '../../../../components/table/columns/establishmentUsersColumns'
+
+const canRemoveMozo = (user) =>
+  user.rolEstablecimiento === 'MOZO'
 
 const EstablishmentUsers = () => {
+  // Hooks
   const { selectedEstablishment } = useContext(WorkspaceContext)
+  const { openActionDialog } = useContext(ActionDialogContext)
   const { user } = useContext(SessionContext)
-  const establishmentId = selectedEstablishment.idEstablecimiento
+
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  const establishmentId =
+    selectedEstablishment.idEstablecimiento
 
   const {
     data: users = [],
@@ -31,52 +41,77 @@ const EstablishmentUsers = () => {
     error,
   } = useEstablishmentUsersQuery(establishmentId)
 
-  const removeMutation = useRemoveEstablishmentUserMutation(establishmentId)
+  const removeMutation =
+    useRemoveEstablishmentUserMutation(establishmentId)
+
+  // Constantes derivadas
   const isEncargado = users.some(
     (item) =>
       item.email === user?.email &&
       item.rolEstablecimiento === 'ENCARGADO'
   )
 
+  // useEffect
   useEffect(() => {
     if (error) {
       toast.error(
         error.response?.data?.message ||
-        'No se pudieron cargar los usuarios del establecimiento.'
+          'No se pudieron cargar los usuarios del establecimiento.'
       )
     }
   }, [error])
 
+  // Funciones
   const handleRemoveUser = (item) => {
-    if (!isEncargado || !canRemoveMozo(item) || removeMutation.isPending) {
+    if (
+      !isEncargado ||
+      !canRemoveMozo(item) ||
+      removeMutation.isPending
+    ) {
       return
     }
 
-    toast(`¿Querés desasociar a ${item.nombre} ${item.apellido}?`, {
-      description: 'El usuario dejará de trabajar como mozo/a en este establecimiento.',
-      action: {
-        label: 'Desasociar',
-        onClick: async () => {
-          try {
-            await removeMutation.mutateAsync(item.idUsuario)
-            toast.success('Usuario desasociado correctamente.')
-          } catch (error) {
-            toast.error(
-              error.response?.data?.message ||
+    openActionDialog({
+      title: 'Desasociar usuario',
+      description: `¿Querés desasociar a ${item.nombre} ${item.apellido}? El usuario dejará de trabajar como mozo/a en este establecimiento.`,
+      actionLabel: 'Desasociar',
+      cancelLabel: 'Cancelar',
+      variant: 'danger',
+      icon: 'cancel',
+      onAction: async () => {
+        try {
+          await removeMutation.mutateAsync(
+            item.idUsuario
+          )
+
+          toast.success(
+            'Usuario desasociado correctamente.'
+          )
+        } catch (error) {
+          toast.error(
+            error.response?.data?.message ||
               'No se pudo desasociar el usuario.'
-            )
-          }
-        },
+          )
+
+          throw error
+        }
       },
-      cancel: { label: 'Cancelar' },
     })
   }
 
+  // Constantes derivadas
+  const columns = getEstablishmentUsersColumns({
+    onRemoveUser: handleRemoveUser,
+    canRemoveUser: canRemoveMozo,
+  })
+
+  // Renderizado
   if (!isLoading && (error || !isEncargado)) {
     return (
       <p className="text-sm text-mesa-muted">
         {error
-          ? error.response?.data?.message || 'No se pudieron cargar los usuarios del establecimiento.'
+          ? error.response?.data?.message ||
+            'No se pudieron cargar los usuarios del establecimiento.'
           : 'Solo el encargado puede administrar los usuarios del establecimiento.'}
       </p>
     )
@@ -95,10 +130,15 @@ const EstablishmentUsers = () => {
           <h3 className="font-display text-xl font-bold text-mesa-text">
             Usuarios asociados
           </h3>
+
           <p className="mt-2 text-sm text-mesa-muted">
-            {users.length} {users.length === 1 ? 'usuario' : 'usuarios'}
+            {users.length}{' '}
+            {users.length === 1
+              ? 'usuario'
+              : 'usuarios'}
           </p>
         </div>
+
         <DefaultButton
           type="button"
           onClick={() => setDialogOpen(true)}
@@ -109,11 +149,12 @@ const EstablishmentUsers = () => {
       </div>
 
       <div className="mt-8 min-w-0 rounded-3xl border border-mesa-border bg-mesa-surface p-3 sm:p-6">
-        <EstablishmentUsersTable
-          users={users}
+        <Table
+          rows={users}
+          columns={columns}
+          getRowId={(row) => row.idUsuario}
           loading={isLoading}
-          onRemoveUser={handleRemoveUser}
-          canRemoveUser={canRemoveMozo}
+          emptyMessage="No hay usuarios asociados a este establecimiento."
         />
       </div>
 

@@ -2,6 +2,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useContext
 } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
@@ -11,13 +12,16 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
 /* Components */
+import Table from '../../../../components/table/Table'
 import DefaultButton from '../../../../components/common/button/DefaultButton'
 import MenuStockSummary from '../../../../components/dashboard/user/menuStock/MenuStockSummary'
-import ProductsTable from '../../../../components/dashboard/user/menuStock/ProductsTable'
 import ProductFormDialog from '../../../../components/dashboard/user/menuStock/ProductFormDialog'
 import ProductImageDialog from '../../../../components/dashboard/user/menuStock/ProductImageDialog'
 import StockMovementDialog from '../../../../components/dashboard/user/menuStock/StockMovementDialog'
-import StockMovementsTable from '../../../../components/dashboard/user/menuStock/StockMovementsTable'
+
+/* Columns */
+import { getProductColumns } from '../../../../components/table/columns/productColumns'
+import { stockMovementsColumns } from '../../../../components/table/columns/stockMovementsColumns'
 
 /* Hooks */
 import useProductsQuery from '../../../../hooks/queries/useProductsQuery'
@@ -31,6 +35,9 @@ import {
   getStockStatus,
   MOVEMENT_FILTER_TYPES,
 } from '../../../../utils/productUtils'
+
+/* Context */
+import { ActionDialogContext } from '../../../../context/ActionDialogContext'
 
 /* Styles */
 import {
@@ -77,6 +84,8 @@ const MenuStock = () => {
   const [stockProduct, setStockProduct] =
     useState(null)
 
+  const { openActionDialog } = useContext(ActionDialogContext)
+
   const [
     stockMovementOpen,
     setStockMovementOpen,
@@ -121,7 +130,6 @@ const MenuStock = () => {
       idEstablecimiento
     )
 
-  // Constantes derivadas
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesCategory =
@@ -302,32 +310,31 @@ const MenuStock = () => {
   }
 
   const handleDeleteProduct = (product) => {
-    toast(`¿Querés eliminar "${product.nombre}"?`, {
-      description: 'Esta acción dará de baja el producto.',
-      action: {
-        label: 'Eliminar',
-        onClick: async () => {
-          try {
-            await deleteMutation.mutateAsync({
-              idEstablecimiento,
-              idProducto: product.idProducto,
-            })
+    openActionDialog({
+      title: 'Eliminar producto',
+      description: `¿Querés eliminar "${product.nombre}"? Esta acción no se puede deshacer.`,
+      actionLabel: 'Eliminar',
+      cancelLabel: 'Cancelar',
+      variant: 'danger',
+      icon: 'delete',
+      onAction: async () => {
+        try {
+          await deleteMutation.mutateAsync({
+            idEstablecimiento,
+            idProducto: product.idProducto,
+          })
 
-            toast.success(
-              'Producto eliminado correctamente.'
+          toast.success('Producto eliminado correctamente.')
+        } catch (error) {
+          toast.error(
+            getErrorMessage(
+              error,
+              'No se pudo eliminar el producto.'
             )
-          } catch (error) {
-            toast.error(
-              getErrorMessage(
-                error,
-                'No se pudo eliminar el producto.'
-              )
-            )
-          }
-        },
-      },
-      cancel: {
-        label: 'Cancelar',
+          )
+
+          throw error
+        }
       },
     })
   }
@@ -339,6 +346,16 @@ const MenuStock = () => {
       refetchMovements(),
     ])
   }
+
+  // Columnas productos
+  const productColumns = getProductColumns({
+    togglingId,
+    onToggleVisible: handleToggleVisible,
+    onAdjustStock: handleOpenStockMovement,
+    onEditProduct: handleEditProduct,
+    onDeleteProduct: handleDeleteProduct,
+    onViewImage: handleViewImage,
+  })
 
   // Renderizado
   return (
@@ -486,29 +503,13 @@ const MenuStock = () => {
           </div>
         </div>
 
-        <ProductsTable
-          products={
-            filteredProducts
-          }
-          loading={
-            productsLoading
-          }
-          togglingId={togglingId}
-          onToggleVisible={
-            handleToggleVisible
-          }
-          onAdjustStock={
-            handleOpenStockMovement
-          }
-          onEditProduct={
-            handleEditProduct
-          }
-          onDeleteProduct={
-            handleDeleteProduct
-          }
-          onViewImage={
-            handleViewImage
-          }
+        <Table
+          rows={filteredProducts}
+          columns={productColumns}
+          getRowId={(product) => product.idProducto}
+          loading={productsLoading}
+          rowHeight={76}
+          emptyMessage="Todavía no hay productos cargados."
         />
       </section>
       )}
@@ -527,13 +528,17 @@ const MenuStock = () => {
           </p>
         </div>
 
-        <StockMovementsTable
-          movements={filteredMovements}
-          loading={
-            movementsLoading
+        <Table
+          rows={filteredMovements}
+          columns={stockMovementsColumns}
+          getRowId={(movement) =>
+            movement.idMovimientoStock
           }
+          loading={movementsLoading}
+          rowHeight={64}
+          emptyMessage="Todavía no hay movimientos de stock para mostrar."
         />
-      </section>
+        </section>
       )}
 
       {productForm && (

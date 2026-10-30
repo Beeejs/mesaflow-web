@@ -21,6 +21,7 @@ import EstablishmentHome from './pages/dashboard/user/EstablishmentHome'
 import DashboardHome from './pages/dashboard/user/DashboardHome'
 import MenuStock from './pages/dashboard/user/menuStock/MenuStock'
 import EstablishmentUsers from './pages/dashboard/user/establishments/EstablishmentUsers'
+import Tables from './pages/dashboard/user/tables/Tables'
 
 const router = createBrowserRouter([
   {
@@ -78,6 +79,10 @@ const router = createBrowserRouter([
               {
                 path: 'mis-establecimientos/:idEstablecimiento/usuarios',
                 Component: EstablishmentUsers,
+              },
+              {
+                path: 'mis-establecimientos/:idEstablecimiento/mesas',
+                Component: Tables,
               },
             ],
           },

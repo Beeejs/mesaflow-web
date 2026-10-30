@@ -40,6 +40,7 @@ export const deleteTableConfiguration = async ({
   idEstablecimiento,
   idConfiguracionMesa,
 }) => {
+  console.log(`Eliminando configuración de mesa con ID ${idConfiguracionMesa} para el establecimiento con ID ${idEstablecimiento}`)
   await api.delete(
     `/api/establecimientos/${idEstablecimiento}/configuraciones-mesa/${idConfiguracionMesa}`
   )

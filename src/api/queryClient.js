@@ -88,6 +88,13 @@ export const queryKeys = {
     idEstablecimiento,
     'table-configurations',
   ],
+
+  // Sectores del establecimiento
+  sectors: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'sectors',
+  ],
 }
 
 export default queryClient

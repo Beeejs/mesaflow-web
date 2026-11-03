@@ -95,6 +95,13 @@ export const queryKeys = {
     idEstablecimiento,
     'sectors',
   ],
+
+  // Mesas físicas del establecimiento
+  tables: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'tables',
+  ],
 }
 
 export default queryClient

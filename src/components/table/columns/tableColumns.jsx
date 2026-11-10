@@ -5,6 +5,36 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 /* Components */
 import DashboardTableActionButton from '../../dashboard/DashboardTableActionButton'
 
+// =========================================
+// IDENTIFICACIÓN VISUAL DE MOZOS
+// =========================================
+
+const WAITER_COLORS = [
+  '#E87722',
+  '#0D9488',
+  '#7C3AED',
+  '#2563EB',
+  '#DB2777',
+  '#65A30D',
+  '#D97706',
+]
+
+const getWaiterColor = (idUsuario) => {
+  const id = Number(idUsuario)
+
+  if (!Number.isFinite(id)) {
+    return WAITER_COLORS[0]
+  }
+
+  return WAITER_COLORS[
+    Math.abs(id) % WAITER_COLORS.length
+  ]
+}
+
+// =========================================
+// COLUMNAS DE MESAS
+// =========================================
+
 export const getTableColumns = ({ onEditTable }) => [
   {
     field: 'codigo',
@@ -70,6 +100,90 @@ export const getTableColumns = ({ onEditTable }) => [
       </span>
     ),
   },
+
+  // =========================================
+  // MOZO RESPONSABLE
+  // =========================================
+
+  {
+    field: 'waiterName',
+    headerName: 'Mozo',
+    flex: 1.3,
+    minWidth: 200,
+    sortable: true,
+
+    renderCell: (params) => {
+      const {
+        waiterId,
+        waiterName,
+        waiterInitial,
+        waiterOrigin,
+      } = params.row
+
+      if (waiterId == null) {
+        return (
+          <span className="text-sm text-mesa-muted">
+            Sin mozo
+          </span>
+        )
+      }
+
+      return (
+        <div
+          className="flex w-full min-w-0 items-center gap-2.5 overflow-hidden"
+          style={{
+            height: '100%',
+            minHeight: 0,
+          }}
+        >
+          {/* Avatar del mozo */}
+          <span
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold leading-none text-white"
+            style={{
+              backgroundColor: getWaiterColor(waiterId),
+            }}
+          >
+            {waiterInitial}
+          </span>
+
+          {/* Nombre y origen de asignación */}
+          <div
+            className="flex min-w-0 flex-1 flex-col justify-center overflow-hidden"
+            style={{
+              minHeight: 0,
+              gap: 3,
+            }}
+          >
+            <span
+              className="block w-full truncate text-sm font-semibold text-mesa-text"
+              style={{
+                lineHeight: '18px',
+              }}
+              title={waiterName}
+            >
+              {waiterName}
+            </span>
+
+            <span
+              className="block w-full truncate text-xs text-mesa-muted"
+              style={{
+                lineHeight: '14px',
+              }}
+            >
+              {waiterOrigin === 'Propio'
+                ? 'Asignación propia'
+                : 'Responsable del sector'}
+            </span>
+          </div>
+        </div>
+      )
+    },
+  },
+
+  // =========================================
+  // ACCIONES
+  // =========================================
+
   {
     field: 'actions',
     headerName: 'Acciones',
@@ -79,6 +193,7 @@ export const getTableColumns = ({ onEditTable }) => [
     align: 'center',
     headerAlign: 'center',
     disableExport: true,
+
     renderCell: (params) => {
       const table = params.row
 

@@ -1,4 +1,5 @@
-import { useContext } from 'react'
+
+import { useContext, useState } from 'react'
 
 /* MUI */
 import Dialog from '@mui/material/Dialog'
@@ -16,7 +17,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 /* Context */
 import { ActionDialogContext } from '../../context/ActionDialogContext'
@@ -62,6 +63,8 @@ const DashboardActionDialog = () => {
     resetActionDialog,
   } = useContext(ActionDialogContext)
 
+  const [isProcessing, setIsProcessing] = useState(false)
+
   // Constantes derivadas
   const styles =
     variantStyles[dialog.variant] ??
@@ -71,24 +74,84 @@ const DashboardActionDialog = () => {
     dialogIcons[dialog.icon] ??
     dialogIcons.warning
 
-  // Funciones
+  // =========================================
+  // CERRAR DIÁLOGO
+  // =========================================
+
   const handleClose = () => {
+    if (isProcessing) return
+
+    // Acción opcional para cuando el usuario
+    // cancela o cierra una confirmación.
+    dialog.onCancel?.()
+
     closeActionDialog()
   }
 
-  const handleConfirm = async () => {
-    try {
-      if (dialog.onAction) {
-        await dialog.onAction()
-      }
+  // =========================================
+  // EJECUTAR UNA ACCIÓN
+  // =========================================
 
-      closeActionDialog()
+  const executeAction = async (action) => {
+    if (isProcessing) return
+
+    setIsProcessing(true)
+
+    try {
+      // Una acción puede devolver false cuando validó o intentó guardar,
+      // pero no pudo completar la operación. En ese caso conservamos
+      // el diálogo abierto para volver a intentar o cancelar.
+      const result = action ? await action() : undefined
+
+      if (result !== false) {
+        closeActionDialog()
+      }
     } catch {
-      // El error lo maneja la acción que abrió el diálogo.
+      // El error lo maneja la acción que abrió
+      // el diálogo. Si la acción falla, el
+      // diálogo permanece abierto.
+    } finally {
+      setIsProcessing(false)
     }
   }
 
-  // Renderizado
+  // =========================================
+  // ACCIÓN PRINCIPAL
+  // =========================================
+
+  const handleConfirm = () => {
+    executeAction(dialog.onAction)
+  }
+
+  // =========================================
+  // ACCIÓN SECUNDARIA OPCIONAL
+  // =========================================
+
+  // Permite agregar una tercera acción sin
+  // modificar los diálogos existentes.
+  //
+  // Ejemplo para habilitación de mesas:
+  //
+  // - Cancelar
+  // - Solo esta
+  // - Todas
+  //
+  // Los diálogos que no proporcionen
+  // secondaryActionLabel y onSecondaryAction
+  // seguirán mostrando solamente dos botones.
+
+  const handleSecondaryAction = () => {
+    executeAction(dialog.onSecondaryAction)
+  }
+
+  const hasSecondaryAction =
+    Boolean(dialog.secondaryActionLabel) &&
+    typeof dialog.onSecondaryAction === 'function'
+
+  // =========================================
+  // RENDERIZADO
+  // =========================================
+
   return (
     <Dialog
       open={dialog.open}
@@ -106,7 +169,8 @@ const DashboardActionDialog = () => {
             backgroundImage: 'none',
             color: '#F8FAFC',
             overflow: 'hidden',
-            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.55)',
+            boxShadow:
+              '0 24px 60px rgba(0, 0, 0, 0.55)',
           },
         },
         backdrop: {
@@ -116,7 +180,11 @@ const DashboardActionDialog = () => {
           },
         },
         transition: {
-          onExited: resetActionDialog,
+          onExited: () => {
+            if (!dialog.open) {
+              resetActionDialog()
+            }
+          },
         },
       }}
     >
@@ -130,6 +198,7 @@ const DashboardActionDialog = () => {
       >
         <IconButton
           onClick={handleClose}
+          disabled={isProcessing}
           aria-label="Cerrar"
           sx={{
             position: 'absolute',
@@ -208,20 +277,45 @@ const DashboardActionDialog = () => {
           py: 2,
           borderTop: '1px solid #1F2937',
           justifyContent: 'center',
+          flexWrap: 'wrap',
           gap: 1.5,
           backgroundColor: '#0B111C',
         }}
       >
+        {/* ===================================== */}
+        {/* CANCELAR                             */}
+        {/* ===================================== */}
+
         <DefaultButton
           variant="secondary"
           onClick={handleClose}
+          disabled={isProcessing}
         >
           {dialog.cancelLabel || 'Cancelar'}
         </DefaultButton>
 
+        {/* ===================================== */}
+        {/* TERCERA ACCIÓN OPCIONAL              */}
+        {/* ===================================== */}
+
+        {hasSecondaryAction && (
+          <DefaultButton
+            variant="secondary"
+            onClick={handleSecondaryAction}
+            disabled={isProcessing}
+          >
+            {dialog.secondaryActionLabel}
+          </DefaultButton>
+        )}
+
+        {/* ===================================== */}
+        {/* ACCIÓN PRINCIPAL                     */}
+        {/* ===================================== */}
+
         <DefaultButton
           variant={dialog.variant || 'primary'}
           onClick={handleConfirm}
+          disabled={isProcessing}
         >
           {dialog.actionLabel || 'Confirmar'}
         </DefaultButton>

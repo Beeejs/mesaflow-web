@@ -10,7 +10,7 @@ const DashboardTabs = ({
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className={`flex gap-6 overflow-x-auto border-b border-white/10 ${className}`}
+      className={`flex gap-6 border-b border-white/10 ${className}`}
     >
       {tabs.map((tab) => {
         const selected = value === tab.id

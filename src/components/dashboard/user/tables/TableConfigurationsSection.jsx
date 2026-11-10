@@ -8,7 +8,6 @@ import TextField from '@mui/material/TextField'
 
 /* Components */
 import DefaultButton from '../../../common/button/DefaultButton'
-import DashboardPageHeader from '../../DashboardPageHeader'
 import DashboardFormDialog from '../../DashboardFormDialog'
 
 /* Context */
@@ -39,15 +38,28 @@ const TableConfigurationsSection = ({
   isLoading,
   isError,
   onRetry,
+
+  // Estado del editor de distribución
+  distributionVersion,
+  isDirty = false,
+  isDistributionSaving = false,
 }) => {
-  // Context
+  // =========================================
+  // CONTEXTO Y ESTADOS
+  // =========================================
+
   const { openActionDialog } = useContext(ActionDialogContext)
 
-  // Estados
-  const [createDialogOpen, setCreateDialogOpen] = useState(false)
-  const [configurationName, setConfigurationName] = useState('')
+  const [createDialogOpen, setCreateDialogOpen] =
+    useState(false)
 
-  // Mutaciones
+  const [configurationName, setConfigurationName] =
+    useState('')
+
+  // =========================================
+  // MUTACIONES
+  // =========================================
+
   const createMutation =
     useCreateTableConfigurationMutation(idEstablecimiento)
 
@@ -57,17 +69,28 @@ const TableConfigurationsSection = ({
   const deleteMutation =
     useDeleteTableConfigurationMutation(idEstablecimiento)
 
-  // Constantes derivadas
+  // =========================================
+  // DATOS DERIVADOS
+  // =========================================
+
   const hasConfigurations = configurations.length > 0
+
   const isSaving = createMutation.isPending
 
-  // Abrir formulario
+  const actionsDisabled =
+    isDistributionSaving || isDirty
+
+  // =========================================
+  // CREAR CONFIGURACIÓN
+  // =========================================
+
   const handleOpenCreateDialog = () => {
+    if (actionsDisabled) return
+
     setConfigurationName('')
     setCreateDialogOpen(true)
   }
 
-  // Cerrar formulario
   const handleCloseCreateDialog = () => {
     if (isSaving) return
 
@@ -75,7 +98,6 @@ const TableConfigurationsSection = ({
     setConfigurationName('')
   }
 
-  // Crear configuración
   const handleCreateConfiguration = async (event) => {
     event.preventDefault()
 
@@ -107,12 +129,16 @@ const TableConfigurationsSection = ({
     }
   }
 
-  // Activar configuración
+  // =========================================
+  // ACTIVAR CONFIGURACIÓN
+  // =========================================
+
   const handleActivateConfiguration = () => {
     if (
       !selectedConfiguration ||
       selectedConfiguration.activa ||
-      activateMutation.isPending
+      activateMutation.isPending ||
+      actionsDisabled
     ) {
       return
     }
@@ -151,12 +177,16 @@ const TableConfigurationsSection = ({
     })
   }
 
-  // Eliminar configuración
+  // =========================================
+  // ELIMINAR CONFIGURACIÓN
+  // =========================================
+
   const handleDeleteConfiguration = () => {
     if (
       !selectedConfiguration ||
       selectedConfiguration.activa ||
-      deleteMutation.isPending
+      deleteMutation.isPending ||
+      actionsDisabled
     ) {
       return
     }
@@ -195,35 +225,30 @@ const TableConfigurationsSection = ({
     })
   }
 
+  // =========================================
+  // RENDERIZADO
+  // =========================================
+
   return (
     <>
-      <DashboardPageHeader
-        eyebrow="Operación"
-        title="Mesas"
-        description="Administrá las configuraciones, sectores y mesas de tu establecimiento."
-        action={
-          <DefaultButton
-            type="button"
-            onClick={handleOpenCreateDialog}
-          >
-            Nueva configuración
-          </DefaultButton>
-        }
-      />
+      {/* ===================================== */}
+      {/* CONFIGURACIONES COMPACTAS             */}
+      {/* ===================================== */}
 
       {isLoading ? (
-        <div className="mt-8 rounded-3xl border border-mesa-border bg-mesa-surface p-6">
+        <div className="mt-5 rounded-2xl border border-mesa-border bg-mesa-surface p-4">
           <p className="text-sm text-mesa-muted">
             Cargando configuraciones...
           </p>
         </div>
       ) : isError ? (
-        <div className="mt-8 rounded-3xl border border-mesa-border bg-mesa-surface p-6">
-          <p className="mb-4 text-sm text-red-400">
+        <div className="mt-5 rounded-2xl border border-mesa-border bg-mesa-surface p-4">
+          <p className="mb-3 text-sm text-red-400">
             No se pudieron cargar las configuraciones.
           </p>
 
           <DefaultButton
+            type="button"
             variant="secondary"
             onClick={onRetry}
           >
@@ -231,110 +256,148 @@ const TableConfigurationsSection = ({
           </DefaultButton>
         </div>
       ) : !hasConfigurations ? (
-        <div className="mt-8 rounded-3xl border border-dashed border-mesa-border bg-mesa-surface p-8 text-center">
-          <h2 className="font-display text-xl font-bold text-mesa-text">
-            Todavía no hay configuraciones de mesas
-          </h2>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-dashed border-mesa-border bg-mesa-surface p-5">
+          <div>
+            <p className="font-semibold text-mesa-text">
+              Todavía no hay configuraciones
+            </p>
 
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-mesa-muted">
-            Creá la primera configuración para comenzar
-            a organizar los sectores y las mesas del establecimiento.
-          </p>
+            <p className="mt-1 text-sm text-mesa-muted">
+              Creá la primera para empezar a distribuir las mesas.
+            </p>
+          </div>
+
+          <DefaultButton
+            type="button"
+            onClick={handleOpenCreateDialog}
+            disabled={actionsDisabled}
+          >
+            Nueva configuración
+          </DefaultButton>
         </div>
       ) : (
-        <div className="mt-8 rounded-3xl border border-mesa-border bg-mesa-surface p-5 sm:p-6">
-          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
-            <div>
-              <h2 className="font-display text-lg font-bold text-mesa-text">
-                Configuración de mesas
-              </h2>
+        <div className="mt-5 rounded-2xl border border-mesa-border bg-mesa-surface px-4 py-3 sm:px-5">
+          {/* ===================================== */}
+          {/* SELECTOR Y ACCIÓN PRINCIPAL           */}
+          {/* ===================================== */}
 
-              <p className="mt-2 text-sm text-mesa-muted">
-                Seleccioná la distribución que querés consultar
-                o editar.
-              </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* Selector, estado y versión */}
+
+            <div className="flex min-w-0 flex-wrap items-center gap-3">
+              <div className="w-full sm:w-64">
+                <TextField
+                  select
+                  label="Configuración"
+                  size="small"
+                  value={
+                    selectedConfiguration?.idConfiguracionMesa ?? ''
+                  }
+                  onChange={(event) =>
+                    onSelectConfiguration(
+                      String(event.target.value)
+                    )
+                  }
+                  disabled={isDistributionSaving}
+                  fullWidth
+                  sx={textFieldStyles}
+                  slotProps={selectSlotProps}
+                >
+                  {configurations.map((configuration) => (
+                    <MenuItem
+                      key={configuration.idConfiguracionMesa}
+                      value={configuration.idConfiguracionMesa}
+                    >
+                      {configuration.nombre}
+                      {configuration.activa ? ' (Activa)' : ''}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </div>
+
+              {/* Estado de la configuración */}
+
+              <span
+                className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${
+                  selectedConfiguration?.activa
+                    ? 'border-green-500/40 bg-green-500/10 text-green-400'
+                    : 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
+                }`}
+              >
+                {selectedConfiguration?.activa
+                  ? 'Activa'
+                  : 'Inactiva'}
+              </span>
+
+              <span className="text-xs text-mesa-muted">
+                v{distributionVersion ??
+                  selectedConfiguration?.version ??
+                  0}
+              </span>
+
+              {/* Acciones de configuraciones inactivas */}
+
+              {selectedConfiguration &&
+                !selectedConfiguration.activa && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <DefaultButton
+                      type="button"
+                      variant="secondary"
+                      onClick={handleActivateConfiguration}
+                      disabled={
+                        activateMutation.isPending ||
+                        actionsDisabled
+                      }
+                    >
+                      Activar
+                    </DefaultButton>
+
+                    <DefaultButton
+                      type="button"
+                      variant="danger"
+                      onClick={handleDeleteConfiguration}
+                      disabled={
+                        deleteMutation.isPending ||
+                        actionsDisabled
+                      }
+                    >
+                      Eliminar
+                    </DefaultButton>
+                  </div>
+                )}
             </div>
 
-            <div className="w-full lg:w-80">
-              <TextField
-                select
-                label="Configuración"
-                value={
-                  selectedConfiguration?.idConfiguracionMesa ?? ''
-                }
-                onChange={(event) =>
-                  onSelectConfiguration(
-                    String(event.target.value)
-                  )
-                }
-                fullWidth
-                sx={textFieldStyles}
-                slotProps={selectSlotProps}
+            {/* Nueva configuración: extremo derecho */}
+
+            <div className="flex shrink-0 justify-end">
+              <DefaultButton
+                type="button"
+                onClick={handleOpenCreateDialog}
+                disabled={actionsDisabled}
               >
-                {configurations.map((configuration) => (
-                  <MenuItem
-                    key={configuration.idConfiguracionMesa}
-                    value={configuration.idConfiguracionMesa}
-                  >
-                    {configuration.nombre}
-                    {configuration.activa ? ' (Activa)' : ''}
-                  </MenuItem>
-                ))}
-              </TextField>
+                Nueva configuración
+              </DefaultButton>
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <span
-              className={`rounded-full border px-3 py-1 text-xs font-bold ${
-                selectedConfiguration?.activa
-                  ? 'border-green-500/40 bg-green-500/10 text-green-400'
-                  : 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400'
-              }`}
-            >
-              {selectedConfiguration?.activa
-                ? 'Activa'
-                : 'Inactiva'}
-            </span>
+          {/* ===================================== */}
+          {/* CONFIGURACIÓN OPERATIVA ACTUAL       */}
+          {/* ===================================== */}
 
-            <span className="text-sm text-mesa-muted">
-              Versión: {selectedConfiguration?.version ?? 0}
-            </span>
-          </div>
-
-          {selectedConfiguration && !selectedConfiguration.activa && (
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <DefaultButton
-                type="button"
-                onClick={handleActivateConfiguration}
-                disabled={activateMutation.isPending}
-              >
-                Activar configuración
-              </DefaultButton>
-
-              <DefaultButton
-                type="button"
-                variant="danger"
-                onClick={handleDeleteConfiguration}
-                disabled={deleteMutation.isPending}
-              >
-                Eliminar configuración
-              </DefaultButton>
-            </div>
-          )}
-
-          {selectedConfiguration && !selectedConfiguration.activa && (
-            <p className="mt-4 text-sm text-mesa-muted">
-              Estás consultando una configuración inactiva.
-              La distribución operativa actual es{' '}
-              <span className="font-semibold text-mesa-text">
+          {selectedConfiguration &&
+            !selectedConfiguration.activa && (
+              <p className="mt-3 text-xs text-mesa-muted">
+                En uso:{' '}
                 {activeConfiguration?.nombre ??
-                  'Ninguna configuración activa'}
-              </span>.
-            </p>
-          )}
+                  'ninguna configuración activa'}
+              </p>
+            )}
         </div>
       )}
+
+      {/* ===================================== */}
+      {/* FORMULARIO: NUEVA CONFIGURACIÓN       */}
+      {/* ===================================== */}
 
       {createDialogOpen && (
         <DashboardFormDialog

@@ -40,7 +40,6 @@ export const deleteTableConfiguration = async ({
   idEstablecimiento,
   idConfiguracionMesa,
 }) => {
-  console.log(`Eliminando configuración de mesa con ID ${idConfiguracionMesa} para el establecimiento con ID ${idEstablecimiento}`)
   await api.delete(
     `/api/establecimientos/${idEstablecimiento}/configuraciones-mesa/${idConfiguracionMesa}`
   )
@@ -67,6 +66,40 @@ export const updateTableDistribution = async ({
   const response = await api.put(
     `/api/establecimientos/${idEstablecimiento}/configuraciones-mesa/${idConfiguracionMesa}/distribucion`,
     distributionData
+  )
+
+  return handleApiResponse(response.data)
+}
+
+/* Función para habilitar o inhabilitar una mesa en una configuración */
+export const changeTableEnablement = async ({
+  idEstablecimiento,
+  idConfiguracionMesa,
+  idMesa,
+  version,
+  activa,
+}) => {
+  const response = await api.put(
+    `/api/establecimientos/${idEstablecimiento}/configuraciones-mesa/${idConfiguracionMesa}/mesas/${idMesa}/habilitacion`,
+    { activa },
+    { params: { version } }
+  )
+
+  return handleApiResponse(response.data)
+}
+
+/* Función para habilitar o inhabilitar una mesa en todas las configuraciones vigentes */
+export const changeTableEnablementInAll = async ({
+  idEstablecimiento,
+  idConfiguracionMesa,
+  idMesa,
+  version,
+  activa,
+}) => {
+  const response = await api.put(
+    `/api/establecimientos/${idEstablecimiento}/configuraciones-mesa/${idConfiguracionMesa}/mesas/${idMesa}/habilitacion/todas`,
+    { activa },
+    { params: { version } }
   )
 
   return handleApiResponse(response.data)

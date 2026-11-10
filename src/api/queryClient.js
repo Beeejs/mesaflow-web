@@ -62,6 +62,46 @@ export const queryKeys = {
     'stock-movement-reasons',
     tipoMovimiento,
   ],
+
+  // Configuraciones de mesas
+  tableConfigurations: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'table-configurations',
+  ],
+
+  // Distribución de una configuración
+  tableDistribution: (
+    idEstablecimiento,
+    idConfiguracionMesa
+  ) => [
+    'establishments',
+    idEstablecimiento,
+    'table-configurations',
+    idConfiguracionMesa,
+    'distribution',
+  ],
+
+  // Prefijo para invalidar las distribuciones
+  tableDistributionsPrefix: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'table-configurations',
+  ],
+
+  // Sectores del establecimiento
+  sectors: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'sectors',
+  ],
+
+  // Mesas físicas del establecimiento
+  tables: (idEstablecimiento) => [
+    'establishments',
+    idEstablecimiento,
+    'tables',
+  ],
 }
 
 export default queryClient

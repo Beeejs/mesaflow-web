@@ -18,6 +18,7 @@ import MenuStockSummary from '../../../../components/dashboard/user/menuStock/Me
 import ProductFormDialog from '../../../../components/dashboard/user/menuStock/ProductFormDialog'
 import ProductImageDialog from '../../../../components/dashboard/user/menuStock/ProductImageDialog'
 import StockMovementDialog from '../../../../components/dashboard/user/menuStock/StockMovementDialog'
+import DashboardTabs from '../../../../components/dashboard/DashboardTabs'
 
 /* Columns */
 import { getProductColumns } from '../../../../components/table/columns/productColumns'
@@ -420,35 +421,12 @@ const MenuStock = () => {
         }
       />
 
-      <div
-        role="tablist"
-        aria-label="Menú y stock"
-        className="flex gap-6 border-b border-white/10"
-      >
-        {TABS.map((tab) => {
-          const selected =
-            activeTab === tab.id
-
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() =>
-                setActiveTab(tab.id)
-              }
-              className={`-mb-px border-b-2 px-1 pb-3 text-sm font-semibold transition-colors ${
-                selected
-                  ? 'border-mesa-cyan-light text-mesa-text'
-                  : 'border-transparent text-mesa-muted hover:text-mesa-text'
-              }`}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
-      </div>
+      <DashboardTabs
+        tabs={TABS}
+        value={activeTab}
+        onChange={setActiveTab}
+        ariaLabel="Menú y stock"
+      />
 
       {activeTab === 'productos' && (
       <section className="space-y-4">

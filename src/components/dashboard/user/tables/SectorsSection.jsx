@@ -132,6 +132,8 @@ const SectorsSection = ({
   // Solicitud para modificar integrantes
   // desde el formulario "Editar mesa".
   groupEditRequest = null,
+  groupingRequested = false,
+  onStopGrouping,
 }) => {
   const { openActionDialog } =
     useContext(ActionDialogContext)
@@ -158,7 +160,7 @@ const SectorsSection = ({
 
   // La selección puede comenzar desde:
   //
-  // - "Agrupar mesas" del sector (manual).
+  // - "Agrupar mesas" general (primer clic determina sector).
   // - "Modificar integrantes" de Editar mesa
   //   (external).
   //
@@ -354,12 +356,6 @@ const SectorsSection = ({
 
   const groupingSelection = (() => {
     if (
-      selectionState?.source === 'manual'
-    ) {
-      return selectionState
-    }
-
-    if (
       externalSelection &&
       selectionState?.source === 'external' &&
       selectionState.sequence === requestSequence
@@ -367,7 +363,21 @@ const SectorsSection = ({
       return selectionState
     }
 
-    return externalSelection
+    if (externalSelection) return externalSelection
+
+    if (groupingRequested) {
+      return selectionState?.source === 'global'
+        ? selectionState
+        : {
+            source: 'global',
+            sequence: null,
+            idSector: null,
+            editingIndex: null,
+            form: { ...emptyGroupForm, idsMesas: [] },
+          }
+    }
+
+    return null
   })()
 
   const groupingSession = groupingSelection
@@ -526,7 +536,7 @@ const SectorsSection = ({
   // SECTOR ACTUAL DE AGRUPACIÓN
   // =========================================
 
-  const groupingSector = groupingSession
+  const groupingSector = groupingSession?.idSector != null
     ? sectorGroups.find(
         (sector) =>
           Number(sector.idSector) ===
@@ -564,13 +574,33 @@ const SectorsSection = ({
   })()
 
   const canSelectInSession = (detail) => {
+    if (!groupingSession) return false
+
+    if (
+      groupingSession.idSector != null &&
+      Number(detail.idSector) !== Number(groupingSession.idSector)
+    ) {
+      return false
+    }
+
     if (
       !canSelectForGrouping(
         detail,
-        groupingSession?.editingIndex
+        groupingSession.editingIndex
       )
     ) {
       return false
+    }
+
+    // Antes de elegir la primera mesa, solo admitir
+    // sectores donde exista al menos una pareja compatible.
+    if (groupingSession.idSector == null) {
+      const candidateSector = sectorGroups.find(
+        (sector) => Number(sector.idSector) === Number(detail.idSector)
+      )
+      if (!candidateSector || !sectorHasCompatibleTables(candidateSector)) {
+        return false
+      }
     }
 
     if (
@@ -596,14 +626,8 @@ const SectorsSection = ({
   // Necesitamos al menos dos mesas disponibles
   // con el mismo responsable efectivo.
 
-  const canCreateGroupInSector = (sector) => {
-    if (
-      editorDisabled ||
-      !onSaveGroup ||
-      groupingSession
-    ) {
-      return false
-    }
+  const sectorHasCompatibleTables = (sector) => {
+    if (editorDisabled || !onSaveGroup) return false
 
     const counts = new Map()
 
@@ -648,35 +672,9 @@ const SectorsSection = ({
 
     setSelectionState(null)
     setGroupDialogOpen(false)
-  }
-
-  // =========================================
-  // CREAR GRUPO
-  // =========================================
-
-  const startCreateGroup = (sector) => {
-    if (
-      !canCreateGroupInSector(sector)
-    ) {
-      return
+    if (groupingSelection?.source === 'global') {
+      onStopGrouping?.()
     }
-
-    setGroupDialogOpen(false)
-
-    setSelectionState({
-      source: 'manual',
-      sequence: null,
-
-      idSector:
-        Number(sector.idSector),
-
-      editingIndex: null,
-
-      form: {
-        ...emptyGroupForm,
-        idsMesas: [],
-      },
-    })
   }
 
   // =========================================
@@ -693,15 +691,25 @@ const SectorsSection = ({
 
     const mesaId = Number(idMesa)
 
-    const detail = groupingSector?.mesas.find(
-      (mesa) =>
-        Number(mesa.idMesa) === mesaId
+    const sourceSector = groupingSession.idSector == null
+      ? sectorGroups.find((sector) =>
+          sector.mesas.some((mesa) => Number(mesa.idMesa) === mesaId)
+        )
+      : groupingSector
+
+    const detail = sourceSector?.mesas.find(
+      (mesa) => Number(mesa.idMesa) === mesaId
     )
 
-    if (
-      !detail ||
-      !canSelectInSession(detail)
-    ) {
+    if (!detail || !canSelectInSession(detail)) return
+
+    // Al elegir la primera mesa, fijar automáticamente su sector.
+    if (groupingSession.idSector == null) {
+      setSelectionState({
+        ...groupingSelection,
+        idSector: Number(detail.idSector),
+        form: { ...groupForm, idsMesas: [mesaId] },
+      })
       return
     }
 
@@ -957,6 +965,12 @@ const SectorsSection = ({
 
         <div className="flex flex-wrap items-center gap-2">
 
+          {groupingSession?.idSector == null && groupingSession && (
+            <DefaultButton type="button" variant="secondary" onClick={cancelGrouping}>
+              Cancelar selección
+            </DefaultButton>
+          )}
+
           {hasRemoteChanges && (
             <DefaultButton
               type="button"
@@ -1139,10 +1153,19 @@ const SectorsSection = ({
                         '& .MuiSelect-select': {
                           display: 'flex',
                           alignItems: 'center',
-                          padding:
-                            '6px 30px 6px 8px !important',
-                          minHeight:
-                            'unset !important',
+                          padding: '6px 30px 6px 8px !important',
+                          minHeight: 'unset !important',
+                        },
+
+                        '&.Mui-disabled': {
+                          color: 'inherit',
+                          WebkitTextFillColor: 'inherit',
+                        },
+
+                        '& .MuiSelect-select.Mui-disabled': {
+                          color: 'inherit',
+                          WebkitTextFillColor: 'inherit',
+                          opacity: 1,
                         },
 
                         '& .MuiOutlinedInput-notchedOutline': {
@@ -1263,20 +1286,7 @@ const SectorsSection = ({
                     })
                   </span>
 
-                  {!groupingSession ? (
-                    <DefaultButton
-                      type="button"
-                      variant="secondary"
-                      onClick={() =>
-                        startCreateGroup(sector)
-                      }
-                      disabled={
-                        !canCreateGroupInSector(sector)
-                      }
-                    >
-                      Agrupar mesas
-                    </DefaultButton>
-                  ) : groupingSession.idSector ===
+                  {groupingSession?.idSector ===
                     Number(sector.idSector) ? (
                     <div className="flex flex-wrap items-center gap-2">
 
@@ -1306,11 +1316,7 @@ const SectorsSection = ({
                       </DefaultButton>
 
                     </div>
-                  ) : (
-                    <span className="text-xs text-mesa-muted">
-                      Selección activa en otro sector
-                    </span>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* ===================================== */}
@@ -1332,6 +1338,7 @@ const SectorsSection = ({
                     editorDisabled ||
                     (
                       Boolean(groupingSession) &&
+                      groupingSession.idSector != null &&
                       groupingSession.idSector !==
                         Number(sector.idSector)
                     )
@@ -1361,8 +1368,11 @@ const SectorsSection = ({
                   }
 
                   groupingMode={
-                    groupingSession?.idSector ===
-                    Number(sector.idSector)
+                    Boolean(groupingSession) &&
+                    (
+                      groupingSession.idSector == null ||
+                      groupingSession.idSector === Number(sector.idSector)
+                    )
                   }
 
                   selectedGroupTableIds={
@@ -1373,14 +1383,14 @@ const SectorsSection = ({
                   }
 
                   selectableGroupTableIds={
-                    groupingSession?.idSector ===
-                    Number(sector.idSector)
+                    groupingSession &&
+                    (
+                      groupingSession.idSector == null ||
+                      groupingSession.idSector === Number(sector.idSector)
+                    )
                       ? sector.mesas
                           .filter(canSelectInSession)
-                          .map(
-                            (detail) =>
-                              Number(detail.idMesa)
-                          )
+                          .map((detail) => Number(detail.idMesa))
                       : []
                   }
 

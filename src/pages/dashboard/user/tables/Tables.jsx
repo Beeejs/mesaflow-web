@@ -1,6 +1,7 @@
 
 import { useContext, useEffect, useState } from 'react'
 import { useBlocker, useParams } from 'react-router'
+import LinkIcon from '@mui/icons-material/Link'
 import { toast } from 'sonner'
 
 /* Components */
@@ -35,6 +36,9 @@ const Tables = () => {
     useContext(ActionDialogContext)
 
   const [selectedId, setSelectedId] = useState('')
+
+  // La primera mesa seleccionada determina el sector del grupo.
+  const [groupingRequested, setGroupingRequested] = useState(false)
 
   // =========================================
   // APERTURA DE FORMULARIOS
@@ -1103,6 +1107,7 @@ const Tables = () => {
     }
 
     if (!isDirty) {
+      setGroupingRequested(false)
       setSelectedId(nextConfigurationId)
       return
     }
@@ -1121,6 +1126,7 @@ const Tables = () => {
 
       onAction: async () => {
         discardChanges()
+        setGroupingRequested(false)
         setSelectedId(nextConfigurationId)
       },
     })
@@ -1267,7 +1273,8 @@ const Tables = () => {
                 disabled={
                   isSaving ||
                   isDirty ||
-                  hasRemoteChanges
+                  hasRemoteChanges ||
+                  groupingRequested
                 }
               >
                 Nuevo sector
@@ -1276,9 +1283,19 @@ const Tables = () => {
               <DefaultButton
                 type="button"
                 onClick={handleOpenCreateTable}
-                disabled={!canCreateTable}
+                disabled={!canCreateTable || groupingRequested}
               >
                 Nueva mesa
+              </DefaultButton>
+
+              <DefaultButton
+                type="button"
+                variant="secondary"
+                onClick={() => setGroupingRequested((previous) => !previous)}
+                disabled={!groupingRequested && (editorDisabled || sectorsLoading || tablesLoading)}
+              >
+                <LinkIcon sx={{ fontSize: 18, mr: 1 }} />
+                {groupingRequested ? 'Cancelar selección' : 'Agrupar mesas'}
               </DefaultButton>
 
             </div>
@@ -1321,6 +1338,8 @@ const Tables = () => {
           onRetryTables={refetchTables}
 
           selectedConfiguration={selectedConfiguration}
+          groupingRequested={groupingRequested}
+          onStopGrouping={() => setGroupingRequested(false)}
           distribution={editedDistribution}
           distributionLoading={distributionLoading}
           distributionError={distributionError}

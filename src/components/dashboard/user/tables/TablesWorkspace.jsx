@@ -68,6 +68,8 @@ const TablesWorkspace = ({
   onRetryTables,
 
   selectedConfiguration,
+  groupingRequested = false,
+  onStopGrouping,
   distribution,
   distributionLoading = false,
   distributionError = false,
@@ -112,6 +114,9 @@ const TablesWorkspace = ({
   // =========================================
 
   const [view, setView] = useState('sectors')
+
+  // Al iniciar una agrupación desde la barra superior, mostrar el Plano.
+  const currentView = groupingRequested ? 'sectors' : view
 
   const [groupEditRequest, setGroupEditRequest] =
     useState(null)
@@ -1250,7 +1255,7 @@ const TablesWorkspace = ({
         <div className="border-b border-mesa-border">
           <DashboardTabs
             tabs={TABLE_VIEWS}
-            value={view}
+            value={currentView}
             onChange={setView}
             ariaLabel="Vistas de mesas"
           />
@@ -1290,8 +1295,8 @@ const TablesWorkspace = ({
         {/* PLANO - CONFIGURACIÓN SELECCIONADA   */}
         {/* ===================================== */}
 
-        {(view === 'sectors' || createSectorOpen) && (
-          <div className={view === 'sectors' ? 'mt-4' : 'hidden'}>
+        {(currentView === 'sectors' || createSectorOpen) && (
+          <div className={currentView === 'sectors' ? 'mt-4' : 'hidden'}>
             {tablesError ? (
               <div className="space-y-3 rounded-xl border border-mesa-border p-5">
                 <p className="text-sm text-red-400">
@@ -1337,6 +1342,8 @@ const TablesWorkspace = ({
                 onSetSectorWaiter={onSetSectorWaiter}
                 onSaveGroup={onSaveGroup}
                 groupEditRequest={groupEditRequest}
+                groupingRequested={groupingRequested}
+                onStopGrouping={onStopGrouping}
               />
             )}
           </div>
@@ -1346,7 +1353,7 @@ const TablesWorkspace = ({
         {/* LISTA - CONFIGURACIÓN SELECCIONADA   */}
         {/* ===================================== */}
 
-        {view === 'operational' && (
+        {currentView === 'operational' && (
           <div className="mt-4 space-y-4">
 
             <div className="flex flex-wrap items-center justify-between gap-2">

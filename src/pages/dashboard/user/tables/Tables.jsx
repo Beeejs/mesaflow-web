@@ -12,6 +12,7 @@ import TablesWorkspace from '../../../../components/dashboard/user/tables/Tables
 
 /* Context */
 import { ActionDialogContext } from '../../../../context/ActionDialogContext'
+import { SessionContext } from '../../../../context/SessionContext'
 
 /* Hooks - Queries */
 import useTableConfigurationsQuery from '../../../../hooks/queries/useTableConfigurationsQuery'
@@ -19,6 +20,7 @@ import useTableDistributionQuery from '../../../../hooks/queries/useTableDistrib
 import useSectorsQuery from '../../../../hooks/queries/useSectorsQuery'
 import useTablesQuery from '../../../../hooks/queries/useTablesQuery'
 import useEstablishmentUsersQuery from '../../../../hooks/queries/useEstablishmentUsersQuery'
+import useOrderEvents from '../../../../hooks/useOrderEvents'
 
 /* Hooks - Editor */
 import useTableDistributionDraft from '../../../../hooks/useTableDistributionDraft'
@@ -31,6 +33,7 @@ const getErrorMessage = (error, fallback) =>
 
 const Tables = () => {
   const { idEstablecimiento } = useParams()
+  const { user } = useContext(SessionContext)
 
   const { openActionDialog } =
     useContext(ActionDialogContext)
@@ -68,13 +71,6 @@ const Tables = () => {
     refetch: refetchSectors,
   } = useSectorsQuery(idEstablecimiento)
 
-  const {
-    data: tables = [],
-    isLoading: tablesLoading,
-    isError: tablesError,
-    refetch: refetchTables,
-  } = useTablesQuery(idEstablecimiento)
-
   // =========================================
   // MOZOS DEL ESTABLECIMIENTO
   // =========================================
@@ -89,6 +85,19 @@ const Tables = () => {
   const waiters = establishmentUsers.filter(
     (user) => user.rolEstablecimiento === 'MOZO'
   )
+
+  const isEncargado = establishmentUsers.some(
+    (item) => item.email === user?.email && item.rolEstablecimiento === 'ENCARGADO'
+  )
+  const liveConnected = useOrderEvents(isEncargado ? idEstablecimiento : null)
+  const {
+    data: tables = [],
+    isLoading: tablesLoading,
+    isError: tablesError,
+    refetch: refetchTables,
+  } = useTablesQuery(idEstablecimiento, {
+    refetchInterval: isEncargado && !liveConnected ? 15000 : false,
+  })
 
   // =========================================
   // CONFIGURACIONES

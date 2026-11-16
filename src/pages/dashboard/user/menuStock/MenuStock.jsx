@@ -19,6 +19,7 @@ import ProductFormDialog from '../../../../components/dashboard/user/menuStock/P
 import ProductImageDialog from '../../../../components/dashboard/user/menuStock/ProductImageDialog'
 import StockMovementDialog from '../../../../components/dashboard/user/menuStock/StockMovementDialog'
 import DashboardTabs from '../../../../components/dashboard/DashboardTabs'
+import DashboardPageHeader from '../../../../components/dashboard/DashboardPageHeader'
 
 /* Columns */
 import { getProductColumns } from '../../../../components/table/columns/productColumns'
@@ -361,49 +362,44 @@ const MenuStock = () => {
   // Renderizado
   return (
     <div className="space-y-8">
-      <section className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-mesa-cyan-light">
-            Operación
-          </p>
+      <DashboardPageHeader
+        eyebrow="Operación"
+        title="Menú y stock"
+        description="Administrá los productos, su disponibilidad y los movimientos de stock del establecimiento."
+        action={
+          <div className="flex flex-wrap gap-3">
+            <DefaultButton
+              variant="secondary"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+            >
+              Actualizar
+            </DefaultButton>
 
-          <h1 className="font-display text-3xl font-bold text-mesa-text">
-            Menú y stock
-          </h1>
+            <DefaultButton
+              variant="secondary"
+              onClick={() =>
+                handleOpenStockMovement()
+              }
+            >
+              Registrar movimiento
+            </DefaultButton>
 
-          <p className="mt-2 max-w-2xl text-sm text-mesa-muted">
-            Administrá los productos,
-            su disponibilidad y los
-            movimientos de stock del
-            establecimiento.
-          </p>
-        </div>
+            <DefaultButton
+              onClick={handleNewProduct}
+            >
+              Nuevo producto
+            </DefaultButton>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap gap-3">
-          <DefaultButton
-            variant="secondary"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-          >
-            Actualizar
-          </DefaultButton>
-
-          <DefaultButton
-            variant="secondary"
-            onClick={() =>
-              handleOpenStockMovement()
-            }
-          >
-            Registrar movimiento
-          </DefaultButton>
-
-          <DefaultButton
-            onClick={handleNewProduct}
-          >
-            Nuevo producto
-          </DefaultButton>
-        </div>
-      </section>
+      <DashboardTabs
+        tabs={TABS}
+        value={activeTab}
+        onChange={setActiveTab}
+        ariaLabel="Menú y stock"
+      />
 
       <MenuStockSummary
         products={products}
@@ -419,13 +415,6 @@ const MenuStock = () => {
             ? setMovementFilter
             : setSummaryFilter
         }
-      />
-
-      <DashboardTabs
-        tabs={TABS}
-        value={activeTab}
-        onChange={setActiveTab}
-        ariaLabel="Menú y stock"
       />
 
       {activeTab === 'productos' && (

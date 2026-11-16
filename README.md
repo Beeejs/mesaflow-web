@@ -1,7 +1,87 @@
 # MesaFlow Web
 
+## Pedidos del establecimiento
+
+La opcion Pedidos del panel del establecimiento permite al ENCARGADO
+listar y filtrar pedidos, consultar sus detalles, pasar de PENDIENTE a
+EN_PREPARACION y de EN_PREPARACION a ENTREGADO. Los botones de estado muestran
+cantidades sobre los resultados de la busqueda, sin depender del estado
+seleccionado. La busqueda se aplica al escribir, por pedido, mesa,
+cliente (ID), sesion, productos y observaciones, ignorando acentos y
+mayusculas. Pedidos Activos consulta sesiones ABIERTAS e incluye sus pedidos
+entregados y cancelados. Historial Pedidos consulta solo sesiones CERRADAS,
+mantiene los filtros por estado y la busqueda y permite consultar detalles
+y cuentas, pero no preparar, cancelar ni cerrar cuentas desde esa vista.
+Los cancelados de cuentas abiertas permanecen en Activos.
+Se consulta `sesionEstado` en REST,
+sin inferir el cierre desde el estado del pedido ni desde la mesa actual.
+Cambiar la busqueda, el estado o la solapa vuelve a la primera pagina.
+Un clic en la fila (o Enter sobre una celda) abre el pedido. Desde su
+detalle se puede abrir la cuenta de la mesa y desde esa cuenta abrir
+cualquier pedido, sin apilar dialogos.
+La columna Mesa muestra solo su codigo en un recuadro neutro, sin vincular
+el historial de pedidos a las ocupaciones posteriores de esa mesa.
+El mozo asignado tambien puede confirmar la entrega. La cancelacion
+requiere motivo (hasta 255 caracteres) y se limita a PENDIENTE o
+EN_PREPARACION. El backend valida permisos, transiciones y reposicion de stock.
+
+La cuenta de sesion muestra todos sus pedidos y el total sin cancelados.
+El cierre requiere pedidos entregados o cancelados y confirmacion del
+cobro fuera del sistema; no procesa pagos. El backend cierra la sesion y
+libera la mesa. Los cambios se reciben mediante SSE mientras la vista esta
+activa; si se pierde la conexion, se actualizan cada 15 segundos hasta
+recuperarla. Los avisos SSE se agrupan en ventanas de 250 ms y esperan
+las consultas en curso, sin reiniciarlas por cada evento. Si llegan
+mas cambios durante una recarga, se consulta nuevamente al terminar.
+El evento CONECTADO sincroniza de inmediato al conectar o reconectar,
+sin duplicar la recarga con onopen. Volver a una pestana visible o
+recuperar la red tambien solicita sincronizacion REST mediante la misma
+cola de recargas. Se mantiene una sola conexion por vista activa del
+establecimiento; el ping no dispara consultas. Al salir se cancelan
+las recargas pendientes y las consultas HTTP de pedidos, cuentas y mesas
+que ya no tienen observadores. Esto no garantiza la cancelacion de SQL
+que el backend ya haya empezado a ejecutar. Tambien se eliminan los
+listeners de visibilidad y recuperacion de red.
+Mesas tambien recibe estos avisos para actualizar su estado
+operativo: la habilitacion es independiente de estar disponible u ocupada.
+El primer pedido ocupa la mesa y el cierre de la cuenta la libera.
+Inicio reutiliza las acciones y dialogos de Pedidos para el ENCARGADO,
+pero consulta solo sesiones ABIERTAS y oculta los pedidos CANCELADOS.
+Su tablero adapta la maqueta de la guia: saludo y fecha, indicadores
+reales de cuentas abiertas, pedidos por preparar/entregar y mesas
+ocupadas/habilitadas; tarjetas de pedidos y resumen del estado de mesas.
+El indicador de ocupación usa una dona en la misma fila de tarjetas:
+naranja para ocupadas y cian para el resto de mesas habilitadas, con
+porcentaje y cantidades. "Restantes" no significa disponibles: puede
+incluir reservadas o fuera de servicio. Sin mesas habilitadas se muestra
+un anillo neutro, sin porcentaje. Reutiliza la tarjeta de resumen y
+CircularProgress de MUI, sin bibliotecas nuevas ni consultas adicionales.
+Las tarjetas se paginan y permiten abrir pedido, cuenta y acciones.
+Los botones de resumen filtran solo ese listado: todas las cuentas
+abiertas, pedidos por preparar, por entregar o de mesas ocupadas habilitadas.
+Los indicadores, el bloque de reservas y el estado de mesas no cambian
+por seleccionar un filtro; la paginacion vuelve a la primera pagina.
+Ingresos muestra un cero provisional con control para ocultar/mostrar
+el importe, sin mensaje adicional en la tarjeta. Reservas muestra
+el texto fijo "Sin Reservas", tambien identificado como pendiente.
+Ninguno representa datos reales de cobros o reservas todavia; no se
+infieren pagos a partir de pedidos entregados o cuentas cerradas.
+Los ENTREGADOS permanecen hasta cerrar la cuenta; el cierre actualiza
+Inicio por SSE sin borrar el historial de Pedidos. Las consultas por
+cuenta tienen caches separadas y se invalidan juntas ante cambios.
+No se implementan
+notificaciones push ni creacion de pedidos desde este panel.
+
 Frontend web de **MesaFlow** desarrollado con **React + Vite**.
 
+Menu y stock y Pedidos comparten `DashboardTabs`, con las solapas antes
+de los indicadores/filtros y del listado. La seleccion funciona por clic
+y teclado (flechas, Inicio y Fin), con el mismo estilo y comportamiento.
+
+El componente compartido de tablas usa la traduccion espanola de MUI
+DataGrid para filtros, operadores, menus y paginacion. Su tema oscuro
+tambien se aplica a desplegables renderizados fuera de la tabla mediante
+portales, reutilizando la paleta de los formularios.
 
 ---
 

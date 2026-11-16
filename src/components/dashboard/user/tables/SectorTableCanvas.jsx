@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 
 import LinkIcon from '@mui/icons-material/Link'
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined'
+import { getTableState } from '../../../../utils/tableStateUtils'
 
 // =========================================
 // CONSTANTES
@@ -872,6 +873,7 @@ const SectorTableCanvas = ({
 
       preview: {
         codigo,
+        estado: physical?.estado,
 
         capacidad:
           physical?.capacidad ?? null,
@@ -1512,6 +1514,8 @@ const SectorTableCanvas = ({
                 detail.activaGlobal !== false &&
                 physical?.activa !== false
 
+              const tableState = getTableState(physical?.estado)
+
               const agrupable =
                 physical?.agrupable === true
 
@@ -1607,6 +1611,7 @@ const SectorTableCanvas = ({
                   }
                   title={[
                     codigo,
+                    `Estado: ${tableState.label}`,
                     habilitada
                       ? 'Habilitada'
                       : 'Deshabilitada',
@@ -1672,9 +1677,7 @@ const SectorTableCanvas = ({
                       ? 'border-blue-400 bg-blue-500/30 text-white ring-2 ring-blue-400/70'
                       : !habilitada
                         ? 'border-slate-500/60 bg-slate-500/15 text-mesa-muted'
-                        : isGrouped
-                          ? 'border-emerald-500/70 bg-emerald-500/15 text-mesa-text'
-                          : 'border-emerald-500/60 bg-emerald-500/15 text-mesa-text'
+                        : tableState.classes
                   } ${
                     disabled
                       ? 'cursor-default opacity-70'
@@ -1703,6 +1706,7 @@ const SectorTableCanvas = ({
                       ? `${physical.capacidad} pers.`
                       : '—'}
                   </span>
+                  <span className="max-w-14 truncate text-[9px] font-semibold">{tableState.label}</span>
 
                   {/* ================================= */}
                   {/* INDICADOR AGRUPABLE / AGRUPADA    */}
@@ -1907,7 +1911,7 @@ const SectorTableCanvas = ({
             <div
               className={`pointer-events-none fixed z-[1400] flex h-14 w-16 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-xl border shadow-2xl ${
                 dragPreview.habilitada
-                  ? 'border-emerald-400 bg-emerald-500/25 text-white'
+                  ? getTableState(dragPreview.estado).classes
                   : 'border-slate-400 bg-slate-500/20 text-white'
               }`}
               style={{

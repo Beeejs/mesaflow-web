@@ -3,9 +3,10 @@ import api from './axiosConfig'
 import { handleApiResponse } from './handleApiResponse'
 
 // Listar mesas físicas del establecimiento
-export const listTables = async (idEstablecimiento) => {
+export const listTables = async (idEstablecimiento, signal) => {
   const response = await api.get(
-    `/api/establecimientos/${idEstablecimiento}/mesas`
+    `/api/establecimientos/${idEstablecimiento}/mesas`,
+    { signal }
   )
 
   return handleApiResponse(response.data)

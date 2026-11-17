@@ -66,6 +66,7 @@ const ProductFormDialog = ({
   })
 
   const [imageFile, setImageFile] = useState(null)
+  const [removeImage, setRemoveImage] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState('')
 
   const createMutation =
@@ -80,6 +81,7 @@ const ProductFormDialog = ({
   // Constantes derivadas
   const isEditing = Boolean(product)
   const hasSavedImage = hasProductImage(product)
+  const showsSavedImage = hasSavedImage && !removeImage
   const selectedCategory = categories.find(
     (category) =>
       category.idCategoriaProducto ===
@@ -167,6 +169,7 @@ const ProductFormDialog = ({
     }
 
     setImageFile(selectedFile)
+    setRemoveImage(false)
   }
 
   const handleCreateCategory = async () => {
@@ -278,6 +281,7 @@ const ProductFormDialog = ({
           idProducto: product.idProducto,
           productData,
           image: imageFile,
+          eliminarImagen: removeImage,
         })
 
         toast.success(
@@ -337,17 +341,17 @@ const ProductFormDialog = ({
                 src={
                   imagePreview ??
                   getProductImage({
-                    imagenUrl: product?.imagenUrl,
+                    imagenUrl: removeImage ? null : product?.imagenUrl,
                     categoria: selectedCategory?.nombre ?? product?.categoria,
                   }, 320)
                 }
                 alt={
-                  imagePreview || hasSavedImage
+                  imagePreview || showsSavedImage
                     ? 'Imagen del producto'
                     : `Ícono de ${selectedCategory?.nombre ?? 'plato'}`
                 }
                 className={`h-full w-full ${
-                  imagePreview || hasSavedImage
+                  imagePreview || showsSavedImage
                     ? 'object-cover'
                     : 'object-contain'
                 }`}
@@ -383,9 +387,13 @@ const ProductFormDialog = ({
                 {hasSavedImage && (
                   <DefaultButton
                     variant="secondary"
-                    disabled
+                    onClick={() => {
+                      setRemoveImage((current) => !current)
+                      setImageFile(null)
+                    }}
+                    disabled={isSaving}
                   >
-                    Eliminar imagen
+                    {removeImage ? 'Restaurar imagen' : 'Eliminar imagen'}
                   </DefaultButton>
                 )}
               </div>
@@ -394,6 +402,8 @@ const ProductFormDialog = ({
                 JPG, PNG o WEBP de hasta 2 MB.
                 {imageFile
                   ? ' La foto elegida se subirá al guardar.'
+                  : removeImage
+                    ? ' La foto se quitará al guardar los cambios.'
                   : hasSavedImage
                     ? ' Podés reemplazar la foto actual.'
                     : ' Sin foto propia se muestra un ícono local de la categoría; no se sube a ImageKit.'}

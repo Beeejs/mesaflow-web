@@ -14,6 +14,11 @@ const queryClient = new QueryClient({
 // Query keys | Para identificar las queries y poder invalidarlas o refetcharlas
 export const queryKeys = {
   users: ['users'],
+  orders: (idEstablecimiento, sesionEstado = '') => [
+    'establishments', idEstablecimiento, 'orders', ...sesionEstado ? [sesionEstado] : [],
+  ],
+  order: (idPedido) => ['orders', idPedido],
+  sessionAccount: (idSesionMesa) => ['session-accounts', idSesionMesa],
   roles: ['roles'],
   establishments: ['establishments'],
   myEstablishments: ['my-establishments'],

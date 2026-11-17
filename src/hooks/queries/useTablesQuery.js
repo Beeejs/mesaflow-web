@@ -5,11 +5,13 @@ import { useQuery } from '@tanstack/react-query'
 import { listTables } from '../../api/tableService'
 import { queryKeys } from '../../api/queryClient'
 
-const useTablesQuery = (idEstablecimiento) => {
+const useTablesQuery = (idEstablecimiento, { refetchInterval = false } = {}) => {
   return useQuery({
     queryKey: queryKeys.tables(idEstablecimiento),
-    queryFn: () => listTables(idEstablecimiento),
+    queryFn: ({ signal }) => listTables(idEstablecimiento, signal),
     enabled: Boolean(idEstablecimiento),
+    refetchOnMount: 'always',
+    refetchInterval,
   })
 }
 

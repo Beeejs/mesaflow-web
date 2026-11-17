@@ -581,6 +581,8 @@ const TablesWorkspace = ({
         capacidad:
           physicalTable?.capacidad ?? null,
 
+        estado: physicalTable?.estado,
+
         agrupable:
           physicalTable?.agrupable ?? false,
 

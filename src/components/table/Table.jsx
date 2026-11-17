@@ -1,7 +1,26 @@
 import { DataGrid } from '@mui/x-data-grid'
+import { esES } from '@mui/x-data-grid/locales'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { selectSlotProps } from '../../styles/formStyles'
 
 /* Components */
 import Loader from '../common/loader/Loader'
+
+const tableTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#056EF8' },
+    background: { default: '#03070F', paper: '#0B111C' },
+    text: { primary: '#F8FAFC', secondary: '#94A3B8' },
+    divider: '#1F2937',
+  },
+  components: {
+    MuiPaper: { styleOverrides: { root: { backgroundImage: 'none' } } },
+    MuiMenu: {
+      styleOverrides: { paper: selectSlotProps.select.MenuProps.slotProps.paper.sx },
+    },
+  },
+})
 
 const Table = ({
   rows = [],
@@ -20,7 +39,8 @@ const Table = ({
 }) => {
   // Renderizado
   return (
-    <DataGrid
+    <ThemeProvider theme={tableTheme}>
+      <DataGrid
       rows={rows}
       columns={columns}
       getRowId={getRowId}
@@ -118,6 +138,7 @@ const Table = ({
         },
       }}
       localeText={{
+        ...esES.components.MuiDataGrid.defaultProps.localeText,
         noRowsLabel: emptyMessage,
         noResultsOverlayLabel: 'No se encontraron resultados.',
         toolbarQuickFilterPlaceholder: 'Buscar...',
@@ -304,7 +325,8 @@ const Table = ({
 
         ...sx,
       }}
-    />
+      />
+    </ThemeProvider>
   )
 }
 

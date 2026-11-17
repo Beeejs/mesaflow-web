@@ -9,6 +9,7 @@ const DashboardTableActionButton = ({
   ariaLabel,
   highlight = false,
   disabled = false,
+  sx = {},
 }) => {
   return (
     <Tooltip title={title}>
@@ -29,6 +30,7 @@ const DashboardTableActionButton = ({
             '&.Mui-disabled': {
               color: '#475569',
             },
+            ...sx,
           }}
         >
           {children}

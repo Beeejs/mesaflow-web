@@ -4,6 +4,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 
 /* Components */
 import DashboardTableActionButton from '../../dashboard/DashboardTableActionButton'
+import { getTableState } from '../../../utils/tableStateUtils'
 
 // =========================================
 // IDENTIFICACIÓN VISUAL DE MOZOS
@@ -65,6 +66,17 @@ export const getTableColumns = ({ onEditTable }) => [
           : `${params.row.capacidad} personas`}
       </span>
     ),
+  },
+  {
+    field: 'estado',
+    headerName: 'Estado',
+    minWidth: 160,
+    renderCell: ({ value }) => {
+      const state = getTableState(value)
+      return <span className={`inline-flex rounded-lg border px-3 py-1 text-xs font-semibold ${state.classes}`}>
+        {state.label}
+      </span>
+    },
   },
   {
     field: 'agrupable',
